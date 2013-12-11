@@ -172,10 +172,10 @@ class Enumeration(models.Model):
                                     related_name = "enumeration_parent_organization")
     associations                = models.ManyToManyField('self', null=True, blank=True,
                                     related_name = "enumerations_associations")
-    enumerition_type            = models.CharField(max_length=10, choices=ENUMERATION_TYPE_CHOICES,)
+    enumeration_type            = models.CharField(max_length=10, choices=ENUMERATION_TYPE_CHOICES,)
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
                                     related_name = "enumerations_licenses")
-    entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
+    #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
     status                      = models.CharField(max_length=1, choices=ENUMERATION_STATUS_CHOICES,
                                                    default ="P", blank=True)
@@ -216,15 +216,15 @@ class Enumeration(models.Model):
 
     def __unicode__(self):
         name = "UNK"
-        if self.entity_type == "ORGANIZATION":
+        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
             name = self.organization_name
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as, self.organization_name)
-        elif self.entity_type == "INDIVIDUAL":
+        elif self.enumeration_type in ("OEID-1", "NPI-1"):
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as, self.first_name, self.last_name)
             
-        e = "%s is a %s managed by %s" % (name, self.entity_type, ", ".join([manager.username
+        e = "%s is a %s managed by %s" % (name, self.enumeration_type, ", ".join([manager.username
                                                     for manager in self.managers.all()]))
         return e
