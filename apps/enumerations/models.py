@@ -225,6 +225,6 @@ class Enumeration(models.Model):
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as, self.first_name, self.last_name)
             
-        e = "%s is a %s managed by %s" % (name, self.enumeration_type, ", ".join([manager.username
+        e = "%s is an %s managed by %s" % (name, self.enumeration_type, ", ".join([manager.username
                                                     for manager in self.managers.all()]))
         return e
