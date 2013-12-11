@@ -160,7 +160,7 @@ class Address(models.Model):
 
 
 class Enumeration(models.Model):
-    managers                    = models.ManyToManyField(User)
+    managers                    = models.ManyToManyField(User, null=True, blank=True)
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
                                     null=True, blank=True)
