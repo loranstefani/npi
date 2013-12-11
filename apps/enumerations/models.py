@@ -3,7 +3,7 @@ from django.conf import settings
 from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 import uuid
-from django_localflavor_us.us_states import US_STATES
+from localflavor.us.us_states import US_STATES
 
 US_STATE_CHOICES = list(US_STATES)
 US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
