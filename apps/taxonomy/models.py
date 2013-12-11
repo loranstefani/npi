@@ -21,4 +21,4 @@ class TaxonomyCode(models.Model):
         ordering = ('-id',)
 
     def __unicode__(self):
-        return "%s" % (self.code)
+        return "%s (%s)" % (self.description, self.code)
