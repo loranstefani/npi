@@ -4,12 +4,19 @@ from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 import uuid
 from localflavor.us.us_states import US_STATES
+import random
 
 US_STATE_CHOICES = list(US_STATES)
 US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
+US_STATE_CHOICES.append(('AE', 'AE - (ZIPs 09xxx) Armed Forces Europe which includes Canada, Middle East, and Africa'))
+US_STATE_CHOICES.append(('AP', 'AP - (ZIPs 962xx) Armed Forces Pacific'))
+US_STATE_CHOICES.append(('AA', 'AA - (ZIPs 340xx) Armed Forces (Central and South) Americas'))
 US_STATE_CHOICES.append(('ZZ', 'Foreign Country'))
 
 
+#AE (ZIPs 09xxx) for Armed Forces Europe which includes Canada, Middle East, and Africa
+#AP (ZIPs 962xx - 966xx) for Armed Forces Pacific
+#AA (ZIPs 340xx) for Armed Forces (Central and South) Americas
 
 ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual Provider (NPI-1)"),
                        ("NPI-2","Provider Organization (NPI-2)"),
@@ -17,6 +24,7 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual Provider (NPI-1)"),
                         ("OEID-1","Individual Atypical Provider (OEID-1)"),
                         ("OEID-2","Atypical Provider Organization (OEID-2)"),
                         )
+
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"), ("O", "Other"), )
 ADDRESS_TYPE_CHOICES    = (("PRACTICE-DOM", "Practice Address (Domestic)"),
@@ -45,6 +53,9 @@ LICENSE_TYPE_CHOICES =(  ("MD", "Medical Doctor (MD)"),
                           ("OTHER","Other"),
                          )
 
+MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
+                ('FPS', 'FPS - Fleet Post Office'),
+                ('DPO', 'PDO - Diplomatic Post Office'))
 
 class License(models.Model):
     number         = models.CharField(max_length=20)
@@ -85,7 +96,7 @@ class Address(models.Model):
     city         = models.CharField(max_length=200, blank=True, default="")
     state        = models.CharField(max_length=2,  blank=True, default="",
                                     choices = US_STATE_CHOICES)
-    zip             = models.CharField(max_length=200,  blank=True, default="")
+    zip             = models.CharField(max_length=10,  blank=True, default="")
     
     us_phone_number = models.CharField(max_length=15,  blank=True, default="")
     us_fax_number   = models.CharField(max_length=15,  blank=True, default="")
@@ -96,6 +107,13 @@ class Address(models.Model):
     foriegn_state         = models.CharField(max_length=2,  blank=True, default="")
     foriegn_postal        = models.CharField(max_length=12,  blank=True, default="")
     foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")
+    
+    mpo                    = models.CharField(max_length=3,
+                                              choices= MPO_CHOICES,
+                                              blank=True, default="",
+                                              verbose_name="Military Post Office")
+    
+    
     latitude              = models.CharField(max_length=20, default="", blank=True)
     longitude             = models.CharField(max_length=20, default="", blank=True)
     foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")
@@ -132,11 +150,9 @@ class Address(models.Model):
                                           self.country_code)
 
         if self.address_type in ("BUSINESS-MIL", "PRACTICE-MIL"):
-            address = "%s %s %s, %s %s %s MILITARY" % (self.address_1, self.address_2,
-                                                   self.city,
-                                          self.state, self.zip, self.country_code)
-        
-        
+            address = "%s %s %s %s %s" % (self.address_1, self.address_2,
+                                                   self.mpo, self.state, self.zip,)
+          
         return address
         
         name = "UNK"
@@ -159,7 +175,25 @@ class Address(models.Model):
         verbose_name_plural = "Addresses"
 
 
+
+
+    def save(self, **kwargs):
+        if self.zip.startswith("09"):
+            self.state ="AE"
+            
+        if self.zip.startswith("962"):
+            self.state ="AP"
+        
+        if self.zip.startswith("340"):
+            self.state ="AA"
+     
+        super(Address, self).save(**kwargs)
+
 class Enumeration(models.Model):
+    
+    status                      = models.CharField(max_length=1,
+                                        choices=ENUMERATION_STATUS_CHOICES,
+                                        default ="P", blank=True)
     managers                    = models.ManyToManyField(User, null=True, blank=True)
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
@@ -177,12 +211,12 @@ class Enumeration(models.Model):
                                     related_name = "enumerations_licenses")
     #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
-    status                      = models.CharField(max_length=1, choices=ENUMERATION_STATUS_CHOICES,
-                                                   default ="P", blank=True)
     reason_decactvated          = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
                                                    default="", blank=True)
     deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
-    number                      = models.CharField(max_length=10, blank=True, default="")
+    number                      = models.CharField(max_length=10, blank=True, default="",
+                                                   #editable=False
+                                                   )
     first_name                  = models.CharField(max_length=100, blank=True, default="")
     last_name                   = models.CharField(max_length=100, blank=True, default="")
     organization_name           = models.CharField(max_length=100, blank=True, default="")
@@ -225,6 +259,24 @@ class Enumeration(models.Model):
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as, self.first_name, self.last_name)
             
-        e = "%s is an %s managed by %s" % (name, self.enumeration_type, ", ".join([manager.username
+        number=self.number
+        if not number:
+            number = "NOT-ASSIGNED"
+        e = "%s %s is an %s managed by %s" % (number, name, self.enumeration_type, ", ".join([manager.username
                                                     for manager in self.managers.all()]))
         return e
+
+
+    def save(self, **kwargs):
+        #If the status is active but no enumeration number is assigned then create one.
+        if self.status == "A" and self.number == "":
+            if self.enumeration_type in ("NPI-1", "NPI-2"):
+                self.number = random.randrange(100000000,199999999)
+            if self.enumeration_type in ("HPID-2"):
+                self.number = random.randrange(7000000000,7999999999)
+             
+            if self.enumeration_type in ("OEID-1", "OEID-2"):
+                self.number = random.randrange(6000000000,6999999999)   
+            
+        super(Enumeration, self).save(**kwargs)
+    
