@@ -19,14 +19,16 @@ US_STATE_CHOICES.append(('ZZ', 'Foreign Country'))
 #AA (ZIPs 340xx) for Armed Forces (Central and South) Americas
 
 ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual Provider (NPI-1)"),
-                       ("NPI-2","Provider Organization (NPI-2)"),
-                       ("HPID","Health Plan Identifier (HPID)"),
-                        ("OEID-1","Individual Atypical Provider (OEID-1)"),
-                        ("OEID-2","Atypical Provider Organization (OEID-2)"),
+                            ("NPI-2","Provider Organization (NPI-2)"),
+                            ("HPID","Health Plan Identifier (HPID)"),
+                            ("OEID-1","Individual Atypical Provider (OEID-1)"),
+                            ("OEID-2","Atypical Provider Organization (OEID-2)"),
                         )
 
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
+
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"), ("O", "Other"), )
+
 ADDRESS_TYPE_CHOICES    = (("PRACTICE-DOM", "Practice Address (Domestic)"),
                            ("BUSINESS-DOM", "Business/Billing Address (Domestic)"),
                            
@@ -36,11 +38,15 @@ ADDRESS_TYPE_CHOICES    = (("PRACTICE-DOM", "Practice Address (Domestic)"),
                            ("PRACTICE-MIL", "Practice Address (Military)"),
                            ("BUSINESS-MIL", "Business/Billing Address (Military)"),
                         )
+
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
+
 
 COUNTRY_CHOICES = (("US", "United States"), ("CA", "Canada"), ("MX", "Mexico"))
 
-LICENSE_STATUS_CHOICES =(("UNK", "Unknown"),("ACTIVE","Active"),
+
+LICENSE_STATUS_CHOICES =(("UNK", "Unknown"),
+                        ("ACTIVE","Active"),
                          ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
                          ("EXPIRED","Expired"),
                          ("REVOKED","Revoked"),
@@ -190,10 +196,9 @@ class Address(models.Model):
         super(Address, self).save(**kwargs)
 
 class Enumeration(models.Model):
-    
     status                      = models.CharField(max_length=1,
-                                        choices=ENUMERATION_STATUS_CHOICES,
-                                        default ="P", blank=True)
+                                    choices=ENUMERATION_STATUS_CHOICES,
+                                    default ="P", blank=True)
     managers                    = models.ManyToManyField(User, null=True, blank=True)
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
@@ -212,7 +217,7 @@ class Enumeration(models.Model):
     #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
     reason_decactvated          = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
-                                                   default="", blank=True)
+                                    default="", blank=True)
     deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
     number                      = models.CharField(max_length=10, blank=True, default="",
                                                    #editable=False
@@ -236,6 +241,9 @@ class Enumeration(models.Model):
     public_email_contact        = models.CharField(max_length=15,  blank=True, default="")
     phone_number_extension      = models.CharField(max_length=15,  blank=True, default="")
     bio                         = models.TextField(max_length=255,  blank=True, default="")
+    national_agency_check       = models.BooleanField(default=False)
+    fingerprinted               = models.BooleanField(default=False)
+    negative_action             = models.BooleanField(default=False, verbose_name="HRSA Information")
     background_image            = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
                                     verbose_name= "Background Image")
@@ -253,17 +261,27 @@ class Enumeration(models.Model):
         if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
             name = self.organization_name
             if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as, self.organization_name)
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.organization_name)
         elif self.enumeration_type in ("OEID-1", "NPI-1"):
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as, self.first_name, self.last_name)
-            
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.first_name,
+                                    self.last_name)
         number=self.number
         if not number:
             number = "NOT-ASSIGNED"
-        e = "%s %s is an %s managed by %s" % (number, name, self.enumeration_type, ", ".join([manager.username
-                                                    for manager in self.managers.all()]))
+        managers = ", ".join([manager.username for manager in self.managers.all()])
+        if not managers:
+            managers = "no one"
+        if not name:
+            name = "Name, No"
+        
+        
+        e = "%s %s is an %s managed by %s." % (number, name,
+                                               self.enumeration_type,
+                                              managers)
         return e
 
 
