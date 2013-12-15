@@ -103,27 +103,20 @@ class Address(models.Model):
     state        = models.CharField(max_length=2,  blank=True, default="",
                                     choices = US_STATE_CHOICES)
     zip             = models.CharField(max_length=10,  blank=True, default="")
-    
-    us_phone_number = models.CharField(max_length=15,  blank=True, default="")
-    us_fax_number   = models.CharField(max_length=15,  blank=True, default="")
-
     country_code    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRY_CHOICES)
-    
     foriegn_state         = models.CharField(max_length=2,  blank=True, default="")
     foriegn_postal        = models.CharField(max_length=12,  blank=True, default="")
-    foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")
-    
+    us_phone_number = models.CharField(max_length=15,  blank=True, default="")
+    us_fax_number   = models.CharField(max_length=15,  blank=True, default="")
+    foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")    
     mpo                    = models.CharField(max_length=3,
                                               choices= MPO_CHOICES,
                                               blank=True, default="",
                                               verbose_name="Military Post Office")
-    
-    
     latitude              = models.CharField(max_length=20, default="", blank=True)
     longitude             = models.CharField(max_length=20, default="", blank=True)
-    foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")
-    foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")
+
     website               = models.CharField(max_length=15,  blank=True, default="")
     driving_details       = models.CharField(max_length=15,  blank=True, default="")
     hours_of_operation    = models.TextField(max_length=255,  blank=True, default="")
@@ -254,6 +247,23 @@ class Enumeration(models.Model):
     class Meta:
         get_latest_by = "id"
         ordering = ('-id',)
+
+
+
+    def name(self):
+        name = "UNK"
+        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
+            name = self.organization_name
+            if self.doing_business_as:
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.organization_name)
+        elif self.enumeration_type in ("OEID-1", "NPI-1"):
+            name = "%s %s" % (self.first_name, self.last_name)
+            if self.doing_business_as:
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.first_name,
+                                    self.last_name)
+        return name
 
 
     def __unicode__(self):
