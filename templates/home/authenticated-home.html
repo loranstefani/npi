@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block Content %}
+
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-lg-12">
+          <h1 class="page-header">Welcome <small>{{user}}</small></h1>
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-12">
+	  
+	
+
+  {% if additional_info %}
+    <div class="alert alert-block">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <h4>{%trans "Important" %}</h4>
+    {{ additional_info }}
+    </div>
+
+  {% endif %}
+
+<div class="row">
+    <div class="col-lg-8">
+      content
+    </div>
+
+        </div>
+
+      </div>
+
+    </div><!-- /.container -->
+
+  
+
+{% endblock %}
+
