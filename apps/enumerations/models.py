@@ -29,15 +29,16 @@ ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactiv
 
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"), ("O", "Other"), )
 
-ADDRESS_TYPE_CHOICES    = (("PRACTICE-DOM", "Practice Address (Domestic)"),
-                           ("BUSINESS-DOM", "Business/Billing Address (Domestic)"),
-                           
-                           ("PRACTICE-FOR", "Practice Address (Foreign)"),
-                           ("BUSINESS-FOR", "Business/Billing Address (Foreign)"),
-
-                           ("PRACTICE-MIL", "Practice Address (Military)"),
-                           ("BUSINESS-MIL", "Business/Billing Address (Military)"),
+ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),                           
+                           ("FGN", "Foriegn"),
+                           ("MIL", "Military"),
                         )
+
+
+ADDRESS_PURPOSE_CHOICES = (("PRACTICE", "Practice Address"),
+                           ("BUSINESS", "Business Address"),
+                        )
+
 
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
 
@@ -97,6 +98,7 @@ class License(models.Model):
 
 class Address(models.Model):
     address_type = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
+    address_purpose = models.CharField(max_length=12, choices=ADDRESS_PURPOSE_CHOICES)
     address_1    = models.CharField(max_length=200, default="")
     address_2    = models.CharField(max_length=200, blank=True, default="")
     city         = models.CharField(max_length=200, blank=True, default="")
@@ -116,7 +118,6 @@ class Address(models.Model):
                                               verbose_name="Military Post Office")
     latitude              = models.CharField(max_length=20, default="", blank=True)
     longitude             = models.CharField(max_length=20, default="", blank=True)
-
     website               = models.CharField(max_length=15,  blank=True, default="")
     driving_details       = models.CharField(max_length=15,  blank=True, default="")
     hours_of_operation    = models.TextField(max_length=255,  blank=True, default="")
@@ -139,16 +140,16 @@ class Address(models.Model):
 
     def __unicode__(self):
         
-        if self.address_type in ("BUSINESS-DOM", "PRACTICE-DOM"):
+        if self.address_type == "DOM":
             address = "%s %s %s, %s %s %s" % (self.address_1, self.address_2, self.city,
                                           self.state, self.zip, self.country_code)
             
-        if self.address_type in ("BUSINESS-FOR", "PRACTICE-FOR"):
+        if self.address_type == "BUS":
             address = "%s %s %s, %s %s %s" % (self.address_1, self.address_2, self.city,
                                           self.foriegn_state, self.foriegn_postal,
                                           self.country_code)
 
-        if self.address_type in ("BUSINESS-MIL", "PRACTICE-MIL"):
+        if self.address_type == "MIL":
             address = "%s %s %s %s %s" % (self.address_1, self.address_2,
                                                    self.mpo, self.state, self.zip,)
           
@@ -189,9 +190,16 @@ class Address(models.Model):
         super(Address, self).save(**kwargs)
 
 class Enumeration(models.Model):
+    first_name                  = models.CharField(max_length=100, blank=True,
+                                                   default="")
+    last_name                   = models.CharField(max_length=100, blank=True,
+                                                   default="")
+    organization_name           = models.CharField(max_length=100, blank=True,
+                                                   default="")
     status                      = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
+    medicare_id                 = models.CharField(max_length=20, blank=True, default="")
     managers                    = models.ManyToManyField(User, null=True, blank=True)
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
@@ -200,11 +208,29 @@ class Enumeration(models.Model):
                                     related_name = "enumeration_primary_business_address")
     primary_practice_address    = models.ForeignKey(Address,
                                     related_name = "enumeration_primary_practice_address")
+    medical_record_storage_address  = models.ForeignKey(Address,
+                                    related_name = "enumeration_medical_record_storage_address",
+                                    null=True, blank=True)
+    
+    correspondence_address    = models.ForeignKey(Address,
+                                    related_name = "enumeration_correspondence_address",
+                                    null=True, blank=True)
+    
+    ten_ninety_nine_address = models.ForeignKey(Address, verbose_name="1099 Address",
+                                    related_name = "enumeration_ten_ninety_nine_address",
+                                    null=True, blank=True)
+    
+    revalidation_address    = models.ForeignKey(Address, verbose_name="PECOS Revalidation Address",
+                                    related_name = "enumeration_revalidation_address",
+                                    null=True, blank=True)
+    
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
                                     related_name = "enumeration_parent_organization")
+    
     associations                = models.ManyToManyField('self', null=True, blank=True,
                                     related_name = "enumerations_associations")
     enumeration_type            = models.CharField(max_length=10, choices=ENUMERATION_TYPE_CHOICES,)
+    
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
                                     related_name = "enumerations_licenses")
     #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
@@ -215,18 +241,20 @@ class Enumeration(models.Model):
     number                      = models.CharField(max_length=10, blank=True, default="",
                                                    #editable=False
                                                    )
-    first_name                  = models.CharField(max_length=100, blank=True, default="")
-    last_name                   = models.CharField(max_length=100, blank=True, default="")
-    organization_name           = models.CharField(max_length=100, blank=True, default="")
+   
     doing_business_as           = models.CharField(max_length=100, blank=True, default="")
     sole_protieter              = models.BooleanField(default=False)
-    tein                        = models.CharField(max_length=9, blank=True, default="", verbose_name="Tax ID Number")
-    ssn                         = models.CharField(max_length=10, blank=True, default="", verbose_name = "Social Security Number")
+    tein                        = models.CharField(max_length=9, blank=True,
+                                        default="", verbose_name="Tax ID Number")
+    ssn                         = models.CharField(max_length=10, blank=True, default="",
+                                        verbose_name = "Social Security Number")
     modify_token                = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
     private_email_contact       = models.CharField(max_length=150,  blank=True, default="")
     public_email_contact        = models.CharField(max_length=150,  blank=True, default="")
-    primary_taxonomy            = models.ForeignKey(TaxonomyCode, null=True, blank=True, related_name ="enumeration_primary_taxonomy")
-    other_taxonomies            = models.ManyToManyField(TaxonomyCode, null=True, blank=True, related_name ="enumeration_other_taxonomies")
+    primary_taxonomy            = models.ForeignKey(TaxonomyCode, null=True, blank=True,
+                                        related_name ="enumeration_primary_taxonomy")
+    other_taxonomies            = models.ManyToManyField(TaxonomyCode, null=True,
+                                        blank=True, related_name ="enumeration_other_taxonomies")
     website                     = models.CharField(max_length=300,  blank=True, default="")
     driving_directions          = models.TextField(max_length=266,  blank=True, default="")
     hours_of_operation          = models.CharField(max_length=15,  blank=True, default="")
@@ -236,7 +264,8 @@ class Enumeration(models.Model):
     bio                         = models.TextField(max_length=255,  blank=True, default="")
     national_agency_check       = models.BooleanField(default=False)
     fingerprinted               = models.BooleanField(default=False)
-    negative_action             = models.BooleanField(default=False, verbose_name="HRSA Information")
+    negative_action             = models.BooleanField(default=False,
+                                    verbose_name="Negative Action on file with HRSA")
     background_image            = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
                                     verbose_name= "Background Image")
