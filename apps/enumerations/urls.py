@@ -14,6 +14,12 @@ urlpatterns = patterns('',
     url(r'domestic-address/(?P<id>\S+)', domestic_address,
                         name="domestic_address"),    
     
+    url(r'foreign-address/(?P<id>\S+)', foreign_address,
+                        name="foreign_address"),
+    
+    url(r'military-address/(?P<id>\S+)', military_address,
+                        name="military_address"),    
+
 
     #url(r'create-domain-bound/(?P<serial_number>\S+)', create_domain_certificate,
     #                   name="create_domain_certificate"),

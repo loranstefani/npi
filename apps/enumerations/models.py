@@ -30,7 +30,7 @@ ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactiv
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"), ("O", "Other"), )
 
 ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),                           
-                           ("FGN", "Foriegn"),
+                           ("FGN", "Foreign"),
                            ("MIL", "Military"),
                         )
 
@@ -46,13 +46,14 @@ ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization")
 COUNTRY_CHOICES = (("US", "United States"), ("CA", "Canada"), ("MX", "Mexico"))
 
 
-LICENSE_STATUS_CHOICES =(("UNK", "Unknown"),
-                        ("ACTIVE","Active"),
-                         ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
-                         ("EXPIRED","Expired"),
-                         ("REVOKED","Revoked"),
-                         ("DECEASED","Deceased"),
-                         )
+LICENSE_STATUS_CHOICES =(
+                          ("UNK", "Unknown"),
+                          ("ACTIVE","Active"),
+                          ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
+                          ("EXPIRED","Expired"),
+                          ("REVOKED","Revoked"),
+                          ("DECEASED","Deceased"),
+                        )
 
 LICENSE_TYPE_CHOICES =(  ("MD", "Medical Doctor (MD)"),
                           ("DO","Doctor of Osteopathy (DO)"),
@@ -107,22 +108,21 @@ class Address(models.Model):
     zip             = models.CharField(max_length=10,  blank=True, default="")
     country_code    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRY_CHOICES)
-    foriegn_state         = models.CharField(max_length=2,  blank=True, default="")
-    foriegn_postal        = models.CharField(max_length=12,  blank=True, default="")
+    foreign_state         = models.CharField(max_length=2,  blank=True, default="")
+    foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
     us_phone_number = models.CharField(max_length=15,  blank=True, default="")
     us_fax_number   = models.CharField(max_length=15,  blank=True, default="")
-    foriegn_phone_number  = models.CharField(max_length=15,  blank=True, default="")    
-    mpo                    = models.CharField(max_length=3,
-                                              choices= MPO_CHOICES,
+    foriegn_phone_number   = models.CharField(max_length=15,  blank=True, default="")    
+    mpo                    = models.CharField(max_length=3, choices= MPO_CHOICES,
                                               blank=True, default="",
                                               verbose_name="Military Post Office")
-    latitude              = models.CharField(max_length=20, default="", blank=True)
-    longitude             = models.CharField(max_length=20, default="", blank=True)
-    website               = models.CharField(max_length=15,  blank=True, default="")
-    driving_details       = models.CharField(max_length=15,  blank=True, default="")
-    hours_of_operation    = models.TextField(max_length=255,  blank=True, default="")
-    private_email_contact = models.CharField(max_length=15,  blank=True, default="")
-    public_email_contact  = models.CharField(max_length=15,  blank=True, default="")
+    latitude                = models.CharField(max_length=20, default="", blank=True)
+    longitude               = models.CharField(max_length=20, default="", blank=True)
+    website                 = models.CharField(max_length=15,  blank=True, default="")
+    driving_details         = models.CharField(max_length=15,  blank=True, default="")
+    hours_of_operation      = models.TextField(max_length=255,  blank=True, default="")
+    private_email_contact   = models.CharField(max_length=15,  blank=True, default="")
+    public_email_contact    = models.CharField(max_length=15,  blank=True, default="")
     phone_number_extension  = models.CharField(max_length=15,  blank=True, default="")
     bio                     = models.TextField(max_length=255,  blank=True, default="")
     diplay_phone            = models.BooleanField(default=False)
