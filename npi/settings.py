@@ -139,6 +139,8 @@ INSTALLED_APPS = (
     #our apps
     'apps.taxonomy',
     'apps.enumerations',
+    'apps.home',
+    'apps.surrogates',
     
 )
 
