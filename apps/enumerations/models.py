@@ -140,33 +140,21 @@ class Address(models.Model):
 
     def __unicode__(self):
         
+        address = "address object"
         if self.address_type == "DOM":
             address = "%s %s %s, %s %s %s" % (self.address_1, self.address_2, self.city,
                                           self.state, self.zip, self.country_code)
             
-        if self.address_type == "BUS":
+        if self.address_type == "FGN":
             address = "%s %s %s, %s %s %s" % (self.address_1, self.address_2, self.city,
-                                          self.foriegn_state, self.foriegn_postal,
+                                          self.foreign_state, self.foreign_postal,
                                           self.country_code)
 
         if self.address_type == "MIL":
             address = "%s %s %s %s %s" % (self.address_1, self.address_2,
                                                    self.mpo, self.state, self.zip,)
-          
-        return address
-        
-        name = "UNK"
-        if self.entity_type == "O":
-            name = self.organization_name
-            if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as, self.organization_name)
-        elif self.entity_type == "P":
-            name = "%s %s" % (self.first_name, self.last_name)
-            if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as, self.first_name, self.last_name)
-            
-        e = "%s is a %s managed by %s" % (name, self.enumeration_type, self.managers)
-        return e
+        return address      
+       
 
     
     class Meta:
