@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 def mylogout(request):
     logout(request)
     messages.success(request, _("You have been logged out."))
-    return HttpResponseRedirect(reverse('mylogout'))
+    return HttpResponseRedirect(reverse('login'))
 
     
 def simple_login(request):
