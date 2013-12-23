@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     'apps.enumerations',
     'apps.home',
     'apps.surrogates',
+    'apps.downloads',
     
 )
 
