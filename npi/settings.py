@@ -136,7 +136,8 @@ INSTALLED_APPS = (
     'bootstrapform',
     'localflavor',
     
-    #our apps
+    #npi apps
+    'apps.accounts',
     'apps.taxonomy',
     'apps.enumerations',
     'apps.home',
@@ -177,6 +178,21 @@ LOGGING = {
 # To enable your own local settings.
 # Copy file found in settings_local_example.py to settings_local.py.
 # Place this file in ithe same directory as settings.py
+
+# Twilio SMS Settings -----------------------------------------------
+TWILIO_DEFAULT_FROM = "+15555555555"
+TWILIO_API_BASE = "https://api.twilio.com/2010-04-01"
+TWILIO_SID = ""
+TWILIO_AUTH_TOKEN = ""
+TWILIO_API_VERSION = '2010-04-01'
+SMS_LOGIN_TIMEOUT_MIN = 10
+
+EMAIL_HOST_USER = 'vcert@example.com'
+HOSTNAME_URL = 'http://127.0.0.1:8000'
+EMAIL_BACKEND = 'django_ses.SESBackend'
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+
 
 try:
     from settings_local import *
