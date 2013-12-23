@@ -1,25 +1,33 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block Content %}
 
 
   <div class="container">
+    
     <div class="hero-unit">
     <h1>{% trans "Login" %}</h1>
   <br>
-    
+   
     <div class="row">
-    <div class="span7 center">
+        
+     <div class="col-lg-5">
+    {% include "include/messages.html" %}
+    
+   
+      
+      
       <form class="well" method="post" action="">
+        
         {% csrf_token %}
         <table>
-        
-        {% load bootstrap %}
-        {{ form|bootstrap }}
-
+	{% load bootstrap %}
+	{{ form|bootstrap }}
         </table>
-        <input type="submit" class="btn-large btn-primary" value="{% trans 'Login' %}" />
+	<input type="submit" class="btn btn-primary btn-large"  value="{% trans 'Continue' %}" /><br>
+	<a href="javascript:history.go(-1)">{% trans "Login" %}</a>
+      
       </form>
     </div>
   </div>

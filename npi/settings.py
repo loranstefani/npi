@@ -1,6 +1,8 @@
 # Django settings for npi project.
 import os
 
+from django.contrib.messages import constants as messages
+
 BASE_DIR = os.path.join( os.path.dirname( __file__ ), '..' )
 DBPATH=os.path.join(BASE_DIR, 'db/db.db')
 
@@ -175,6 +177,12 @@ LOGGING = {
 }
 
 
+MESSAGE_TAGS ={messages.DEBUG: 'debug',
+messages.INFO: 'info',
+messages.SUCCESS: 'success',
+messages.WARNING: 'warning',
+messages.ERROR: 'danger',}
+
 # To enable your own local settings.
 # Copy file found in settings_local_example.py to settings_local.py.
 # Place this file in ithe same directory as settings.py
@@ -193,6 +201,10 @@ EMAIL_BACKEND = 'django_ses.SESBackend'
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 
+AUTH_PROFILE_MODULE = 'accounts.userprofile'
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+                           'apps.accounts.auth.HTTPAuthBackend',
+                           )
 
 try:
     from settings_local import *
