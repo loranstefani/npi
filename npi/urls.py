@@ -18,6 +18,9 @@ urlpatterns = patterns('',
     url(r'^$',   include('apps.home.urls')),
     url(r'^accounts/',   include('apps.accounts.urls')),
     url(r'^downloads/',   include('apps.downloads.urls')),
+    url(r'^statistics/',   include('apps.statistics.urls')),
+    url(r'^search/',   include('apps.search.urls')),
+    
     url(r'^admin/', include(admin.site.urls)),
     url(r'^enumerations/', include('apps.enumerations.urls')),
 )

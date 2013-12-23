@@ -145,6 +145,8 @@ INSTALLED_APPS = (
     'apps.home',
     'apps.surrogates',
     'apps.downloads',
+    'apps.search',
+    'apps.statistics',
     
 )
 
