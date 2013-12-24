@@ -283,6 +283,30 @@ class Enumeration(models.Model):
         return name
 
 
+
+    def entity_type(self):
+        entity_type = None
+        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
+            entity_type = "Organization"
+        elif self.enumeration_type in ("OEID-1", "NPI-1"):
+            entity_type = "Individual"
+        return entity_type
+    
+    
+    def pretty_status(self):
+        pretty_status = None
+        if str(self.status) == "A":
+            pretty_status = "Active"
+        
+        if str(self.status) == "P":
+            pretty_status = "Pending"   
+    
+        if str(self.status) == "D":
+            pretty_status = "Decactivated"   
+    
+        return pretty_status
+
+
     def __unicode__(self):
         name = "UNK"
         if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):

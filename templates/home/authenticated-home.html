@@ -8,7 +8,7 @@
       <div class="row">
 
         <div class="col-lg-12">
-          <h1 class="page-header">Welcome <small>{{user}}</small></h1>
+          <h1 class="page-header">{{user}}'s <small>Accounts</small></h1>
         </div>
 
       </div>
@@ -19,19 +19,86 @@
 	  
 	
 
-  {% if additional_info %}
-    <div class="alert alert-block">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <h4>{%trans "Important" %}</h4>
-    {{ additional_info }}
-    </div>
-
-  {% endif %}
-
 <div class="row">
     <div class="col-lg-10">
       {% include "include/messages.html" %}
-      content
+      
+    {% if not surrogate %}
+    <div class="alert alert-info">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <h4>{%trans "Welcome" %}</h4>
+    This looks like is your first time here.  If you already have an NPI,
+    then find yourself or the person you are managing by clicking
+    <a href="#" class="alert-link">Add Existing Entity</a>.
+    If you need to create an NPI for you or someone else, click
+    <a href="#" class="alert-link">Create New Entity</a>. If you manage a large
+    number of individuals or organizations, you can use the
+    <a href="#" class="alert-link">Bulk Update</a> or
+    <a href="#" class="alert-link">Bulk Create</a> features which allow you to
+    upload information with a specially formatted-spreadsheet.
+    </div>
+    
+  {% endif %}
+      
+      <div class="alert alert-info">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <h4>{%trans "Managing Data for others:" %}</h4>
+    
+      In order to manage enmeration data for others you'll need the individual's
+      social security number, date of birth, and will need to attest that you have
+      the individual's permission to mangage his or her information. Here is a
+      <a href="#" class="alert-link">sample form</a> you can use for that purpose.
+      If you do not have the individuals social security number and date of birth,
+      but are still authorized to manage information, then you can request
+      permission from the individual through this site.  An email will be sent
+      to the individual asking him or her to verify that you have the right to
+      manage data on their behalf.
+    </div>
+    
+      
+      <div class="btn-group">
+	<button type="button" class="btn btn-default">Add Existing Entity</button>
+	<button type="button" class="btn btn-default">Create New Entity</button>
+	<button type="button" class="btn btn-default">Bulk Create Entities</button>
+	<button type="button" class="btn btn-default">Bulk Update Entities</button>
+
+      </div>
+      <br><br>
+
+      
+ <div class="row">
+    <div class="col-lg-10">     
+      
+      <table class="table table-striped  table-bordered">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Entity Type</th>
+    <th>Enumeration Type</th>
+    <th>Number</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  
+  
+  {% for e in surrogate.enumerations.all %}
+  <tr>
+    <td>{{ e.name }}</td>
+    <td>{{ e.entity_type }}</td>
+    <td>{{ e.enumeration_type }}</td>
+    <td>{{ e.number }}</td>
+    <td>{{ e.pretty_status }}</td>
+    <td><a href="view">View</a>|<a href="/enumeration/request-management">Request Permission to Manage</a></td>
+  </tr>
+  {% endfor %}
+  
+  
+  
+      </table>
+
+      
+      
     </div>
 
         </div>
