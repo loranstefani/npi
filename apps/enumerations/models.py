@@ -193,9 +193,13 @@ class Enumeration(models.Model):
                                     related_name = "enumeration_other_addresses",
                                     null=True, blank=True)
     primary_business_address    = models.ForeignKey(Address,
-                                    related_name = "enumeration_primary_business_address")
+                                    related_name = "enumeration_primary_business_address",
+                                    verbose_name = "Business address for correspondence",
+                                    null=True, blank=True)
     primary_practice_address    = models.ForeignKey(Address,
-                                    related_name = "enumeration_primary_practice_address")
+                                    verbose_name = "Primary physical practice or business address",
+                                    related_name = "enumeration_primary_practice_address",
+                                    null=True, blank=True)
     medical_record_storage_address  = models.ForeignKey(Address,
                                     related_name = "enumeration_medical_record_storage_address",
                                     null=True, blank=True)

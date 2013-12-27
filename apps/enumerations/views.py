@@ -8,9 +8,94 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from models import Address, Enumeration, License
+import sys
+from forms import *
 
-from forms import SelectAddressTypeForm, DomesticAddressForm, ForeignAddressForm, MilitaryAddressForm
 
+
+@login_required
+def create_enumeration(request):
+    name = _("Create New Entity for Enumeration")
+    if request.method == 'POST':
+        
+        
+        form = CreateEnumeration1Form(request.POST, mymanager=request.user.email)
+        
+        if form.is_valid():
+           e = form.save()
+           #e.managers = request.user
+           #e.save_m2m()
+           if e.enumeration_type in ("NPI-1", "OEID-1"):
+               return HttpResponseRedirect(reverse('create_individual_enumeration',
+                                                   args=(e.id,)))
+           else:
+                return HttpResponseRedirect(reverse('create_organization_enumeration',
+                                                   args=(e.id,)))
+            
+        else:
+            #The form is invalid
+             print "invalid form", form.is_bound(), form.errors
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,
+                                             'name':name,},
+                                            RequestContext(request))
+            
+    #this is a GET
+    context= {'name':name,
+              'form': CreateEnumeration1Form(initial={"manager":request.user.email,},
+                                             mymanager=request.user.email, 
+                                             )}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+
+def create_individual_enumeration(request, id):
+    name = _("Create a New Individual")
+    e = Enumeration.objects.get(id=id)
+    
+    
+    if request.method == 'POST':
+        form = CreateEnumerationIndividualForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+            return enumeration_edit(id)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': CreateEnumerationIndividualForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+def create_organization_enumeration(request, id):
+    name = _("Create a New Organization")
+    e = Enumeration.objects.get(id=id)
+    
+    
+    if request.method == 'POST':
+        form = CreateEnumerationOrganizationForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+            return enumeration_edit(id)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': CreateEnumerationOrganizationForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+def enumeration_edit(id):
+    return HttpResponse("OK")
 
 
 #@login_required

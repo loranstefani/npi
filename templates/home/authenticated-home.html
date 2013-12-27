@@ -2,7 +2,6 @@
 {% load i18n %}
 {% block Content %}
 
-
     <div class="container">
 
       <div class="row">
@@ -17,8 +16,6 @@
 
         <div class="col-lg-12">
 	  
-	
-
 <div class="row">
     <div class="col-lg-10">
       {% include "include/messages.html" %}
@@ -57,11 +54,10 @@
     
       
       <div class="btn-group">
-	<button type="button" class="btn btn-default">Add Existing Entity</button>
-	<button type="button" class="btn btn-default">Create New Entity</button>
-	<button type="button" class="btn btn-default">Bulk Create Entities</button>
-	<button type="button" class="btn btn-default">Bulk Update Entities</button>
-
+	<a href=/enumerations/surrogate-lookup><button type="button" class="btn btn-default">Add Existing Entity</button></a>
+	<a href=/enumerations/create><button type="button" class="btn btn-default">Create New Entity</button></a>
+	<a href=/enumerations/bulk-create><button type="button" class="btn btn-default">Bulk Create Entities</button></a>
+	<a href=/enumerations/bulk-update><button type="button" class="btn btn-default">Bulk Update Entities</button></a>
       </div>
       <br><br>
 
@@ -69,7 +65,7 @@
  <div class="row">
     <div class="col-lg-10">     
       
-      <table class="table table-striped  table-bordered">
+  <table class="table table-striped  table-bordered">
   <thead>
   <tr>
     <th>Name</th>
@@ -89,16 +85,20 @@
     <td>{{ e.enumeration_type }}</td>
     <td>{{ e.number }}</td>
     <td>{{ e.pretty_status }}</td>
-    <td><a href="view">View</a>|<a href="/enumeration/request-management">Request Permission to Manage</a></td>
+    <td>
+      <a href="view">View</a>|
+      {% if surrogate.user in e.managers.all %}
+          <a href="/enumeration/edit/{{ e.id }}">Edit</a> | 
+	  <a href="/enumeration/stop-managing/{{ e.id }}">Stop Managing</a>
+      {% else %}
+          <a href="/enumeration/request-management/{{ e.id }}">Request Permission to Manage</a>
+      {% endif %}
+      </td>
   </tr>
   {% endfor %}
-  
-  
-  
+    
       </table>
 
-      
-      
     </div>
 
         </div>
@@ -108,6 +108,5 @@
     </div><!-- /.container -->
 
   
-
 {% endblock %}
 

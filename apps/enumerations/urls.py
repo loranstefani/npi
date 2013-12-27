@@ -7,6 +7,13 @@ from views import *
 
 urlpatterns = patterns('',
    
+    url(r'create/$', create_enumeration, name="create_enumeration"),
+    
+    url(r'create-individual/(?P<id>\S+)', create_individual_enumeration,
+        name="create_individual_enumeration"),
+    
+    url(r'create-organization/(?P<id>\S+)', create_organization_enumeration,
+                                        name="create_organization_enumeration"),
 
     url(r'select-address-type/', select_address_type,
                        name="select_address_type"),
