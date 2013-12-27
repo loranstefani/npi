@@ -311,6 +311,13 @@ class Enumeration(models.Model):
             pretty_status = "Decactivated"   
     
         return pretty_status
+    
+    
+    def pretty_number(self):
+        if not self.number:
+            return  "Unassigned"
+           
+        returnself.number
 
 
     def __unicode__(self):
