@@ -125,6 +125,20 @@ def edit_enumeration(request, id):
                               RequestContext(request, context,))
 
 
+
+@login_required
+def stop_managing_enumeration(request, enumeration_id):
+    e = Enumeration.objects.get(id=enumeration_id)
+    e.managers.remove(e)
+    s = Surrogate.objects.get(user=request.user)
+    s.enumerations.remove(e)
+    msg = _("You are no longer managing.")
+    messages.error(request,msg)
+    return HttpResponseRedirect(reverse('home',))
+    
+    
+
+
 @login_required
 def select_address_type(request, enumeration_id):
     name = _("Create Address")

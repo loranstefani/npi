@@ -93,10 +93,10 @@
     <td>
       <a href="view">View</a>|
       {% if surrogate.user in e.managers.all %}
-          <a href="/enumeration/edit/{{ e.id }}">Edit</a> | 
-	  <a href="/enumeration/stop-managing/{{ e.id }}">Stop Managing</a>
+          <a href="/enumerations/edit/{{ e.id }}">Edit</a> | 
+	  <a href="/enumerations/stop-managing/{{ e.id }}">Stop Managing</a>
       {% else %}
-          <a href="/enumeration/request-management/{{ e.id }}">Request Permission to Manage</a>
+          <a href="/enumerations/request-management/{{ e.id }}">Request Permission to Manage</a>
       {% endif %}
       </td>
   </tr>

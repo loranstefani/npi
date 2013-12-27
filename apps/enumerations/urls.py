@@ -16,6 +16,9 @@ urlpatterns = patterns('',
                                         name="create_organization_enumeration"),
 
 
+    url(r'stop-managing/(?P<enumeration_id>\S+)', stop_managing_enumeration,
+        name="stop_managing_enumeration"),
+
     url(r'edit/(?P<id>\S+)', edit_enumeration, name="edit_enumeration"),
 
 
