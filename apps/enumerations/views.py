@@ -10,8 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from models import Address, Enumeration, License
 import sys
 from forms import *
-
-
+from ..surrogates.models import Surrogate
 
 @login_required
 def create_enumeration(request):
@@ -22,19 +21,26 @@ def create_enumeration(request):
         form = CreateEnumeration1Form(request.POST, mymanager=request.user.email)
         
         if form.is_valid():
-           e = form.save()
-           #e.managers = request.user
-           #e.save_m2m()
-           if e.enumeration_type in ("NPI-1", "OEID-1"):
+            e = form.save()
+           
+            #make sure this user is also the surrogate
+
+            s = Surrogate.objects.get(user=request.user)
+            
+            s.enumerations.add(e)
+            s.save()
+            
+            
+           
+            if e.enumeration_type in ("NPI-1", "OEID-1"):
                return HttpResponseRedirect(reverse('create_individual_enumeration',
                                                    args=(e.id,)))
-           else:
+            else:
                 return HttpResponseRedirect(reverse('create_organization_enumeration',
                                                    args=(e.id,)))
             
         else:
             #The form is invalid
-             print "invalid form", form.is_bound(), form.errors
              messages.error(request,_("Please correct the errors in the form."))
              return render_to_response('generic/bootstrapform.html',
                                             {'form': form,
@@ -49,7 +55,7 @@ def create_enumeration(request):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
-
+@login_required
 def create_individual_enumeration(request, id):
     name = _("Create a New Individual")
     e = Enumeration.objects.get(id=id)
@@ -59,7 +65,8 @@ def create_individual_enumeration(request, id):
         form = CreateEnumerationIndividualForm(request.POST, instance=e)
         if form.is_valid():
             e = form.save()
-            return enumeration_edit(id)
+            
+            return HttpResponseRedirect(reverse('select_address_type', args=(id,)))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -72,6 +79,7 @@ def create_individual_enumeration(request, id):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
+@login_required
 def create_organization_enumeration(request, id):
     name = _("Create a New Organization")
     e = Enumeration.objects.get(id=id)
@@ -81,7 +89,8 @@ def create_organization_enumeration(request, id):
         form = CreateEnumerationOrganizationForm(request.POST, instance=e)
         if form.is_valid():
             e = form.save()
-            return enumeration_edit(id)
+            return HttpResponseRedirect(reverse('select_address_type',
+                                                   args=(e.id,)))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -93,24 +102,50 @@ def create_organization_enumeration(request, id):
               'form': CreateEnumerationOrganizationForm(instance=e)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+@login_required
+def edit_enumeration(request, id):
+    name = _("Additional Addresses")
+    e = Enumeration.objects.get(id=id)
+    
+    if request.method == 'POST':
+        form = AdditionalInformationForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+            return enumeration_edit(id)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': AdditionalInformationForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
 
-def enumeration_edit(id):
-    return HttpResponse("OK")
 
-
-#@login_required
-def select_address_type(request):
+@login_required
+def select_address_type(request, enumeration_id):
     name = _("Create Address")
     if request.method == 'POST':
         form = SelectAddressTypeForm(request.POST)
         if form.is_valid():
             a = form.save()
+            
+            #save this address to the enumeration.
+            e = Enumeration.objects.get(id=enumeration_id)
+            a.other_addresses = e
+            a.save()
             if a.address_type == "DOM":
-                return HttpResponseRedirect(reverse('domestic_address', args=(a.id,)))
+                return HttpResponseRedirect(reverse('domestic_address',
+                                                    args=(a.id, e.id)))
             elif a.address_type == "FGN":
-                return HttpResponseRedirect(reverse('foreign_address', args=(a.id,)))
+                return HttpResponseRedirect(reverse('foreign_address',
+                                                    args=(a.id,e.id, )))
             elif a.address_type == "MIL":
-                return HttpResponseRedirect(reverse('military_address', args=(a.id,)))
+                return HttpResponseRedirect(reverse('military_address',
+                                                    args=(a.id,e.id, )))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -123,12 +158,51 @@ def select_address_type(request):
               'form': SelectAddressTypeForm()}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
-    
 
-def domestic_address(request, id):
-    name = _("Domestic Address")
+
+
+@login_required
+def edit_address(request, address_id, enumeration_id,):
+    name = _("Create Address")
+    address = Address.objects.get(id=address_id)
     if request.method == 'POST':
-        form = DomesticAddressForm(request.POST)
+        
+        
+        form = SelectAddressTypeForm(request.POST, instance=address)
+        if form.is_valid():
+            a = form.save()
+            
+            #save this address to the enumeration.
+            e = Enumeration.objects.get(id=enumeration_id)
+            
+            
+            if a.address_type == "DOM":
+                return HttpResponseRedirect(reverse('domestic_address', args=(a.id,e.id)))
+            elif a.address_type == "FGN":
+                return HttpResponseRedirect(reverse('foreign_address', args=(a.id,e.id)))
+            elif a.address_type == "MIL":
+                return HttpResponseRedirect(reverse('military_address', args=(a.id,e.id)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+            
+    #this is a GET
+    context= {'name':name,
+              'form': SelectAddressTypeForm(instance=address)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+
+
+@login_required
+def domestic_address(request, address_id, enumeration_id):
+    name = _("Domestic Address")
+    address = Address.objects.get(id=address_id)
+    if request.method == 'POST':
+        form = DomesticAddressForm(request.POST, instance=address)
         if form.is_valid():
             a = form.save()
             return HttpResponseRedirect(reverse('home',))
@@ -143,7 +217,7 @@ def domestic_address(request, id):
     
     #this is a GET
     context= {'name':name,
-              'form': DomesticAddressForm()}
+              'form': DomesticAddressForm(instance=address)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
     

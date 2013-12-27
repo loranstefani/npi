@@ -12,8 +12,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 
-
-
 class CreateEnumeration1Form(ModelForm):
     
     def __init__(self, *args,**kwargs):
@@ -23,9 +21,13 @@ class CreateEnumeration1Form(ModelForm):
         super(CreateEnumeration1Form,self).__init__(*args,**kwargs)
         
         if mymanager:
+            #self.fields['managers'].widget  = forms.CheckboxSelectMultiple
             self.fields['managers'].queryset = User.objects.filter(email=mymanager)
             self.fields['managers'].initial  = User.objects.filter(email=mymanager)
-
+            self.fields['managers'].required = True
+            self.fields['enumeration_type'].required = True
+            
+        
 
     class Meta:
         model = Enumeration
@@ -39,18 +41,16 @@ class CreateEnumerationOrganizationForm(ModelForm):
     class Meta:
         model = Enumeration
         fields = ('organization_name', 'tein', 'doing_business_as',
-                  'website', 'driving_directions',
-                  'hours_of_operation', 'bio',
                   )
     required_css_class = 'required'
+    
 
 
 class CreateEnumerationIndividualForm(ModelForm):
     class Meta:
         model = Enumeration
-        fields = ('first_name', 'last_name', 'ssn',
-                  'sole_protieter',  'doing_business_as', 'tein' ,
-                 
+        fields = ('first_name', 'last_name', 'ssn', 'sole_protieter',
+                  'doing_business_as', 'tein',
                   )
     required_css_class = 'required'
 
@@ -58,9 +58,9 @@ class CreateEnumerationIndividualForm(ModelForm):
 class AdditionalInformationForm(ModelForm):
     class Meta:
         model = Enumeration
-        fields = (
-                  'website', 'driving_directions',
-                  'hours_of_operation', 'bio',
+        fields = ('primary_business_address','primary_practice_address', 'licenses',
+                  'website', 'driving_directions', 'hours_of_operation', 'bio',
+                  'avatar_image', 'background_image',
                   )
     required_css_class = 'required'
 
@@ -71,7 +71,7 @@ class AdditionalInformationForm(ModelForm):
 class SelectAddressTypeForm(ModelForm):
     class Meta:
         model = Address
-        fields = ('address_type',)
+        fields = ('address_type', 'address_purpose')
     required_css_class = 'required'
     
     

@@ -15,17 +15,27 @@ urlpatterns = patterns('',
     url(r'create-organization/(?P<id>\S+)', create_organization_enumeration,
                                         name="create_organization_enumeration"),
 
-    url(r'select-address-type/', select_address_type,
+
+    url(r'edit/(?P<id>\S+)', edit_enumeration, name="edit_enumeration"),
+
+
+    url(r'select-address-type/(?P<enumeration_id>\S+)', select_address_type,
                        name="select_address_type"),
     
-    url(r'domestic-address/(?P<id>\S+)', domestic_address,
+    url(r'domestic-address/(?P<address_id>\S+)/(?P<enumeration_id>\S+)', domestic_address,
                         name="domestic_address"),    
     
     url(r'foreign-address/(?P<id>\S+)', foreign_address,
                         name="foreign_address"),
     
     url(r'military-address/(?P<id>\S+)', military_address,
-                        name="military_address"),    
+                        name="military_address"),
+    
+    
+    url(r'domestic-address/(?P<enumeration_id>\S+)/(?P<address_id>\S+)', domestic_address,
+                        name="domestic_address"),    
+    
+
 
 
     #url(r'create-domain-bound/(?P<serial_number>\S+)', create_domain_certificate,

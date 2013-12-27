@@ -35,8 +35,10 @@ ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),
                         )
 
 
-ADDRESS_PURPOSE_CHOICES = (("PRACTICE", "Practice Address"),
-                           ("BUSINESS", "Business Address"),
+ADDRESS_PURPOSE_CHOICES = (("PRIMARY-PRACTICE", "Primary Practice Address"),
+                           ("PRIMAY-BUSINESS", "Primary Business/Correspondence Address"),
+                           ("ADDITIONAL-PRACTICE", "Additional Practice Address"),
+                           ("SECONDARY-BUSINESS", "Business Address"),
                         )
 
 
@@ -99,7 +101,7 @@ class License(models.Model):
 
 class Address(models.Model):
     address_type = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
-    address_purpose = models.CharField(max_length=12, choices=ADDRESS_PURPOSE_CHOICES)
+    address_purpose = models.CharField(max_length=20, choices=ADDRESS_PURPOSE_CHOICES)
     address_1    = models.CharField(max_length=200, default="")
     address_2    = models.CharField(max_length=200, blank=True, default="")
     city         = models.CharField(max_length=200, blank=True, default="")
@@ -281,7 +283,7 @@ class Enumeration(models.Model):
         elif self.enumeration_type in ("OEID-1", "NPI-1"):
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as,
+                name = "%s (%s %s)" % (self.doing_business_as,
                                     self.first_name,
                                     self.last_name)
         return name
@@ -321,7 +323,7 @@ class Enumeration(models.Model):
         elif self.enumeration_type in ("OEID-1", "NPI-1"):
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as,
+                name = "%s (%s %s)" % (self.doing_business_as,
                                     self.first_name,
                                     self.last_name)
         number=self.number

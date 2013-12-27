@@ -15,5 +15,13 @@ class Surrogate(models.Model):
   
     
     def __unicode__(self):
-        s ="Surrogate %s" % (self.user)
+        #enums = self.enumerations.all()
+        #for e in enums:
+        #    print e
+        
+        #enumerations = ", ".join([enumeration.name for enumeration in self.enumerations.all()])
+        #print "here"
+        s ="Surrogate %s" % (self.user, )
+        
+        
         return s

@@ -21,7 +21,11 @@ def home(request):
 
 @login_required
 def authenticated_home(request):
-    s = Surrogate.objects.get(user=request.user)
+    try:
+        s = Surrogate.objects.get(user=request.user)
+    except Surrogate.DoesNotExist:
+        s = Surrogate.objects.create(user=request.user)
+    
     name = "Authenticated Home"
     #this is a GET
     context= {'name':name,
