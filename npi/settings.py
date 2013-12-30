@@ -142,6 +142,8 @@ INSTALLED_APPS = (
     'apps.accounts',
     'apps.taxonomy',
     'apps.enumerations',
+    'apps.licenses',
+    'apps.direct',
     'apps.home',
     'apps.surrogates',
     'apps.downloads',

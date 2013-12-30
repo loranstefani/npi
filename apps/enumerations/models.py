@@ -6,6 +6,8 @@ import uuid
 from localflavor.us.us_states import US_STATES
 import random
 from countries import COUNTRIES
+from ..licenses.models import License
+from ..direct.models import DirectAddress
 
 US_STATE_CHOICES = list(US_STATES)
 US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
@@ -53,56 +55,13 @@ ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization")
 COUNTRY_CHOICES = (("US", "United States"), ("CA", "Canada"), ("MX", "Mexico"))
 
 
-LICENSE_STATUS_CHOICES =(
-                          ("UNK", "Unknown"),
-                          ("ACTIVE","Active"),
-                          ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
-                          ("EXPIRED","Expired"),
-                          ("REVOKED","Revoked"),
-                          ("DECEASED","Deceased"),
-                        )
 
-LICENSE_TYPE_CHOICES =(  ("MD", "Medical Doctor (MD)"),
-                          ("DO","Doctor of Osteopathy (DO)"),
-                          ("RN","Registered Nurse (RN)"),
-                          ("OTHER","Other"),
-                         )
 
 MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
                 ('FPS', 'FPS - Fleet Post Office'),
                 ('DPO', 'PDO - Diplomatic Post Office'))
 
-class License(models.Model):
-    number         = models.CharField(max_length=20)
-    state          = models.CharField(max_length=2,  blank=True, default="",
-                                    choices = US_STATE_CHOICES)
-    license_type   = models.CharField(max_length=5,  blank=True, default="",
-                                    choices = LICENSE_TYPE_CHOICES)
 
-    status         = models.CharField(max_length=10, choices=LICENSE_STATUS_CHOICES,
-                                         default ="")
-    verified_by_issuing_board   = models.BooleanField(default=False)
-    verified_by_ther_means      = models.BooleanField(default=False)
-    verified                    = models.BooleanField(default=False, editable=False)
-    note                        = models.TextField(max_length=255,  blank=True, default="")
-    internal_note               = models.TextField(max_length=255,  blank=True, default="")
-    note_restictions            = models.TextField(max_length=1024,  blank=True, default="")
-    license_image               = models.ImageField(blank = True, null=False, default="",
-                                    max_length=255L, upload_to="licenses-",
-                                    verbose_name= "License Image",
-                                    help_text= "PNG, JPG, or PDF formats accepted. 3MB max.")
-    def save(self, **kwargs):
-        
-        if self.verified_by_issuing_board or self.verified_by_ther_means:
-            self.verified=True
-        else:
-            self.verified=False        
-        super(License, self).save(**kwargs)
-    
-    
-    def __unicode__(self):
-        r ="%s issued by %s is %s." % (self.number, self.state, self.status)
-        return r
 
 class Address(models.Model):
     address_type = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
@@ -185,13 +144,24 @@ class Address(models.Model):
         super(Address, self).save(**kwargs)
 
 class Enumeration(models.Model):
-    first_name                  = models.CharField(max_length=100, blank=True,
+    first_name            = models.CharField(max_length=100, blank=True,
                                                    default="")
-    last_name                   = models.CharField(max_length=100, blank=True,
+    last_name             = models.CharField(max_length=100, blank=True,
                                                    default="")
-    organization_name           = models.CharField(max_length=100, blank=True,
+    organization_name     = models.CharField(max_length=100, blank=True,
                                                    default="")
-    status                      = models.CharField(max_length=1,
+    doing_business_as     = models.CharField(max_length=100, blank=True, default="")
+     
+    other_first_name_1    = models.CharField(max_length=100, blank=True,
+                                                   default="")
+    other_last_name_1     = models.CharField(max_length=100, blank=True,
+                                                   default="") 
+    other_first_name_2    = models.CharField(max_length=100, blank=True,
+                                       default="")
+    other_last_name_2     = models.CharField(max_length=100, blank=True,
+                                                   default="")
+    
+    status                = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
     medicare_id                 = models.CharField(max_length=20, blank=True, default="")
@@ -232,6 +202,8 @@ class Enumeration(models.Model):
     
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
                                     related_name = "enumerations_licenses")
+    direct_addresses            = models.ManyToManyField(DirectAddress, null=True, blank=True,
+                                    related_name = "enumerations_direct_addresses")
     #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
     reason_decactvated          = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
@@ -240,16 +212,14 @@ class Enumeration(models.Model):
     number                      = models.CharField(max_length=10, blank=True, default="",
                                                    #editable=False
                                                    )
-   
-    doing_business_as           = models.CharField(max_length=100, blank=True, default="")
     sole_protieter              = models.BooleanField(default=False)
     tein                        = models.CharField(max_length=9, blank=True,
                                         default="", verbose_name="Tax ID Number")
     ssn                         = models.CharField(max_length=10, blank=True, default="",
                                         verbose_name = "Social Security Number")
     modify_token                = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
-    private_email_contact       = models.CharField(max_length=150,  blank=True, default="")
-    public_email_contact        = models.CharField(max_length=150,  blank=True, default="")
+   
+    public_email                = models.CharField(max_length=150,  blank=True, default="")
     primary_taxonomy            = models.ForeignKey(TaxonomyCode, null=True, blank=True,
                                         related_name ="enumeration_primary_taxonomy")
     other_taxonomies            = models.ManyToManyField(TaxonomyCode, null=True,
@@ -257,8 +227,7 @@ class Enumeration(models.Model):
     website                     = models.CharField(max_length=300,  blank=True, default="")
     driving_directions          = models.TextField(max_length=266,  blank=True, default="")
     hours_of_operation          = models.CharField(max_length=15,  blank=True, default="")
-    private_email_contact       = models.CharField(max_length=15,  blank=True, default="")
-    public_email_contact        = models.CharField(max_length=15,  blank=True, default="")
+   
     phone_number_extension      = models.CharField(max_length=15,  blank=True, default="")
     bio                         = models.TextField(max_length=255,  blank=True, default="")
     national_agency_check       = models.BooleanField(default=False)
@@ -271,6 +240,12 @@ class Enumeration(models.Model):
     avatar_image                = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-avatars",
                                     verbose_name= "Profile Photo")
+
+    contact_person_email        = models.CharField(max_length=150,  blank=True, default="")
+    contact_person_first_name   = models.CharField(max_length=150,  blank=True, default="")
+    contact_person_last_name   = models.CharField(max_length=150,  blank=True, default="")
+    contact_person_telephone   = models.CharField(max_length=15,  blank=True, default="")
+    contact_person_extension   = models.CharField(max_length=10,  blank=True, default="")
 
     class Meta:
         get_latest_by = "id"
