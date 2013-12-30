@@ -5,20 +5,17 @@ from localflavor.us.us_states import US_STATES
 
 
 
-LICENSE_STATUS_CHOICES =(
-                          ("UNK", "Unknown"),
+LICENSE_STATUS_CHOICES =(("UNK", "Unknown"),
                           ("ACTIVE","Active"),
                           ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
                           ("EXPIRED","Expired"),
                           ("REVOKED","Revoked"),
-                          ("DECEASED","Deceased"),
-                        )
+                          ("DECEASED","Deceased"), )
 
-LICENSE_TYPE_CHOICES =(  ("MD", "Medical Doctor (MD)"),
+LICENSE_TYPE_CHOICES =(("MD", "Medical Doctor (MD)"),
                           ("DO","Doctor of Osteopathy (DO)"),
                           ("RN","Registered Nurse (RN)"),
-                          ("OTHER","Other"),
-                         )
+                          ("OTHER","Other"), )
 
 class License(models.Model):
     number         = models.CharField(max_length=20)
@@ -40,7 +37,6 @@ class License(models.Model):
                                     verbose_name= "License Image",
                                     help_text= "PNG, JPG, or PDF formats accepted. 3MB max.")
     def save(self, **kwargs):
-        
         if self.verified_by_issuing_board or self.verified_by_ther_means:
             self.verified=True
         else:
@@ -51,3 +47,13 @@ class License(models.Model):
     def __unicode__(self):
         r ="%s issued by %s is %s." % (self.number, self.state, self.status)
         return r
+
+
+class LicenseValidator(models.Model):
+
+    state = models.CharField(max_length=2, choices = US_STATES, unique=True)
+   # will follow form url/npi/[NPI] and url/license-number/[number]
+    url   = models.CharField(max_length=200, default ="")
+    
+    def __unicode__(self):
+        return self.state
