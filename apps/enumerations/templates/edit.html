@@ -12,6 +12,8 @@
 
       </div>
 
+    
+    
       <div class="row">
 
         <div class="col-lg-12">
@@ -20,7 +22,10 @@
     <div class="col-lg-10">
       {% include "include/messages.html" %}
       
-      <br><br>
+        </div>
+
+      </div>
+     
 
   
 
@@ -28,7 +33,7 @@
     
  <div class="row">
     <div class="col-lg-10">     
-
+ <h2>Basic Information</h2>
       
   <table class="table table-striped  table-bordered">
   <thead>
@@ -39,44 +44,29 @@
   </tr>
   </thead>
   
-  
+   <tr>
+    <td>Enumeration Type / Number</td>
+    <td>{{enumeration.enumeration_type}} / {{enumeration.pretty_number}}</td>
+    <td>
+       <a href="/enumeration/deactiviate/{{e.id}}">Deactivate</a> |
+       <a href="/enumeration/report/{{e.id}}">Report Problem</a>
+      </td>
+  </tr>
 
   
   <tr>
-    <td>Basic Information</td>
+    <td>Name, Point of Contact, etc.</td>
     <td>{{ enumeration.name }} ({{enumeration.enumeration_type}})</td>
     <td>
       <a href="/enumeration/edit/{{e.id}}">Edit</a>
       </td>
   </tr>
   
-  <tr>
-    <td>Enumeration Type / Number</td>
-    <td>{{enumeration.enumeration_type}} / {{enumeration.pretty_number}}</td>
-    <td>
-      ---
-      </td>
-  </tr>
+ 
   
   
     <tr>
-    <td>Licenses (State / Number / Kind)</td>
-    <td>{% for l in enumeration.licenses.all %}
-          {{l.state}} / {{l.number}} / {{l.license_type}}<br>
-         {% endfor %}
-    </td>
-    <td>
-         {% for l in enumeration.licenses.all %}
-      <a href="/licenses/edit/{{l.id}}">Edit</a><br>
-      {% endfor %}
-      <a href="/licenses/create">Create</a>
-    </td>
-  </tr>
-  
-  
-  
-    <tr>
-    <td>Primary Business/Correspondence  Address</td>
+    <td>Primary Business/Correspondence Address</td>
     <td>{{ enumeration.primary_business_address }}</td>
     <td>
       <a href="/enumerations/address/edit/{{enumeration.primary_business_address.id}}/{{enumeration.id}}">Edit</a>
@@ -147,64 +137,147 @@
     
      </tr>
     
-    
-    <tr>
-    <td>Additional Addresses (Address / Purpose )</td>
-    <td>
-      
-      {% for a in enumeration.other_addresses.all %}
-           {{a}} / {{a.address_purpose}}<br>
-         {% endfor %}
-      </td>
-    <td>
-      <a href="/enumerations/address/edit/{{enumeration.primary_business_address.id}}/{{enumeration.id}}">Edit</a>
-    </td>
-  </tr>
-
-  
-  
-  <tr>
-    <td>Enhanced Profile Information<br>
-    Website, Hours, Bio, etc</td>
-    <td>Website: {{ enumeration.website }}<br>
-    Hours of Operation: {{ enumeration.hours_of_operation}}
-   </td>
-    <td>
-      <a href="/enumeration/edit/{{e.id}}">Edit</a>
-      </td>
-  </tr>
-  
-   <tr>
-    <td>Direct Addresses</td>
-    <td>{{ enumeration.name }} ({{enumeration.enumeration_type}})</td>
-    <td>
-      <a href="/enumeration/edit/{{e.id}}">Edit</a>
-      </td>
-  </tr>
-   
-   
-   
-   <tr>
-    <td>Managers</td>
-    <td>{{ enumeration.name }} ({{enumeration.enumeration_type}})</td>
-    <td>
-      <a href="/enumeration/edit/{{e.id}}">Edit</a>
-      </td>
-  </tr>
-
-
-
-
-
-
-    
       </table>
 
     </div>
+</div>
 
-        </div>
 
+
+
+
+ <div class="row">
+    <div class="col-lg-10">     
+ <h2>Licenses  <a href=/licenses/add><button type="button" class="btn btn-default">Add</button></a></h2>
+      
+  <table class="table table-striped  table-bordered">
+  <thead>
+  <tr>
+    <th>State</th>
+    <th>Type</th>
+    <th>Number</th>
+    <th>Status</th>
+    <th>Verified</th>
+  </tr>
+  </thead>
+  
+  
+  {% for l in enumeration.licenses.all %}
+  <tr>
+    <td>{{l.state}} </td>
+    <td>{{l.license_type}} </td>
+    <td>{{l.number}} </td>
+    <td>{{l.status}} </td>
+    <td>{{l.status}} </td>
+    </tr>
+         {% endfor %}
+  
+
+      </table>
+
+    </div>
+    </div>
+
+
+
+ <div class="row">
+    <div class="col-lg-10">     
+ <h2>Profile Enhancement</h2>
+      
+  <table class="table table-striped  table-bordered">
+  <thead>
+  <tr>
+    <th>Section</th>
+    <th>Information</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  
+  
+
+  
+  <tr>
+    <td>Basic Information</td>
+    <td>{{ enumeration.name }} ({{enumeration.enumeration_type}})</td>
+    <td>
+      <a href="/enumeration/edit/{{e.id}}">Edit</a>
+      </td>
+  </tr>
+
+      </table>
+    </div>
+    </div>
+
+
+
+ <div class="row">
+    <div class="col-lg-10">   
+ <h2>Additional Addresses <a href=/enumerations/address/select-address-type/{{enumeration.id}}><button type="button" class="btn btn-default">Add</button></a></h2>
+      
+  <table class="table table-striped  table-bordered">
+  <thead>
+  <tr>
+    <th>Purpose</th>
+    <th>Address</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  
+  
+  {% for a in enumeration.other_addresses.all %}
+   <tr>
+    <td>{{a.address_purpose}}</td>
+    <td>{{a}}</td>
+    <td>
+      <a href="/enumerations/address/edit/{{a.id}}/{{enumeration.id}}">Edit</a>
+    </td>
+    </tr>
+   {% endfor %}
+  
+ 
+
+
+      </table>
+    </div>
+ </div>
+
+
+
+ <div class="row">
+    <div class="col-lg-10">   
+ <h2>Managers</h2>
+      
+  <table class="table table-striped  table-bordered">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  
+  
+{% for m in enumeration.managers.all %}
+  
+  <tr>
+    <td>{{m.first_name}} {{m.last_name}}</td>
+    <td>{{m.email}}</td>
+    <td>
+      <a href="/enumeration/revoke-management/{{e.id}}">Revoke</a>
+    </td>
+  </tr>
+  
+  {% endfor %}
+
+
+      </table>
+
+    </div>
       </div>
+
+
+
+
 
     </div><!-- /.container -->
 
