@@ -55,6 +55,7 @@ def create_enumeration(request):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
+
 @login_required
 def create_individual_enumeration(request, id):
     name = _("Create a New Individual")
@@ -79,6 +80,7 @@ def create_individual_enumeration(request, id):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
+
 @login_required
 def create_organization_enumeration(request, id):
     name = _("Create a New Organization")
@@ -102,11 +104,11 @@ def create_organization_enumeration(request, id):
               'form': CreateEnumerationOrganizationForm(instance=e)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+
 @login_required
 def edit_enumeration(request, id):
-    name = _("Additional Addresses")
+    name = _("Edit Enumeration")
     e = Enumeration.objects.get(id=id)
-    
     if request.method == 'POST':
         form = AdditionalInformationForm(request.POST, instance=e)
         if form.is_valid():
@@ -115,14 +117,16 @@ def edit_enumeration(request, id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
+             return render_to_response('edit.html',
                                             {'form': form,'name':name,},
                                             RequestContext(request))
     #this is a GET
-    context= {'name':name,
+    context= {'name': name,
+              'enumeration': e,
               'form': AdditionalInformationForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
+    return render_to_response('edit.html',
                               RequestContext(request, context,))
+
 
 
 
@@ -139,6 +143,7 @@ def stop_managing_enumeration(request, enumeration_id):
     
 
 
+
 @login_required
 def select_address_type(request, enumeration_id):
     name = _("Create Address")
@@ -149,8 +154,31 @@ def select_address_type(request, enumeration_id):
             
             #save this address to the enumeration.
             e = Enumeration.objects.get(id=enumeration_id)
-            a.other_addresses = e
-            a.save()
+            print "Address Purposes",  a.address_purpose
+            
+            
+#            ("PRIMARY-LOCATION",   
+#("PRIMAY-BUSINESS",    
+#("MEDREC-STORAGE",     
+#("1099",               
+#("REVALIDATION",       
+#("ADDITIONAL-PRACTICE",
+#("ADDITIONAL-BUSINESS",
+
+            
+            if str(a.address_purpose) == "PRIMARY-LOCATION":
+                e.primary_practice_address = a
+                
+            if str(a.address_purpose) == "PRIMARY-BUSINESS":
+                print "here"
+                e.primary_business_address = a
+            
+            if a.address_purpose in ("ADDITIONAL-PRACTICE", "ADDITIONAL-BUSINESS"):
+                e.other_addresses.add(a)
+            
+            e.save()
+
+
             if a.address_type == "DOM":
                 return HttpResponseRedirect(reverse('domestic_address',
                                                     args=(a.id, e.id)))
@@ -175,51 +203,42 @@ def select_address_type(request, enumeration_id):
 
 
 
+
 @login_required
-def edit_address(request, address_id, enumeration_id,):
-    name = _("Create Address")
-    address = Address.objects.get(id=address_id)
-    if request.method == 'POST':
-        
-        
-        form = SelectAddressTypeForm(request.POST, instance=address)
-        if form.is_valid():
-            a = form.save()
-            
-            #save this address to the enumeration.
-            e = Enumeration.objects.get(id=enumeration_id)
-            
-            
-            if a.address_type == "DOM":
-                return HttpResponseRedirect(reverse('domestic_address', args=(a.id,e.id)))
-            elif a.address_type == "FGN":
-                return HttpResponseRedirect(reverse('foreign_address', args=(a.id,e.id)))
-            elif a.address_type == "MIL":
-                return HttpResponseRedirect(reverse('military_address', args=(a.id,e.id)))
-        else:
-            #The form is invalid
-             messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
-            
-    #this is a GET
+def edit_address(request, address_id, enumeration_id):
+    a = Address.objects.get(id=address_id)
+    name = _("Edit Address")
+    
+    if a.address_type == "DOM":
+        return HttpResponseRedirect(reverse('domestic_address',
+                                            args=(a.id,enumeration_id)))
+    elif a.address_type == "FGN":
+        return HttpResponseRedirect(reverse('foreign_address',
+                                            args=(a.id,e.enumeration_id)))
+    elif a.address_type == "MIL":
+        return HttpResponseRedirect(reverse('military_address',
+                                            args=(a.id,e.enumeration_id)))
+    
+    
     context= {'name':name,
-              'form': SelectAddressTypeForm(instance=address)}
+              'form': SelectAddressTypeForm(instance=a)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
-
+   
 
 
 @login_required
-def domestic_address(request, address_id, enumeration_id):
+def domestic_address(request,  address_id, enumeration_id):
     name = _("Domestic Address")
     address = Address.objects.get(id=address_id)
     if request.method == 'POST':
         form = DomesticAddressForm(request.POST, instance=address)
         if form.is_valid():
             a = form.save()
-            return HttpResponseRedirect(reverse('home',))
+            #based on address_purpose, 
+            
+            return HttpResponseRedirect(reverse('edit_enumeration',
+                                    args=(enumeration_id )))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -228,7 +247,6 @@ def domestic_address(request, address_id, enumeration_id):
                                              'name':name,
                                              },
                                             RequestContext(request))
-    
     #this is a GET
     context= {'name':name,
               'form': DomesticAddressForm(instance=address)}
@@ -236,14 +254,17 @@ def domestic_address(request, address_id, enumeration_id):
                               RequestContext(request, context,))
     
     
-def foreign_address(request, id):
+
+@login_required
+def foreign_address(request, address_id, enumeration_id):
     name = _("Foreign Address")
+    address = Address.objects.get(id=address_id)
     if request.method == 'POST':
-        form = ForeignAddressForm(request.POST)
+        form = ForeignAddressForm(request.POST, instance=address)
         if form.is_valid():
             a = form.save()
-            if a.address_type== "DOM":
-                return HttpResponseRedirect(reverse('home',))
+            return HttpResponseRedirect(reverse('edit_enumeration',
+                                    args=(enumeration_id )))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -255,12 +276,12 @@ def foreign_address(request, id):
     
     #this is a GET
     context= {'name':name,
-              'form': ForeignAddressForm()}
+              'form': ForeignAddressForm(instance=address)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
-
-def military_address(request, id):
+@login_required
+def military_address(request, address_id, enumeration_id):
     name = _("Military Address")
     if request.method == 'POST':
         form = MilitaryAddressForm(request.POST)

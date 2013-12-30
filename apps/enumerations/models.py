@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 import uuid
 from localflavor.us.us_states import US_STATES
 import random
+from countries import COUNTRIES
 
 US_STATE_CHOICES = list(US_STATES)
 US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
@@ -27,7 +28,8 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual Provider (NPI-1)"),
 
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
 
-DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"), ("O", "Other"), )
+DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"),
+    ("O", "Other"), )
 
 ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),                           
                            ("FGN", "Foreign"),
@@ -35,10 +37,13 @@ ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),
                         )
 
 
-ADDRESS_PURPOSE_CHOICES = (("PRIMARY-PRACTICE", "Primary Practice Address"),
-                           ("PRIMAY-BUSINESS", "Primary Business/Correspondence Address"),
-                           ("ADDITIONAL-PRACTICE", "Additional Practice Address"),
-                           ("SECONDARY-BUSINESS", "Business Address"),
+ADDRESS_PURPOSE_CHOICES = (("PRIMARY-LOCATION",     "Primary Practice/Business Address (Phyiscal)"),
+                           ("PRIMARY-BUSINESS",      "Primary Business Correspondence Address"),
+                           ("MEDREC-STORAGE",       "Medical REcords Storage Address"),
+                           ("1099",                 "1099 Address"),
+                           ("REVALIDATION",         "Revalidation Address"),
+                           ("ADDITIONAL-PRACTICE",  "Additional Practice Address"),
+                           ("ADDITIONAL-BUSINESS",  "Additional Business Address"),
                         )
 
 
@@ -109,7 +114,7 @@ class Address(models.Model):
                                     choices = US_STATE_CHOICES)
     zip             = models.CharField(max_length=10,  blank=True, default="")
     country_code    = models.CharField(max_length=2,  blank=True, default="US",
-                                    choices = COUNTRY_CHOICES)
+                                    choices = COUNTRIES)
     foreign_state         = models.CharField(max_length=2,  blank=True, default="")
     foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
     us_phone_number = models.CharField(max_length=15,  blank=True, default="")

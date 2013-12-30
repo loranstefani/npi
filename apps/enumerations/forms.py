@@ -10,6 +10,8 @@ import datetime
 from localflavor.us.us_states import US_STATES
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from countries import NO_US_COUNTRIES, US_COUNTRY_CHOICES
+
 
 
 class CreateEnumeration1Form(ModelForm):
@@ -74,18 +76,27 @@ class SelectAddressTypeForm(ModelForm):
         fields = ('address_type', 'address_purpose')
     required_css_class = 'required'
     
-    
+
+
 class DomesticAddressForm(ModelForm):
+    
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
         super(DomesticAddressForm,self).__init__(*args,**kwargs)
         self.fields['state'].choices=US_STATES
+        self.fields['country_code'].choices=US_COUNTRY_CHOICES
+        
+        
+
     
     class Meta:
         model = Address
-        fields = ('address_1', 'address_2', 'city', 'state', 'zip')
+        fields = ('address_1', 'address_2', 'city', 'state', 'zip', 'country_code')
     
-    country_code = forms.CharField(widget= forms.HiddenInput, initial="US")
+    country_code = forms.TypedChoiceField(initial="US", choices=US_COUNTRY_CHOICES)
+    address_type = forms.CharField(widget= forms.HiddenInput, initial="DOM")
+
+    
     required_css_class = 'required'
     
     
@@ -94,7 +105,7 @@ class ForeignAddressForm(ModelForm):
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
         super(ForeignAddressForm,self).__init__(*args,**kwargs)
-        
+        self.fields['country_code'].choices=NO_US_COUNTRIES
     
     class Meta:
         model = Address
@@ -102,6 +113,8 @@ class ForeignAddressForm(ModelForm):
                   'foreign_postal', 'country_code')
         
     state = forms.CharField(widget= forms.HiddenInput, initial="ZZ")
+    address_type = forms.CharField(widget= forms.HiddenInput, initial="FGN")
+
         
     required_css_class = 'required'
     
@@ -123,4 +136,4 @@ class MilitaryAddressForm(ModelForm):
         fields = ('address_1', 'address_2', 'mpo', 'state', 'zip',)
     required_css_class = 'required'
     
-    country_code = forms.CharField(widget= forms.HiddenInput, initial="US")
+    country_code    = forms.CharField(widget= forms.HiddenInput, initial="US")

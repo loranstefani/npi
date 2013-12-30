@@ -20,7 +20,7 @@
     <div class="col-lg-10">
       {% include "include/messages.html" %}
       
-    {% if not surrogate %}
+    {% if not surrogate.enumerations.all %}
     <div class="alert alert-info">
     <button type="button" class="close" data-dismiss="alert">×</button>
     <h4>{%trans "Welcome" %}</h4>
@@ -41,15 +41,11 @@
     <button type="button" class="close" data-dismiss="alert">×</button>
     <h4>{%trans "Managing Data for others:" %}</h4>
     
-      In order to manage enmeration data for others you'll need the individual's
-      social security number, date of birth, and will need to attest that you have
-      the individual's permission to mangage his or her information. Here is a
-      <a href="#" class="alert-link">sample form</a> you can use for that purpose.
-      If you do not have the individuals social security number and date of birth,
-      but are still authorized to manage information, then you can request
-      permission from the individual through this site.  An email will be sent
-      to the individual asking him or her to verify that you have the right to
-      manage data on their behalf.
+      Although you can manage your own information, this system is designed to
+      allow delgation of enumeration information management. There are a few way
+      to delegate this authority to others. <a target="_blank"href="/instructions/delegation" class="alert-link">Read more...</a> 
+      
+      
     </div>
     
       
