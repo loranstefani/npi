@@ -5,16 +5,16 @@ from localflavor.us.us_states import US_STATES
 
 
 
-LICENSE_STATUS_CHOICES =(("UNK", "Unknown"),
+LICENSE_STATUS_CHOICES =(("UNKNOWN", "Unknown"),
                           ("ACTIVE","Active"),
                           ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
                           ("EXPIRED","Expired"),
                           ("REVOKED","Revoked"),
                           ("DECEASED","Deceased"), )
 
-LICENSE_TYPE_CHOICES =(("MD", "Medical Doctor (MD)"),
+LICENSE_TYPE_CHOICES =(   ("MD", "Medical Doctor (MD)"),
                           ("DO","Doctor of Osteopathy (DO)"),
-                          ("RN","Registered Nurse (RN)"),
+                          ("PA","Physician Assistant"),
                           ("OTHER","Other"), )
 
 class License(models.Model):
@@ -23,9 +23,8 @@ class License(models.Model):
                                     choices = US_STATES)
     license_type   = models.CharField(max_length=5,  blank=True, default="",
                                     choices = LICENSE_TYPE_CHOICES)
-
     status         = models.CharField(max_length=10, choices=LICENSE_STATUS_CHOICES,
-                                         default ="")
+                                         default ="UNKNOWN")
     verified_by_issuing_board   = models.BooleanField(default=False)
     verified_by_ther_means      = models.BooleanField(default=False)
     verified                    = models.BooleanField(default=False, editable=False)
@@ -48,12 +47,18 @@ class License(models.Model):
         r ="%s issued by %s is %s." % (self.number, self.state, self.status)
         return r
 
+        
 
 class LicenseValidator(models.Model):
 
-    state = models.CharField(max_length=2, choices = US_STATES, unique=True)
-   # will follow form url/npi/[NPI] and url/license-number/[number]
+    state         = models.CharField(max_length=2, choices = US_STATES,
+                                     unique=True)
+    
+    #license_type  = models.CharField(max_length=5,  blank=True, default="",
+    #                                choices = LICENSE_TYPE_CHOICES)
+    # the url will get following appended. No trailing slash. [/license/[state]/[number]
     url   = models.CharField(max_length=200, default ="")
     
     def __unicode__(self):
         return self.state
+   

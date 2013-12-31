@@ -169,6 +169,7 @@
     <th>Number</th>
     <th>Status</th>
     <th>Verified</th>
+    <th>Actions</th>
   </tr>
   </thead>
   
@@ -179,7 +180,10 @@
     <td>{{l.license_type}} </td>
     <td>{{l.number}} </td>
     <td>{{l.status}} </td>
-    <td>{{l.status}} </td>
+    <td>{{l.verified}} </td>
+    <td> <a href=/licenses/view/{{l.id}}> View</a> |
+         <a href=/licenses/view/{{l.id}}/{{enumeration.id}}>Delete</a>
+    </td>
     </tr>
          {% endfor %}
   
