@@ -39,29 +39,59 @@ class CreateEnumeration1Form(ModelForm):
     required_css_class = 'required'
 
 class CreateEnumerationOrganizationForm(ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(CreateEnumerationOrganizationForm,self).__init__(*args,**kwargs)
+        self.fields['organization_name'].required = True
+        self.fields['tein'].required = True
+        self.fields['doing_business_as'].required = True
+        self.fields['contact_person_email'].required = True
+        self.fields['contact_person_first_name'].required = True
+        self.fields['contact_person_last_name'].required = True
     
+
+        
     class Meta:
         model = Enumeration
         fields = ('organization_name', 'tein', 'doing_business_as',
+                  'contact_person_email', 'contact_person_first_name',
+                   'contact_person_last_name', 'contact_person_telephone' ,
+                    'contact_person_extension'
                   )
     required_css_class = 'required'
     
 
 
 class CreateEnumerationIndividualForm(ModelForm):
+    
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['ssn'].required = True
+        self.fields['contact_person_email'].required = True
+        self.fields['contact_person_first_name'].required = True
+        self.fields['contact_person_last_name'].required = True
+    
     class Meta:
         model = Enumeration
         fields = ('first_name', 'last_name', 'ssn', 'sole_protieter',
-                  'doing_business_as', 'tein',
-                  )
+                  'doing_business_as', 'tein', 'other_first_name_1',                  
+                    'other_last_name_1', 'other_first_name_2', 'other_last_name_2',
+                    'contact_person_email', 'contact_person_first_name',
+                    'contact_person_last_name', 'contact_person_telephone' ,
+                    'contact_person_extension')
+        
     required_css_class = 'required'
 
 
-class AdditionalInformationForm(ModelForm):
+class EnumerationEnhancementForm(ModelForm):
     class Meta:
         model = Enumeration
-        fields = ('primary_business_address','primary_practice_address', 'licenses',
-                  'website', 'driving_directions', 'hours_of_operation', 'bio',
+        fields = (
+                  'website', 'driving_directions',
+                  'hours_of_operation', 'bio',
                   'avatar_image', 'background_image',
                   )
     required_css_class = 'required'

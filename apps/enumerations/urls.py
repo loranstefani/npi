@@ -29,20 +29,35 @@ urlpatterns = patterns('',
     
     
     #Enumeration URLs -------------------------------------
-    url(r'^create/$', create_enumeration,
-                    name="create_enumeration"),
+    url(r'^create/$', create_enumeration, name="create_enumeration"),
     
     url(r'^create-individual/(?P<id>\S+)', create_individual_enumeration,
                     name="create_individual_enumeration"),
     
     url(r'^create-organization/(?P<id>\S+)', create_organization_enumeration,
                     name="create_organization_enumeration"),
+    
+    
+    url(r'^edit-individual/(?P<id>\S+)', create_individual_enumeration,
+                    name="edit_individual_enumeration"),
+    
+    url(r'^edit-organization/(?P<id>\S+)', create_organization_enumeration,
+                    name="edit_organization_enumeration"),
+    
+    url(r'^edit-basic/(?P<id>\S+)', edit_basic_enumeration,
+                    name="edit_basic_enumeration"),
+
+    url(r'^edit-enhanced/(?P<id>\S+)', edit_enhanced_enumeration,
+                    name="edit_enhanced_enumeration"),
 
     url(r'^stop-managing/(?P<enumeration_id>\S+)', stop_managing_enumeration,
-        name="stop_managing_enumeration"),
+                    name="stop_managing_enumeration"),
 
     url(r'^edit/(?P<id>\S+)', edit_enumeration,
                     name="edit_enumeration"),
+    
+
+
     
     
 

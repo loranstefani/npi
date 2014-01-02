@@ -21,7 +21,14 @@ def create_enumeration(request):
         form = CreateEnumeration1Form(request.POST, mymanager=request.user.email)
         
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.contact_person_first_name     = request.user.first_name
+            e.contact_person_last_name      = request.user.last_name
+            e.contact_person_email          = request.user.email
+            e.save()
+
+           
+           
            
             #make sure this user is also the surrogate
 
@@ -56,6 +63,21 @@ def create_enumeration(request):
                               RequestContext(request, context,))
 
 
+
+@login_required
+def edit_basic_enumeration(request, id):
+    name = _("Edit basic information for an enumeration")
+    e = Enumeration.objects.get(id=id)
+    if e.enumeration_type in ("NPI-1", "OEID-1"):
+        return HttpResponseRedirect(reverse('edit_individual_enumeration',
+                                                   args=(e.id,)))
+    else:
+        return HttpResponseRedirect(reverse('edit_organization_enumeration',
+                                                   args=(e.id,)))
+
+
+
+
 @login_required
 def create_individual_enumeration(request, id):
     name = _("Create a New Individual")
@@ -79,6 +101,7 @@ def create_individual_enumeration(request, id):
               'form': CreateEnumerationIndividualForm(instance=e)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+
 
 
 @login_required
@@ -105,26 +128,44 @@ def create_organization_enumeration(request, id):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
+
 @login_required
 def edit_enumeration(request, id):
     name = _("Edit Enumeration")
     e = Enumeration.objects.get(id=id)
-    if request.method == 'POST':
-        form = AdditionalInformationForm(request.POST, instance=e)
-        if form.is_valid():
-            e = form.save()
-            return enumeration_edit(id)
-        else:
-            #The form is invalid
-             messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('edit.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
     #this is a GET
     context= {'name': name,
               'enumeration': e,
-              'form': AdditionalInformationForm(instance=e)}
+              #'form': AdditionalInformationForm(instance=e)
+              }
     return render_to_response('edit.html',
+                              RequestContext(request, context,))
+
+
+
+
+@login_required
+def edit_enhanced_enumeration(request, id):
+    name = _("Edit Enhanced Profile Information")
+    e = Enumeration.objects.get(id=id)
+    
+    
+    if request.method == 'POST':
+        form = EnumerationEnhancementForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+            return HttpResponseRedirect(reverse('select_address_type',
+                                                   args=(e.id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': EnumerationEnhancementForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
 
@@ -141,6 +182,7 @@ def stop_managing_enumeration(request, enumeration_id):
     return HttpResponseRedirect(reverse('home',))
     
     
+
 
 
 
@@ -204,6 +246,7 @@ def select_address_type(request, enumeration_id):
 
 
 
+
 @login_required
 def edit_address(request, address_id, enumeration_id):
     a = Address.objects.get(id=address_id)
@@ -225,6 +268,7 @@ def edit_address(request, address_id, enumeration_id):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
    
+
 
 
 @login_required
@@ -255,6 +299,7 @@ def domestic_address(request,  address_id, enumeration_id):
     
     
 
+
 @login_required
 def foreign_address(request, address_id, enumeration_id):
     name = _("Foreign Address")
@@ -279,6 +324,7 @@ def foreign_address(request, address_id, enumeration_id):
               'form': ForeignAddressForm(instance=address)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+
 
 @login_required
 def military_address(request, address_id, enumeration_id):

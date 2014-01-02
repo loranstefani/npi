@@ -160,7 +160,6 @@ class Enumeration(models.Model):
                                        default="")
     other_last_name_2     = models.CharField(max_length=100, blank=True,
                                                    default="")
-    
     status                = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
@@ -231,21 +230,30 @@ class Enumeration(models.Model):
     phone_number_extension      = models.CharField(max_length=15,  blank=True, default="")
     bio                         = models.TextField(max_length=255,  blank=True, default="")
     national_agency_check       = models.BooleanField(default=False)
+    
     fingerprinted               = models.BooleanField(default=False)
+    
     negative_action             = models.BooleanField(default=False,
                                     verbose_name="Negative Action on file with HRSA")
+    
     background_image            = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
                                     verbose_name= "Background Image")
+    
     avatar_image                = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-avatars",
                                     verbose_name= "Profile Photo")
 
-    contact_person_email        = models.CharField(max_length=150,  blank=True, default="")
-    contact_person_first_name   = models.CharField(max_length=150,  blank=True, default="")
-    contact_person_last_name   = models.CharField(max_length=150,  blank=True, default="")
-    contact_person_telephone   = models.CharField(max_length=15,  blank=True, default="")
-    contact_person_extension   = models.CharField(max_length=10,  blank=True, default="")
+    contact_person_email       = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    contact_person_first_name  = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    contact_person_last_name   = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    contact_person_telephone   = models.CharField(max_length=15,
+                                                  blank=True, default="")
+    contact_person_extension   = models.CharField(max_length=10,
+                                                  blank=True, default="")
 
     class Meta:
         get_latest_by = "id"
@@ -266,6 +274,8 @@ class Enumeration(models.Model):
                 name = "%s (%s %s)" % (self.doing_business_as,
                                     self.first_name,
                                     self.last_name)
+        if not name:
+            return "UNK"
         return name
 
 
