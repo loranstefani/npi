@@ -12,7 +12,7 @@ from forms import *
 from ..enumerations.models import Enumeration
 
 @login_required
-def novaladd_license(request, enumeration_id):
+def manual_add_license(request, enumeration_id):
     name = _("Create License")
     if request.method == 'POST':
         form = CreateLicenseForm(request.POST)
@@ -38,6 +38,7 @@ def novaladd_license(request, enumeration_id):
               'form': CreateLicenseForm()}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+
 
 
 @login_required
@@ -72,3 +73,18 @@ def add_license(request, enumeration_id):
               'enumeration_id': enumeration_id}
     return render_to_response('auto-license-verify.html',
                               RequestContext(request, context,))
+    
+    
+@login_required
+def delete_license(request, license_id, enumeration_id):
+    
+    name = _("Delete a License from an Enumeration")
+    e = Enumeration.objects.get(id=enumeration_id)
+    l = License.objects.get(id=license_id)       
+    print dir(e.licenses) 
+    e.licenses.remove(l)
+    e.save()
+    l.delete()
+    messages.success(request, "Your license was deleted.")
+    return HttpResponseRedirect(reverse('edit_enumeration',
+                                args=(enumeration_id,)))

@@ -12,8 +12,7 @@
 
       </div>
 
-    
-    
+
       <div class="row">
 
         <div class="col-lg-12">
@@ -66,8 +65,12 @@
 
   
   <tr>
-    <td>Name, Point of Contact, etc.</td>
-    <td>{{ enumeration.name }}</td>
+    <td>Name, Point of Contact, Website and other Profile Enhancements etc.</td>
+    <td>Point of contact for {{ enumeration.name }} is {{ enumeration.contact_first_name }}
+    {{ enumeration.contact_last_name }}
+    <br></br>
+    {{ enumeration.website }}
+    </td>
     <td>
       <a href="/enumeration/edit/{{e.id}}">Edit</a>
       </td>
@@ -182,7 +185,7 @@
     <td>{{l.status}} </td>
     <td>{{l.verified}} </td>
     <td> <a href=/licenses/view/{{l.id}}> View</a> |
-         <a href=/licenses/view/{{l.id}}/{{enumeration.id}}>Delete</a>
+         <a href=/licenses/delete/{{l.id}}/{{enumeration.id}}>Delete</a>
     </td>
     </tr>
          {% endfor %}

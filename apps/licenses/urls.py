@@ -15,4 +15,11 @@ urlpatterns = patterns('',
                     add_license, name="add_license"),
 
 
+    url(r'^delete/(?P<license_id>\S+)/(?P<enumeration_id>\S+)',
+                    delete_license, name="delete_license"),
+
+
+    url(r'^manual-add/(?P<enumeration_id>\S+)',
+                    manual_add_license, name="manual_add_license"),
+
     )
