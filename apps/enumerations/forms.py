@@ -14,6 +14,44 @@ from countries import NO_US_COUNTRIES, US_COUNTRY_CHOICES
 
 
 
+class SearchForm(ModelForm):
+    class Meta:
+        model = Enumeration
+        fields = (
+                  'number', 'first_name', 'last_name', 'organization_name',
+                  )
+    required_css_class = 'required'
+    
+    def save(self, force_insert=False, force_update=False, commit=True):
+        
+        q={}
+        number              = self.cleaned_data.get("number", "")
+        first_name          = self.cleaned_data.get("first_name", "")
+        last_name           = self.cleaned_data.get("last_name", "")
+        organization_name   = self.cleaned_data.get("organization_name", "")
+        
+        
+        if number:
+            q['number']=number
+        
+        if first_name:
+            q['first_name']=first_name
+        
+        if last_name:
+            q['last_name']=last_name
+        
+        if organization_name:
+            q['organization_name']=organization_name
+        
+            
+        qs = Enumeration.objects.filter(**q)
+        for i in qs:
+            print i
+        return qs
+    
+    
+
+
 class CreateEnumeration1Form(ModelForm):
     
     def __init__(self, *args,**kwargs):
@@ -46,7 +84,7 @@ class CreateEnumerationOrganizationForm(ModelForm):
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
-    
+        self.fields['primary_taxonomy'].required = True
 
         
     class Meta:
@@ -54,7 +92,7 @@ class CreateEnumerationOrganizationForm(ModelForm):
         fields = ('organization_name', 'tein', 'doing_business_as',
                   'contact_person_email', 'contact_person_first_name',
                    'contact_person_last_name', 'contact_person_telephone' ,
-                    'contact_person_extension'
+                    'contact_person_extension', 'primary_taxonomy'
                   )
     required_css_class = 'required'
     
@@ -71,6 +109,7 @@ class CreateEnumerationIndividualForm(ModelForm):
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
+        self.fields['primary_taxonomy'].required = True
     
     class Meta:
         model = Enumeration
@@ -79,7 +118,7 @@ class CreateEnumerationIndividualForm(ModelForm):
                     'other_last_name_1', 'other_first_name_2', 'other_last_name_2',
                     'contact_person_email', 'contact_person_first_name',
                     'contact_person_last_name', 'contact_person_telephone' ,
-                    'contact_person_extension')
+                    'contact_person_extension', 'primary_taxonomy')
         
     required_css_class = 'required'
 
@@ -92,6 +131,14 @@ class EnumerationEnhancementForm(ModelForm):
                   'hours_of_operation', 'bio',
                   'avatar_image', 'background_image',
                   )
+    required_css_class = 'required'
+
+
+
+class AddParentForm(forms.Form):
+    
+    
+    number = forms.CharField(max_length=20, initial="", label="Number (e.g. NPI, OEID)")
     required_css_class = 'required'
 
 

@@ -29,7 +29,9 @@ urlpatterns = patterns('',
     
     
     #Enumeration URLs -------------------------------------
-    url(r'^create/$', create_enumeration, name="create_enumeration"),
+    
+    url(r'^search$', search_enumeration, name="search_enumeration"),
+    url(r'^create$', create_enumeration, name="create_enumeration"),
     
     url(r'^create-individual/(?P<id>\S+)', create_individual_enumeration,
                     name="create_individual_enumeration"),

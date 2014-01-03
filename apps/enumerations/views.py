@@ -13,6 +13,38 @@ from forms import *
 from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate
 
+
+def search_enumeration(request):
+    name = _("Search for Enumeration Records")
+    if request.method == 'POST':
+    
+        form = SearchForm(request.POST,)
+        
+        if form.is_valid():
+            qs = form.save()
+            context= {'name':name,
+                      'search_results': qs,
+              'form': SearchForm()}
+            return render_to_response('search.html',
+                              RequestContext(request, context,))
+
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,
+                                             'name':name,},
+                                            RequestContext(request))
+            
+    #this is a GET
+    context= {'name':name,
+              'form': SearchForm()}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+
+
+
 @login_required
 def create_enumeration(request):
     name = _("Create New Entity for Enumeration")

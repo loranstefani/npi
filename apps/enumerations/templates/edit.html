@@ -7,7 +7,7 @@
       <div class="row">
 
         <div class="col-lg-12">
-          <h1 class="page-header">Edit:<small> Enumeration Record</small></h1>
+          <h1 class="page-header">Edit:<small> {{enumeration.name}}</small></h1>
         </div>
 
       </div>
@@ -64,7 +64,8 @@
     <td>Basic Information</td>
     <td>
     Point of contact for {{ enumeration.name }} is {{ enumeration.contact_person_first_name }}
-    {{ enumeration.contact_person_last_name }}
+    {{ enumeration.contact_person_last_name }}. Primary Taxonomy is
+    {{ enumeration.primary_taxonomy }}
     </td>
     <td>
       <a href="/enumerations/edit-basic/{{enumeration.id}}">Edit</a>

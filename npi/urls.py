@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
-
+from apps.enumerations.views import search_enumeration
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -19,10 +19,10 @@ urlpatterns = patterns('',
     url(r'^accounts/',      include('apps.accounts.urls')),
     url(r'^downloads/',     include('apps.downloads.urls')),
     url(r'^statistics/',    include('apps.statistics.urls')),
-    url(r'^search/',        include('apps.search.urls')),
+    url(r'^search/',        search_enumeration, name = "search"),
     
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^enumerations/', include('apps.enumerations.urls')),
-    url(r'^licenses/', include('apps.licenses.urls')),
-    url(r'^direct/', include('apps.direct.urls')),
+    url(r'^admin/',         include(admin.site.urls)),
+    url(r'^enumerations/',  include('apps.enumerations.urls')),
+    url(r'^licenses/',      include('apps.licenses.urls')),
+    url(r'^direct/',        include('apps.direct.urls')),
 )

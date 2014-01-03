@@ -308,7 +308,7 @@ class Enumeration(models.Model):
         if not self.number:
             return  "Unassigned"
            
-        returnself.number
+        return self.number
 
 
     def detail(self):
