@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from models import Address, Enumeration, License
 import sys
 from forms import *
+from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate
 
 @login_required
@@ -26,9 +27,8 @@ def create_enumeration(request):
             e.contact_person_last_name      = request.user.last_name
             e.contact_person_email          = request.user.email
             e.save()
+            form.save_m2m()
 
-           
-           
            
             #make sure this user is also the surrogate
 
@@ -67,7 +67,7 @@ def create_enumeration(request):
 @login_required
 def edit_basic_enumeration(request, id):
     name = _("Edit basic information for an enumeration")
-    e = Enumeration.objects.get(id=id)
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     if e.enumeration_type in ("NPI-1", "OEID-1"):
         return HttpResponseRedirect(reverse('edit_individual_enumeration',
                                                    args=(e.id,)))
@@ -81,7 +81,7 @@ def edit_basic_enumeration(request, id):
 @login_required
 def create_individual_enumeration(request, id):
     name = _("Create a New Individual")
-    e = Enumeration.objects.get(id=id)
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     
     
     if request.method == 'POST':
@@ -89,7 +89,7 @@ def create_individual_enumeration(request, id):
         if form.is_valid():
             e = form.save()
             
-            return HttpResponseRedirect(reverse('select_address_type', args=(id,)))
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -107,14 +107,14 @@ def create_individual_enumeration(request, id):
 @login_required
 def create_organization_enumeration(request, id):
     name = _("Create a New Organization")
-    e = Enumeration.objects.get(id=id)
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     
     
     if request.method == 'POST':
         form = CreateEnumerationOrganizationForm(request.POST, instance=e)
         if form.is_valid():
             e = form.save()
-            return HttpResponseRedirect(reverse('select_address_type',
+            return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(e.id,)))
         else:
             #The form is invalid
@@ -132,7 +132,8 @@ def create_organization_enumeration(request, id):
 @login_required
 def edit_enumeration(request, id):
     name = _("Edit Enumeration")
-    e = Enumeration.objects.get(id=id)
+    
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user) 
     #this is a GET
     context= {'name': name,
               'enumeration': e,
@@ -147,14 +148,14 @@ def edit_enumeration(request, id):
 @login_required
 def edit_enhanced_enumeration(request, id):
     name = _("Edit Enhanced Profile Information")
-    e = Enumeration.objects.get(id=id)
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     
     
     if request.method == 'POST':
         form = EnumerationEnhancementForm(request.POST, instance=e)
         if form.is_valid():
             e = form.save()
-            return HttpResponseRedirect(reverse('select_address_type',
+            return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(e.id,)))
         else:
             #The form is invalid
@@ -173,7 +174,7 @@ def edit_enhanced_enumeration(request, id):
 
 @login_required
 def stop_managing_enumeration(request, enumeration_id):
-    e = Enumeration.objects.get(id=enumeration_id)
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     e.managers.remove(e)
     s = Surrogate.objects.get(user=request.user)
     s.enumerations.remove(e)
@@ -195,24 +196,15 @@ def select_address_type(request, enumeration_id):
             a = form.save()
             
             #save this address to the enumeration.
-            e = Enumeration.objects.get(id=enumeration_id)
+            e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                                    request.user)
             print "Address Purposes",  a.address_purpose
             
-            
-#            ("PRIMARY-LOCATION",   
-#("PRIMAY-BUSINESS",    
-#("MEDREC-STORAGE",     
-#("1099",               
-#("REVALIDATION",       
-#("ADDITIONAL-PRACTICE",
-#("ADDITIONAL-BUSINESS",
 
-            
             if str(a.address_purpose) == "PRIMARY-LOCATION":
                 e.primary_practice_address = a
                 
             if str(a.address_purpose) == "PRIMARY-BUSINESS":
-                print "here"
                 e.primary_business_address = a
             
             if a.address_purpose in ("ADDITIONAL-PRACTICE", "ADDITIONAL-BUSINESS"):
@@ -274,6 +266,8 @@ def edit_address(request, address_id, enumeration_id):
 @login_required
 def domestic_address(request,  address_id, enumeration_id):
     name = _("Domestic Address")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
     address = Address.objects.get(id=address_id)
     if request.method == 'POST':
         form = DomesticAddressForm(request.POST, instance=address)
@@ -303,6 +297,8 @@ def domestic_address(request,  address_id, enumeration_id):
 @login_required
 def foreign_address(request, address_id, enumeration_id):
     name = _("Foreign Address")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
     address = Address.objects.get(id=address_id)
     if request.method == 'POST':
         form = ForeignAddressForm(request.POST, instance=address)
@@ -329,6 +325,8 @@ def foreign_address(request, address_id, enumeration_id):
 @login_required
 def military_address(request, address_id, enumeration_id):
     name = _("Military Address")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
     if request.method == 'POST':
         form = MilitaryAddressForm(request.POST)
         if form.is_valid():

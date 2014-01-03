@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 import sys
 from forms import *
 from ..enumerations.models import Enumeration
+from ..enumerations.utils import get_enumeration_user_manages_or_404
 
 @login_required
 def manual_add_license(request, enumeration_id):
@@ -18,8 +19,9 @@ def manual_add_license(request, enumeration_id):
         form = CreateLicenseForm(request.POST)
         
         if form.is_valid():
+            e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
             l = form.save()
-            e = Enumeration.objects.get(id=enumeration_id)
             e.licenses.add(l)
             e.save()
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -48,11 +50,12 @@ def add_license(request, enumeration_id):
         form = AutoVerifyLicenseForm(request.POST)
         
         if form.is_valid():
+            e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
             l = form.save(commit=False)
             l.verified_by_issuing_board = True
             l.save()
             
-            e = Enumeration.objects.get(id=enumeration_id)
             e.licenses.add(l)
             e.save()
             messages.success(request, "Your license was automatically verified.")
@@ -79,9 +82,9 @@ def add_license(request, enumeration_id):
 def delete_license(request, license_id, enumeration_id):
     
     name = _("Delete a License from an Enumeration")
-    e = Enumeration.objects.get(id=enumeration_id)
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
     l = License.objects.get(id=license_id)       
-    print dir(e.licenses) 
     e.licenses.remove(l)
     e.save()
     l.delete()

@@ -91,11 +91,16 @@
     <tr>
     <td>Primary Business/Correspondence Address</td>
     <td>{{ enumeration.primary_business_address }}</td>
+    {% if enumeration.primary_business_address  %}
     <td>
-      <a href="/enumerations/address/edit/{{enumeration.primary_business_address.id}}/{{enumeration.id}}">Edit</a>
-    </td>
-  </tr>
-
+      <a href="/enumerations/address/{{enumeration.primary_business_address.id}}/{{e.id}}">Edit</a>
+      </td>
+    {% else %}
+    <td>
+      <a href="/enumerations/address/select-address-type/{{enumeration.id}}">Create</a>
+      </td>
+ {% endif %}
+ 
     <tr>
     <td>Primary Location (Physical Practice Location)</td>
     <td>{{ enumeration.primary_practice_address }}</td>

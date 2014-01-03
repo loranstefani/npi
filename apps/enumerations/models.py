@@ -274,7 +274,8 @@ class Enumeration(models.Model):
                 name = "%s (%s %s)" % (self.doing_business_as,
                                     self.first_name,
                                     self.last_name)
-        if not name:
+
+        if not name or name== " ":
             return "UNK"
         return name
 
