@@ -188,10 +188,11 @@ def stop_managing_enumeration(request, enumeration_id):
 
 
 @login_required
-def select_address_type(request, enumeration_id):
+def select_address_type(request, address_purpose, enumeration_id):
     name = _("Create Address")
     if request.method == 'POST':
-        form = SelectAddressTypeForm(request.POST)
+        form = SelectAddressPurposeForm(request.POST,
+                                        address_purpose=address_purpose)
         if form.is_valid():
             a = form.save()
             
@@ -201,13 +202,23 @@ def select_address_type(request, enumeration_id):
             print "Address Purposes",  a.address_purpose
             
 
-            if str(a.address_purpose) == "PRIMARY-LOCATION":
+            if str(address_purpose) == "PRIMARY-LOCATION":
                 e.primary_practice_address = a
                 
-            if str(a.address_purpose) == "PRIMARY-BUSINESS":
+            if str(address_purpose) == "PRIMARY-BUSINESS":
                 e.primary_business_address = a
+                
+            if str(address_purpose) == "MEDREC-STORAGE":
+                e.medical_record_storage_address = a
+    
+            if str(address_purpose) == "1099":
+                e.ten_ninety_nine_address = a
+                
+            if str(address_purpose) == "REVALIDATION":
+                e.revalidation_address = a
+                        
             
-            if a.address_purpose in ("ADDITIONAL-PRACTICE", "ADDITIONAL-BUSINESS"):
+            if str(address_purpose) in ("OTHER", "ADDITIONAL-PRACTICE", "ADDITIONAL-BUSINESS"):
                 e.other_addresses.add(a)
             
             e.save()
@@ -231,7 +242,7 @@ def select_address_type(request, enumeration_id):
             
     #this is a GET
     context= {'name':name,
-              'form': SelectAddressTypeForm()}
+              'form': SelectAddressPurposeForm(address_purpose=address_purpose)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
@@ -332,7 +343,8 @@ def military_address(request, address_id, enumeration_id):
         if form.is_valid():
             a = form.save()
             if a.address_type== "DOM":
-                return HttpResponseRedirect(reverse('home',))
+                return HttpResponseRedirect(reverse('edit_enumeration',
+                                    args=(enumeration_id )))
 
         else:
             #The form is invalid

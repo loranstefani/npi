@@ -29,8 +29,6 @@ class CreateEnumeration1Form(ModelForm):
             self.fields['managers'].required = True
             self.fields['enumeration_type'].required = True
             
-        
-
     class Meta:
         model = Enumeration
         fields = ('enumeration_type', 'managers')
@@ -97,15 +95,58 @@ class EnumerationEnhancementForm(ModelForm):
     required_css_class = 'required'
 
 
-
-
-
 class SelectAddressTypeForm(ModelForm):
     class Meta:
         model = Address
         fields = ('address_type', 'address_purpose')
     required_css_class = 'required'
     
+
+
+
+
+class SelectAddressPurposeForm(ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        
+        address_purpose = str(kwargs.pop('address_purpose', None)) 
+        
+        super(SelectAddressPurposeForm,self).__init__(*args,**kwargs)
+        if address_purpose:
+            self.fields['address_purpose'].initial = address_purpose
+
+            if address_purpose == "PRIMARY-LOCATION":
+                self.fields['address_purpose'].choices = ((address_purpose,'Primary Practice/Business Address (Phyiscal)'),)
+            
+            if address_purpose == "PRIMARY-BUSINESS":
+                self.fields['address_purpose'].choices = ((address_purpose,'Primary Business Correspondence Address'),)
+ 
+            if address_purpose == "MEDREC-STORAGE":
+                self.fields['address_purpose'].choices = ((address_purpose,'Medical Records Storage Address'),)
+
+            if address_purpose == "1099":
+                self.fields['address_purpose'].choices = ((address_purpose,'1099 Address'),) 
+
+            if address_purpose == "REVALIDATION":
+                self.fields['address_purpose'].choices = ((address_purpose,'Revalidation Address'),) 
+
+            if address_purpose == "ADDITIONAL-PRACTICE":
+                self.fields['address_purpose'].choices = ((address_purpose,'Additional Practice Address'),) 
+
+            if address_purpose == "ADDITIONAL-BUSINESS":
+                self.fields['address_purpose'].choices = ((address_purpose,'Additional Business Address'),) 
+
+            if address_purpose == "OTHER":
+                self.fields['address_purpose'].choices = (
+                        ("ADDITIONAL-PRACTICE",  "Additional Practice Address"),
+                        ("ADDITIONAL-BUSINESS",  "Additional Business Address"),
+                        )
+
+
+    class Meta:
+        model = Address
+        fields = ('address_type', 'address_purpose')
+    required_css_class = 'required'
 
 
 class DomesticAddressForm(ModelForm):
@@ -115,20 +156,23 @@ class DomesticAddressForm(ModelForm):
         super(DomesticAddressForm,self).__init__(*args,**kwargs)
         self.fields['state'].choices=US_STATES
         self.fields['country_code'].choices=US_COUNTRY_CHOICES
+        self.fields['country_code'].initial="US"
+        self.fields['country_code'].required = True
+        self.fields['city'].required = True
+        self.fields['state'].required = True
+        self.fields['zip'].required = True
         
-        
-
     
     class Meta:
         model = Address
         fields = ('address_1', 'address_2', 'city', 'state', 'zip', 'country_code')
     
-    country_code = forms.TypedChoiceField(initial="US", choices=US_COUNTRY_CHOICES)
     address_type = forms.CharField(widget= forms.HiddenInput, initial="DOM")
 
-    
     required_css_class = 'required'
     
+
+
     
 class ForeignAddressForm(ModelForm):
 
@@ -136,6 +180,11 @@ class ForeignAddressForm(ModelForm):
         """Override the form's init"""
         super(ForeignAddressForm,self).__init__(*args,**kwargs)
         self.fields['country_code'].choices=NO_US_COUNTRIES
+        self.fields['country_code'].required = True
+        self.fields['city'].required = True
+        self.fields['foreign_postal'].required = True
+        self.fields['country_code'].required = True
+    
     
     class Meta:
         model = Address
@@ -159,6 +208,8 @@ class MilitaryAddressForm(ModelForm):
                        ('AA', 'AA - (ZIPs 340xx) Armed Forces (Central and South) Americas'))
                       
         self.fields['state'].choices=MIL_CHOICES
+        self.fields['mpo'].required = True
+        self.fields['zip'].required = True
         
     
     class Meta:

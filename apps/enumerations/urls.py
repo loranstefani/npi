@@ -14,8 +14,8 @@ urlpatterns = patterns('',
     url(r'^address/edit/(?P<address_id>\S+)/(?P<enumeration_id>\S+)',
                     edit_address, name="edit_address"),
 
-    url(r'^address/select-address-type/(?P<enumeration_id>\S+)', select_address_type,
-                    name="select_address_type"),
+    url(r'^address/select-address-type/(?P<address_purpose>\S+)/(?P<enumeration_id>\S+)',
+                    select_address_type, name="select_address_type"),
     
     url(r'^address/domestic-address/(?P<address_id>\S+)/(?P<enumeration_id>\S+)',
                     domestic_address, name="domestic_address"),    

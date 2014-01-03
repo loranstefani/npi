@@ -41,7 +41,7 @@ ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),
 
 ADDRESS_PURPOSE_CHOICES = (("PRIMARY-LOCATION",     "Primary Practice/Business Address (Phyiscal)"),
                            ("PRIMARY-BUSINESS",      "Primary Business Correspondence Address"),
-                           ("MEDREC-STORAGE",       "Medical REcords Storage Address"),
+                           ("MEDREC-STORAGE",       "Medical Records Storage Address"),
                            ("1099",                 "1099 Address"),
                            ("REVALIDATION",         "Revalidation Address"),
                            ("ADDITIONAL-PRACTICE",  "Additional Practice Address"),
