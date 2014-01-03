@@ -82,6 +82,22 @@
       </td>
   </tr>
  
+  {% if enumeration.enumeration_type == "NPI-2" %}
+   <tr>
+    <td>Parent Organization</td>
+   <td>
+    {{ enumeration.parent_organization|default:"No parent organization" }}
+    </td>
+    <td>
+    {% if enumeration.parent_organization %}
+      <a href="/enumerations/parent-organization/delete/{{enumeration.id}}">Delete</a>
+    {% else  %}
+     <a href="/enumerations/parent-organization/add/{{enumeration.id}}">Create</a>
+    {% endif%}
+    </td>
+  </tr>
+  {% endif%}
+
 
     <tr>
     <td>Primary Business/Correspondence Address</td>
@@ -270,8 +286,6 @@
 
     </div>
       </div>
-
-
 
 
 

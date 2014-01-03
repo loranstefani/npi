@@ -311,7 +311,7 @@ class Enumeration(models.Model):
         returnself.number
 
 
-    def __unicode__(self):
+    def detail(self):
         name = "UNK"
         if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
             name = self.organization_name
@@ -338,6 +338,30 @@ class Enumeration(models.Model):
                                                self.enumeration_type,
                                               managers)
         return e
+
+
+
+    def __unicode__(self):
+        name = "No Name"
+        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
+            name = self.organization_name
+            if self.doing_business_as:
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.organization_name)
+        elif self.enumeration_type in ("OEID-1", "NPI-1"):
+            name = "%s %s" % (self.first_name, self.last_name)
+            if self.doing_business_as:
+                name = "%s (%s %s)" % (self.doing_business_as,
+                                    self.first_name,
+                                    self.last_name)
+        number=self.number
+        if not number:
+            number = "Unassigned"
+            
+        e = "%s/%s/%s" % (self.enumeration_type, number, name)
+        return e
+
+
 
 
     def save(self, **kwargs):
