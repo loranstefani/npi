@@ -94,7 +94,7 @@
   {% for e in surrogate.enumerations.all %}
   
   <tr>
-    <td>{{ e.name }} / {{ e.parent_organization }}</td>
+    <td>{{ e.name }} / {{ e.parent_organization.name }}</td>
     <td>{{ e.entity_type }}</td>
      <td>{{ e.enumeration_type }}</td>
     <td>{{ e.pretty_number }}</td>
