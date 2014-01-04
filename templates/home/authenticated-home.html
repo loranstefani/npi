@@ -81,8 +81,7 @@
   <table class="table table-striped  table-bordered">
   <thead>
   <tr>
-    <th>Name / Parent</th>
-    <th>Entity Type</th>
+    <th>Name</th>
     <th>Enumeration Type</th>
     <th>Number</th>
     <th>Status</th>
@@ -94,9 +93,12 @@
   {% for e in surrogate.enumerations.all %}
   
   <tr>
-    <td>{{ e.name }} / {{ e.parent_organization.name }}</td>
-    <td>{{ e.entity_type }}</td>
-     <td>{{ e.enumeration_type }}</td>
+    <td>{{ e.name }}
+      {% if e.parent_organization.name %}
+         (Parent is {{ e.parent_organization.name }})
+      {% endif %}
+    </td>
+    <td>{{ e.enumeration_type }} ({{ e.entity_type }})</td>
     <td>{{ e.pretty_number }}</td>
     <td>{{ e.pretty_status }}</td>
     <td>
