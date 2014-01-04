@@ -80,7 +80,6 @@ class CreateEnumerationOrganizationForm(ModelForm):
         super(CreateEnumerationOrganizationForm,self).__init__(*args,**kwargs)
         self.fields['organization_name'].required = True
         self.fields['tein'].required = True
-        self.fields['doing_business_as'].required = True
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
