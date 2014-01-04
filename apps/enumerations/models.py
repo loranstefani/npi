@@ -64,21 +64,22 @@ MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
 
 
 class Address(models.Model):
-    address_type = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
+    address_type    = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
     address_purpose = models.CharField(max_length=20, choices=ADDRESS_PURPOSE_CHOICES)
-    address_1    = models.CharField(max_length=200, default="")
-    address_2    = models.CharField(max_length=200, blank=True, default="")
-    city         = models.CharField(max_length=200, blank=True, default="")
-    state        = models.CharField(max_length=2,  blank=True, default="",
+    address_1       = models.CharField(max_length=200, default="")
+    address_2       = models.CharField(max_length=200, blank=True, default="")
+    city            = models.CharField(max_length=200, blank=True, default="")
+    state           = models.CharField(max_length=2,  blank=True, default="",
                                     choices = US_STATE_CHOICES)
     zip             = models.CharField(max_length=10,  blank=True, default="")
     country_code    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRIES)
     foreign_state         = models.CharField(max_length=2,  blank=True, default="")
     foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
-    us_phone_number = models.CharField(max_length=15,  blank=True, default="")
-    us_fax_number   = models.CharField(max_length=15,  blank=True, default="")
-    foriegn_phone_number   = models.CharField(max_length=15,  blank=True, default="")    
+    us_phone_number = models.CharField(max_length=12,  blank=True, default="")
+    us_fax_number   = models.CharField(max_length=12,  blank=True, default="")
+    foreign_phone_number   = models.CharField(max_length=20,  blank=True, default="")
+    foreign_fax_number   = models.CharField(max_length=20,  blank=True, default="") 
     mpo                    = models.CharField(max_length=3, choices= MPO_CHOICES,
                                               blank=True, default="",
                                               verbose_name="Military Post Office")
@@ -153,13 +154,17 @@ class Enumeration(models.Model):
     doing_business_as     = models.CharField(max_length=100, blank=True, default="")
      
     other_first_name_1    = models.CharField(max_length=100, blank=True,
-                                                   default="")
+                                                   default="",
+                                                   help_text="Previous first name")
     other_last_name_1     = models.CharField(max_length=100, blank=True,
-                                                   default="") 
+                                                   default="",
+                                                   help_text="Previous or maiden last name") 
     other_first_name_2    = models.CharField(max_length=100, blank=True,
-                                       default="")
+                                       default="",
+                                       help_text="Another previous first name")
     other_last_name_2     = models.CharField(max_length=100, blank=True,
-                                                   default="")
+                                                   default="",
+                                                   help_text="Another previous or maiden last name")
     status                = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
@@ -191,6 +196,8 @@ class Enumeration(models.Model):
     revalidation_address    = models.ForeignKey(Address, verbose_name="PECOS Revalidation Address",
                                     related_name = "enumeration_revalidation_address",
                                     null=True, blank=True)
+    phone_number            = models.CharField(max_length=12,  blank=True, default="")
+    fax_number              = models.CharField(max_length=12,  blank=True, default="")
     
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
                                     related_name = "enumeration_parent_organization")
@@ -205,17 +212,25 @@ class Enumeration(models.Model):
                                     related_name = "enumerations_direct_addresses")
     #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
+    
     reason_decactvated          = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
                                     default="", blank=True)
+    
     deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
+    
     number                      = models.CharField(max_length=10, blank=True, default="",
                                                    #editable=False
                                                    )
     sole_protieter              = models.BooleanField(default=False)
+    
     tein                        = models.CharField(max_length=9, blank=True,
-                                        default="", verbose_name="Tax ID Number")
+                                        default="", verbose_name="Employer Identification Number (EIN)",
+                                        help_text = "An EIN is issued by the IRS. This is required for organizations and optional for individuals."
+                                        )
     ssn                         = models.CharField(max_length=10, blank=True, default="",
-                                        verbose_name = "Social Security Number")
+                                        verbose_name = "Social Security Number",
+                                        help_text= "Required for individuals unless an EIN is provided.")
+    
     modify_token                = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
    
     public_email                = models.CharField(max_length=150,  blank=True, default="")

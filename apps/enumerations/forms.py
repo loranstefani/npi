@@ -80,6 +80,7 @@ class CreateEnumerationOrganizationForm(ModelForm):
         super(CreateEnumerationOrganizationForm,self).__init__(*args,**kwargs)
         self.fields['organization_name'].required = True
         self.fields['tein'].required = True
+        self.fields['tein'].help_text = "EINs are issued by the IRS. This is required for organizations."
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
@@ -89,6 +90,7 @@ class CreateEnumerationOrganizationForm(ModelForm):
     class Meta:
         model = Enumeration
         fields = ('organization_name', 'tein', 'doing_business_as',
+                  'phone_number', 'fax_number',
                   'contact_person_email', 'contact_person_first_name',
                    'contact_person_last_name', 'contact_person_telephone' ,
                     'contact_person_extension', 'primary_taxonomy'
@@ -104,16 +106,17 @@ class CreateEnumerationIndividualForm(ModelForm):
         super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
-        self.fields['ssn'].required = True
+        self.fields['tein'].help_text = "EINs are issued by the IRS. This is optional for individuals."
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
-        self.fields['primary_taxonomy'].required = True
-    
+        self.fields['primary_taxonomy'].required = True      
     class Meta:
         model = Enumeration
         fields = ('first_name', 'last_name', 'ssn', 'sole_protieter',
-                  'doing_business_as', 'tein', 'other_first_name_1',                  
+                  'doing_business_as', 'tein',
+                  'phone_number', 'fax_number',
+                  'other_first_name_1',                  
                     'other_last_name_1', 'other_first_name_2', 'other_last_name_2',
                     'contact_person_email', 'contact_person_first_name',
                     'contact_person_last_name', 'contact_person_telephone' ,
@@ -211,7 +214,8 @@ class DomesticAddressForm(ModelForm):
     
     class Meta:
         model = Address
-        fields = ('address_1', 'address_2', 'city', 'state', 'zip', 'country_code')
+        fields = ('address_1', 'address_2', 'city', 'state', 'zip', 'country_code',
+                  'us_phone_number','us_fax_number')
     
     address_type = forms.CharField(widget= forms.HiddenInput, initial="DOM")
 
@@ -235,7 +239,8 @@ class ForeignAddressForm(ModelForm):
     class Meta:
         model = Address
         fields = ('address_1', 'address_2', 'city', 'foreign_state',
-                  'foreign_postal', 'country_code')
+                  'foreign_postal', 'country_code', 'foreign_phone_number',
+                  'foreign_fax_number')
         
     state = forms.CharField(widget= forms.HiddenInput, initial="ZZ")
     address_type = forms.CharField(widget= forms.HiddenInput, initial="FGN")
@@ -260,7 +265,9 @@ class MilitaryAddressForm(ModelForm):
     
     class Meta:
         model = Address
-        fields = ('address_1', 'address_2', 'mpo', 'state', 'zip',)
+        fields = ('address_1', 'address_2', 'mpo', 'state', 'zip',
+                  'us_phone_number', 'us_fax_number')
+    
     required_css_class = 'required'
     
     country_code    = forms.CharField(widget= forms.HiddenInput, initial="US")
