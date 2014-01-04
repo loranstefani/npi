@@ -75,16 +75,15 @@
   
     
  <div class="row">
-    <div class="col-lg-10">     
+    <div class="col-lg-12">     
 
       
   <table class="table table-striped  table-bordered">
   <thead>
   <tr>
-    <th>Name</th>
+    <th>Name / Parent</th>
     <th>Entity Type</th>
-    <th>Enumeration Type</th>
-    <th>Number</th>
+    <th>Type/Number</th>
     <th>Status</th>
     <th>Actions</th>
   </tr>
@@ -94,10 +93,9 @@
   {% for e in surrogate.enumerations.all %}
   
   <tr>
-    <td>{{ e.name }}</td>
+    <td>{{ e.name }} /  {{ e.parent_organization }}</td>
     <td>{{ e.entity_type }}</td>
-    <td>{{ e.enumeration_type }}</td>
-    <td>{{ e.pretty_number }}</td>
+    <td>{{ e.enumeration_type }}/{{ e.pretty_number }}</td>
     <td>{{ e.pretty_status }}</td>
     <td>
       <a href="view">View</a> |
