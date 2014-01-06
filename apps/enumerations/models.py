@@ -8,7 +8,7 @@ import random
 from countries import COUNTRIES
 from ..licenses.models import License
 from ..direct.models import DirectAddress
-
+from localflavor.us.models import PhoneNumberField
 US_STATE_CHOICES = list(US_STATES)
 US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
 US_STATE_CHOICES.append(('AE', 'AE - (ZIPs 09xxx) Armed Forces Europe which includes Canada, Middle East, and Africa'))
@@ -21,11 +21,10 @@ US_STATE_CHOICES.append(('ZZ', 'Foreign Country'))
 #AP (ZIPs 962xx - 966xx) for Armed Forces Pacific
 #AA (ZIPs 340xx) for Armed Forces (Central and South) Americas
 
-ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual Provider (NPI-1)"),
-                            ("NPI-2","Provider Organization (NPI-2)"),
+ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (NPI-1)"),
+                            ("NPI-2","Organizational National Provider Identifier (NPI-2)"),
                             ("HPID","Health Plan Identifier (HPID)"),
-                            ("OEID-1","Individual Atypical Provider (OEID-1)"),
-                            ("OEID-2","Atypical Provider Organization (OEID-2)"),
+                            ("OEID","Other Entity Individual Atypical Provider (OEID)"),
                         )
 
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
@@ -39,13 +38,12 @@ ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),
                         )
 
 
-ADDRESS_PURPOSE_CHOICES = (("PRIMARY-LOCATION",     "Primary Practice/Business Address (Phyiscal)"),
-                           ("PRIMARY-BUSINESS",      "Primary Business Correspondence Address"),
+ADDRESS_PURPOSE_CHOICES = (("LOCATION",     "Location Address (Phyiscal)"),
+                           ("MAILING",      "Mailing Address (Correspondence)"),
                            ("MEDREC-STORAGE",       "Medical Records Storage Address"),
                            ("1099",                 "1099 Address"),
                            ("REVALIDATION",         "Revalidation Address"),
-                           ("ADDITIONAL-PRACTICE",  "Additional Practice Address"),
-                           ("ADDITIONAL-BUSINESS",  "Additional Business Address"),
+                           ("ADDITIONAL-LOCATION",  "Additional Location Address"),
                         )
 
 
@@ -55,11 +53,9 @@ ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization")
 COUNTRY_CHOICES = (("US", "United States"), ("CA", "Canada"), ("MX", "Mexico"))
 
 
-
-
 MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
-                ('FPS', 'FPS - Fleet Post Office'),
-                ('DPO', 'PDO - Diplomatic Post Office'))
+                ('FPS',  'FPS - Fleet Post Office'),
+                ('DPO',  'PDO - Diplomatic Post Office'))
 
 
 
@@ -76,9 +72,11 @@ class Address(models.Model):
                                     choices = COUNTRIES)
     foreign_state         = models.CharField(max_length=2,  blank=True, default="")
     foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
-    us_phone_number = models.CharField(max_length=12,  blank=True, default="")
-    us_fax_number   = models.CharField(max_length=12,  blank=True, default="")
-    foreign_phone_number   = models.CharField(max_length=20,  blank=True, default="")
+    us_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone."
+                                           )
+    us_fax_number   = models.CharField(max_length=12,  blank=True, default="",)
+    foreign_telephone_number   = models.CharField(max_length=20,  blank=True, default="")
     foreign_fax_number   = models.CharField(max_length=20,  blank=True, default="") 
     mpo                    = models.CharField(max_length=3, choices= MPO_CHOICES,
                                               blank=True, default="",
@@ -145,9 +143,30 @@ class Address(models.Model):
         super(Address, self).save(**kwargs)
 
 class Enumeration(models.Model):
-    first_name            = models.CharField(max_length=100, blank=True,
+    
+    number              = models.CharField(max_length=10, blank=True, default="",
+                                                   #editable=False
+                                                   )
+    enumeration_date    = models.DateField(auto_now_add=True)
+    
+    name_prefix         = models.CharField(max_length=10, blank=True,
                                                    default="")
-    last_name             = models.CharField(max_length=100, blank=True,
+    first_name          = models.CharField(max_length=100, blank=True,
+                                                   default="")
+    middle_name          = models.CharField(max_length=100, blank=True,
+                                                   default="")
+    
+    last_name           = models.CharField(max_length=100, blank=True,
+                                                   default=
+                                                   "")
+    state_of_birth      = models.CharField(max_length=2,  blank=True, default="",
+                                    choices = US_STATE_CHOICES)
+    
+    country_of_birth    = models.CharField(max_length=2,  blank=True, default="US",
+                                    choices = COUNTRIES)
+    
+    
+    name_suffix           = models.CharField(max_length=10, blank=True,
                                                    default="")
     organization_name     = models.CharField(max_length=100, blank=True,
                                                    default="")
@@ -156,31 +175,41 @@ class Enumeration(models.Model):
     other_first_name_1    = models.CharField(max_length=100, blank=True,
                                                    default="",
                                                    help_text="Previous first name")
+    
     other_last_name_1     = models.CharField(max_length=100, blank=True,
                                                    default="",
                                                    help_text="Previous or maiden last name") 
+    
     other_first_name_2    = models.CharField(max_length=100, blank=True,
                                        default="",
                                        help_text="Another previous first name")
+    
     other_last_name_2     = models.CharField(max_length=100, blank=True,
                                                    default="",
                                                    help_text="Another previous or maiden last name")
+    
     status                = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
+    
     medicare_id                 = models.CharField(max_length=20, blank=True, default="")
+    
     managers                    = models.ManyToManyField(User, null=True, blank=True)
+    
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
                                     null=True, blank=True)
-    primary_business_address    = models.ForeignKey(Address,
-                                    related_name = "enumeration_primary_business_address",
+    
+    mailing_address             = models.ForeignKey(Address,
+                                    related_name = "enumeration_primary_mailing_address",
                                     verbose_name = "Business address for correspondence",
                                     null=True, blank=True)
-    primary_practice_address    = models.ForeignKey(Address,
-                                    verbose_name = "Primary physical practice or business address",
-                                    related_name = "enumeration_primary_practice_address",
+    
+    location_address            = models.ForeignKey(Address,
+                                    help_text = "Primary location (a physical adrress of your practice or business",
+                                    related_name = "enumeration_location_address",
                                     null=True, blank=True)
+    
     medical_record_storage_address  = models.ForeignKey(Address,
                                     related_name = "enumeration_medical_record_storage_address",
                                     null=True, blank=True)
@@ -196,9 +225,7 @@ class Enumeration(models.Model):
     revalidation_address    = models.ForeignKey(Address, verbose_name="PECOS Revalidation Address",
                                     related_name = "enumeration_revalidation_address",
                                     null=True, blank=True)
-    phone_number            = models.CharField(max_length=12,  blank=True, default="")
-    fax_number              = models.CharField(max_length=12,  blank=True, default="")
-    
+   
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
                                     related_name = "enumeration_parent_organization")
     
@@ -213,62 +240,125 @@ class Enumeration(models.Model):
     #entity_type                 = models.CharField(max_length=12, choices=ENTITY_CHOICES)
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
     
-    reason_decactvated          = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
+    decactvation_reason_code          = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
                                     default="", blank=True)
     
     deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
     
-    number                      = models.CharField(max_length=10, blank=True, default="",
-                                                   #editable=False
-                                                   )
-    sole_protieter              = models.BooleanField(default=False)
-    
-    tein                        = models.CharField(max_length=9, blank=True,
-                                        default="", verbose_name="Employer Identification Number (EIN)",
-                                        help_text = "An EIN is issued by the IRS. This is required for organizations and optional for individuals."
+
+    sole_protieter              = models.BooleanField(default=False, editable=False)
+    sole_proprietor             = models.BooleanField(default=False)
+
+    itin                        = models.CharField(max_length=10, blank=True,
+                                        default="", verbose_name="IRS Individual Tax Payer  Number (ITIN)",
+                                        help_text = "An ITIN is required for individuals that are not eligible for a social security number."
                                         )
     ssn                         = models.CharField(max_length=10, blank=True, default="",
                                         verbose_name = "Social Security Number",
-                                        help_text= "Required for individuals unless an EIN is provided.")
+                                        help_text= "Required for individuals.")
+
+    ein                        = models.CharField(max_length=9, blank=True,
+                                        default="", verbose_name="Employer Identification Number (EIN)",
+                                        help_text = "An EIN is issued by the IRS. This is required for organizations and optional for individuals."
+                                        )
+
+    ein_image               = models.ImageField(blank = True, null=False, default='',
+                                    max_length=255L, upload_to="ein-verification",
+                                    verbose_name= "EIN Image",
+                                    help_text ="A PDF or PNG of your EIN assigned by the IRS",
+                                    )
     
-    modify_token                = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
+    modify_token               = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
    
-    public_email                = models.CharField(max_length=150,  blank=True, default="")
-    primary_taxonomy            = models.ForeignKey(TaxonomyCode, null=True, blank=True,
+    public_email               = models.CharField(max_length=150,  blank=True, default="")
+    taxonomy                   = models.ForeignKey(TaxonomyCode, null=True, blank=True,
                                         related_name ="enumeration_primary_taxonomy")
-    other_taxonomies            = models.ManyToManyField(TaxonomyCode, null=True,
+    other_taxonomies           = models.ManyToManyField(TaxonomyCode, null=True,
                                         blank=True, related_name ="enumeration_other_taxonomies")
-    website                     = models.CharField(max_length=300,  blank=True, default="")
-    driving_directions          = models.TextField(max_length=266,  blank=True, default="")
-    hours_of_operation          = models.CharField(max_length=15,  blank=True, default="")
+    website                    = models.CharField(max_length=300,  blank=True, default="")
+    
+    public_email               = models.EmailField(blank=True, default="")
+    driving_directions         = models.TextField(max_length=266,  blank=True, default="")
+    hours_of_operation         = models.CharField(max_length=15,  blank=True, default="")
    
-    phone_number_extension      = models.CharField(max_length=15,  blank=True, default="")
-    bio                         = models.TextField(max_length=255,  blank=True, default="")
-    national_agency_check       = models.BooleanField(default=False)
+    phone_number_extension     = models.CharField(max_length=15,  blank=True, default="")
+    bio                        = models.TextField(max_length=255,  blank=True, default="")
+    national_agency_check      = models.BooleanField(default=False)
     
-    fingerprinted               = models.BooleanField(default=False)
+    fingerprinted              = models.BooleanField(default=False)
     
-    negative_action             = models.BooleanField(default=False,
+    negative_action            = models.BooleanField(default=False,
                                     verbose_name="Negative Action on file with HRSA")
     
-    background_image            = models.ImageField(blank = True, null=False, default='',
+    background_image           = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
                                     verbose_name= "Background Image")
     
-    avatar_image                = models.ImageField(blank = True, null=False, default='',
+    avatar_image               = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-avatars",
                                     verbose_name= "Profile Photo")
 
-    contact_person_email       = models.CharField(max_length=150,
-                                                  blank=True, default="")
+    contact_person_email       = models.EmailField(blank=True, default="")
     contact_person_first_name  = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    contact_person_middle_name = models.CharField(max_length=150,
                                                   blank=True, default="")
     contact_person_last_name   = models.CharField(max_length=150,
                                                   blank=True, default="")
-    contact_person_telephone   = models.CharField(max_length=15,
+    contact_person_suffix      = models.CharField(max_length=150,
+                                                  blank=True, default="",
+                                                  help_text = "For example, M.D., R.N., PhD"
+                                                  )
+    
+    contact_person_credential   = models.CharField(max_length=150,
+                                                  blank=True, default="",
+                                                  help_text = "For example, Jr., Sr., II, III."
+                                                  )
+    
+    contact_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone."
+                                           )
+    contact_person_telephone_extension   = models.CharField(max_length=10,
                                                   blank=True, default="")
-    contact_person_extension   = models.CharField(max_length=10,
+    contact_person_title_or_position       = models.CharField(max_length=150,
                                                   blank=True, default="")
+
+    contact_person_title       = models.CharField(max_length=150,
+                                                  blank=True, default="")
+
+    authorized_person_email      = models.EmailField(blank=True, default="")
+    authorized_person_first_name  = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    authorized_person_middle_name = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    authorized_person_last_name   = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    authorized_person_suffix      = models.CharField(max_length=150,
+                                                  blank=True, default="",
+                                                  help_text = "For example, M.D., R.N., PhD"
+                                                  )
+    
+    authorized_person_credential   = models.CharField(max_length=150,
+                                                  blank=True, default="",
+                                                  help_text = "For example, Jr., Sr., II, III."
+                                                  )
+    
+    authorized_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
+                                            help_text="Format: XXX-XXX-XXXX. Required if the authorized person has a telephone.")
+    authorized_person_telephone_extension   = models.CharField(max_length=10,
+                                                  blank=True, default="")
+    
+    authorized_person_title_or_position       = models.CharField(max_length=150,
+                                                  blank=True, default="")
+    authorized_person_title       = models.CharField(max_length=150,
+                                                  blank=True, default="")
+
+    added               = models.DateField(auto_now_add=True)
+    updated             = models.DateTimeField(auto_now=True)
+
+
+    deactiviation_date               = models.DateField(auto_now_add=True)
+    reactiviation_date               = models.DateField(auto_now_add=True)
 
     class Meta:
         get_latest_by = "id"

@@ -94,8 +94,8 @@
   
   <tr>
     <td>{{ e.name }}
-      {% if e.parent_organization.name %}
-         (Parent is {{ e.parent_organization.name }})
+      {% if e.parent_organization.name %}<br></br>
+         Parent\Legal Business Name: {{ e.parent_organization.name }}
       {% endif %}
     </td>
     <td>{{ e.enumeration_type }} ({{ e.entity_type }})</td>

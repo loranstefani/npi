@@ -231,14 +231,13 @@ def select_address_type(request, address_purpose, enumeration_id):
             #save this address to the enumeration.
             e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                                     request.user)
-            print "Address Purposes",  a.address_purpose
-            
 
-            if str(address_purpose) == "PRIMARY-LOCATION":
-                e.primary_practice_address = a
+
+            if str(address_purpose) == "LOCATION":
+                e.location_address = a
                 
-            if str(address_purpose) == "PRIMARY-BUSINESS":
-                e.primary_business_address = a
+            if str(address_purpose) == "MAILING":
+                e.mailing_address = a
                 
             if str(address_purpose) == "MEDREC-STORAGE":
                 e.medical_record_storage_address = a
@@ -250,7 +249,7 @@ def select_address_type(request, address_purpose, enumeration_id):
                 e.revalidation_address = a
                         
             
-            if str(address_purpose) in ("OTHER", "ADDITIONAL-PRACTICE", "ADDITIONAL-BUSINESS"):
+            if str(address_purpose) in ("OTHER", "ADDITIONAL-LOCATION",):
                 e.other_addresses.add(a)
             
             e.save()
@@ -292,10 +291,10 @@ def edit_address(request, address_id, enumeration_id):
                                             args=(a.id,enumeration_id)))
     elif a.address_type == "FGN":
         return HttpResponseRedirect(reverse('foreign_address',
-                                            args=(a.id,e.enumeration_id)))
+                                            args=(a.id,enumeration_id)))
     elif a.address_type == "MIL":
         return HttpResponseRedirect(reverse('military_address',
-                                            args=(a.id,e.enumeration_id)))
+                                            args=(a.id,enumeration_id)))
     
     
     context= {'name':name,
@@ -370,12 +369,12 @@ def military_address(request, address_id, enumeration_id):
     name = _("Military Address")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
+    address = Address.objects.get(id=address_id)
     if request.method == 'POST':
-        form = MilitaryAddressForm(request.POST)
+        form = MilitaryAddressForm(request.POST, instance=address)
         if form.is_valid():
             a = form.save()
-            if a.address_type== "DOM":
-                return HttpResponseRedirect(reverse('edit_enumeration',
+            return HttpResponseRedirect(reverse('edit_enumeration',
                                     args=(enumeration_id )))
 
         else:

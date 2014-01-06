@@ -79,21 +79,28 @@ class CreateEnumerationOrganizationForm(ModelForm):
         """Override the form's init"""
         super(CreateEnumerationOrganizationForm,self).__init__(*args,**kwargs)
         self.fields['organization_name'].required = True
-        self.fields['tein'].required = True
-        self.fields['tein'].help_text = "EINs are issued by the IRS. This is required for organizations."
+        self.fields['ein'].required = True
+        self.fields['ein'].help_text = "EINs are issued by the IRS. This is required for organizations."
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
-        self.fields['primary_taxonomy'].required = True
 
         
     class Meta:
         model = Enumeration
-        fields = ('organization_name', 'tein', 'doing_business_as',
-                  'phone_number', 'fax_number',
-                  'contact_person_email', 'contact_person_first_name',
-                   'contact_person_last_name', 'contact_person_telephone' ,
-                    'contact_person_extension', 'primary_taxonomy'
+        fields = ('organization_name', 'ein', 'doing_business_as',
+                    'contact_person_email', 'contact_person_first_name',
+                    'contact_person_last_name',
+                    'contact_person_suffix', 'contact_person_credential',
+                    'contact_person_title_or_position',
+                    'contact_person_telephone_number' ,
+                    'contact_person_telephone_extension',
+                    'authorized_person_email', 'authorized_person_first_name',
+                    'authorized_person_last_name',
+                    'authorized_person_suffix', 'authorized_person_credential',
+                    'authorized_person_title_or_position',
+                    'authorized_person_telephone_number' ,
+                    'authorized_person_telephone_extension',
                   )
     required_css_class = 'required'
     
@@ -106,21 +113,32 @@ class CreateEnumerationIndividualForm(ModelForm):
         super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
-        self.fields['tein'].help_text = "EINs are issued by the IRS. This is optional for individuals."
+        self.fields['ein'].help_text = "EINs are issued by the IRS. This is optional for individuals."
         self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
-        self.fields['primary_taxonomy'].required = True      
+        self.fields['ssn'].required = True
+        
     class Meta:
         model = Enumeration
-        fields = ('first_name', 'last_name', 'ssn', 'sole_protieter',
-                  'doing_business_as', 'tein',
-                  'phone_number', 'fax_number',
-                  'other_first_name_1',                  
-                    'other_last_name_1', 'other_first_name_2', 'other_last_name_2',
+        fields = ('first_name', 'last_name', 'ssn', 'sole_proprietor',
+                  'doing_business_as','itin', 'ein',
                     'contact_person_email', 'contact_person_first_name',
-                    'contact_person_last_name', 'contact_person_telephone' ,
-                    'contact_person_extension', 'primary_taxonomy')
+                    'contact_person_last_name',
+                    'contact_person_suffix', 'contact_person_credential',
+                    'contact_person_title_or_position',
+                    'contact_person_telephone_number' ,
+                    'contact_person_telephone_extension',
+                    
+                    'authorized_person_email', 'authorized_person_first_name',
+                    'authorized_person_last_name',
+                    'authorized_person_suffix', 'authorized_person_credential',
+                    'authorized_person_title_or_position',
+                    'authorized_person_telephone_number' ,
+                    'authorized_person_telephone_extension',
+                    'other_first_name_1',                  
+                    'other_last_name_1', 'other_first_name_2', 'other_last_name_2',
+                    )
         
     required_css_class = 'required'
 
@@ -164,11 +182,11 @@ class SelectAddressPurposeForm(ModelForm):
         if address_purpose:
             self.fields['address_purpose'].initial = address_purpose
 
-            if address_purpose == "PRIMARY-LOCATION":
-                self.fields['address_purpose'].choices = ((address_purpose,'Primary Practice/Business Address (Phyiscal)'),)
+            if address_purpose == "LOCATION":
+                self.fields['address_purpose'].choices = ((address_purpose,'Location Address (Phyiscal)'),)
             
-            if address_purpose == "PRIMARY-BUSINESS":
-                self.fields['address_purpose'].choices = ((address_purpose,'Primary Business Correspondence Address'),)
+            if address_purpose == "MAILING":
+                self.fields['address_purpose'].choices = ((address_purpose,'Mailing Address (Physical)'),)
  
             if address_purpose == "MEDREC-STORAGE":
                 self.fields['address_purpose'].choices = ((address_purpose,'Medical Records Storage Address'),)
@@ -179,16 +197,12 @@ class SelectAddressPurposeForm(ModelForm):
             if address_purpose == "REVALIDATION":
                 self.fields['address_purpose'].choices = ((address_purpose,'Revalidation Address'),) 
 
-            if address_purpose == "ADDITIONAL-PRACTICE":
-                self.fields['address_purpose'].choices = ((address_purpose,'Additional Practice Address'),) 
-
-            if address_purpose == "ADDITIONAL-BUSINESS":
-                self.fields['address_purpose'].choices = ((address_purpose,'Additional Business Address'),) 
+            if address_purpose == "ADDITIONAL-LOCATION":
+                self.fields['address_purpose'].choices = ((address_purpose,'Additional Location Address (Physical)'),) 
 
             if address_purpose == "OTHER":
                 self.fields['address_purpose'].choices = (
-                        ("ADDITIONAL-PRACTICE",  "Additional Practice Address"),
-                        ("ADDITIONAL-BUSINESS",  "Additional Business Address"),
+                        ("ADDITIONAL-LOCATION",  "Additional Practice Address"),
                         )
 
 
@@ -215,7 +229,7 @@ class DomesticAddressForm(ModelForm):
     class Meta:
         model = Address
         fields = ('address_1', 'address_2', 'city', 'state', 'zip', 'country_code',
-                  'us_phone_number','us_fax_number')
+                  'us_telephone_number','us_fax_number')
     
     address_type = forms.CharField(widget= forms.HiddenInput, initial="DOM")
 
@@ -239,7 +253,7 @@ class ForeignAddressForm(ModelForm):
     class Meta:
         model = Address
         fields = ('address_1', 'address_2', 'city', 'foreign_state',
-                  'foreign_postal', 'country_code', 'foreign_phone_number',
+                  'foreign_postal', 'country_code', 'foreign_telephone_number',
                   'foreign_fax_number')
         
     state = forms.CharField(widget= forms.HiddenInput, initial="ZZ")
@@ -266,7 +280,7 @@ class MilitaryAddressForm(ModelForm):
     class Meta:
         model = Address
         fields = ('address_1', 'address_2', 'mpo', 'state', 'zip',
-                  'us_phone_number', 'us_fax_number')
+                  'us_telephone_number', 'us_fax_number')
     
     required_css_class = 'required'
     

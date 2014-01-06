@@ -101,28 +101,28 @@
 
 
     <tr>
-    <td>Primary Business/Correspondence Address</td>
-    <td>{{ enumeration.primary_business_address }}</td>
-    {% if enumeration.primary_business_address  %}
+    <td>Mailing Address (Coorespondence)</td>
+    <td>{{ enumeration.mailing_address }}</td>
+    {% if enumeration.mailing_address  %}
     <td>
-      <a href="/enumerations/address/edit/{{enumeration.primary_business_address.id}}/{{enumeration.id}}">Edit</a>
+      <a href="/enumerations/address/edit/{{enumeration.mailing_address.id}}/{{enumeration.id}}">Edit</a>
       </td>
     {% else %}
     <td>
-      <a href="/enumerations/address/select-address-type/PRIMARY-BUSINESS/{{enumeration.id}}">Create</a>
+      <a href="/enumerations/address/select-address-type/MAILING/{{enumeration.id}}">Create</a>
       </td>
  {% endif %}
  
     <tr>
-    <td>Primary Location (Physical Practice Location)</td>
-    <td>{{ enumeration.primary_practice_address }}</td>
-    {% if enumeration.primary_practice_address  %}
+    <td>Location Address (Physical)</td>
+    <td>{{ enumeration.location_address }}</td>
+    {% if enumeration.location_address  %}
     <td>
-      <a href="/enumerations/address/edit/{{enumeration.primary_practice_address.id}}/{{enumeration.id}}">Edit</a>
+      <a href="/enumerations/address/edit/{{enumeration.location_address.id}}/{{enumeration.id}}">Edit</a>
       </td>
     {% else %}
     <td>
-      <a href="/enumerations/address/select-address-type/PRIMARY-LOCATION/{{enumeration.id}}">Create</a>
+      <a href="/enumerations/address/select-address-type/LOCATION/{{enumeration.id}}">Create</a>
       </td>
     {% endif %}
     
@@ -135,7 +135,7 @@
     <td>{{ enumeration.ten_ninety_nine_address }}</td>
     {% if enumeration.ten_ninety_nine_address  %}
     <td>
-      <a href="/enumerations/address/edit/{{enumeration.ten_ninety_nine_address.id}}/{{e.id}}">Edit</a>
+      <a href="/enumerations/address/edit/{{enumeration.ten_ninety_nine_address.id}}/{{enumeration.id}}">Edit</a>
       </td>
     {% else %}
     <td>
