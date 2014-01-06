@@ -52,7 +52,7 @@
   
    <tr>
     <td>Enumeration Type / Number / Status</td>
-    <td>{{enumeration.enumeration_type}} / {{enumeration.pretty_number}} / {{enumeration.pretty_status}}</td>
+    <td>{{enumeration.enumeration_type}} / {{enumeration.number|default: "Unassigned"}} / {{enumeration.pretty_status}}</td>
     <td>
        <a href="/enumeration/deactiviate/{{enumeration.id}}">Deactivate</a> |
        <a href="/enumeration/report/{{enumeration.id}}">Report a Problem</a>
@@ -64,8 +64,7 @@
     <td>Basic Information</td>
     <td>
     Point of contact for {{ enumeration.name }} is {{ enumeration.contact_person_first_name }}
-    {{ enumeration.contact_person_last_name }}. Primary Taxonomy is
-    {{ enumeration.primary_taxonomy }}
+    {{ enumeration.contact_person_last_name }}.
     </td>
     <td>
       <a href="/enumerations/edit-basic/{{enumeration.id}}">Edit</a>
@@ -207,7 +206,7 @@
   <tr>
     <td>{{l.get_state_display}} </td>
     <td>{{l.get_license_type_display}} </td>
-    <td>{{l.number}} </td>
+    <td>{{l.license_number}} </td>
     <td>{{l.get_status_display}} </td>
     <td>{{l.verified}} </td>
     <td> <a href=/licenses/view/{{l.id}}> View</a> |

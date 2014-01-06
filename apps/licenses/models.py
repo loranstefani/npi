@@ -18,7 +18,7 @@ LICENSE_TYPE_CHOICES =(   ("MD", "Medical Doctor (MD)"),
                           ("OTHER","Other"), )
 
 class License(models.Model):
-    number         = models.CharField(max_length=20)
+    number         = models.CharField(max_length=20, verbose_name="License Number")
     state          = models.CharField(max_length=2,  blank=True, default="",
                                     choices = US_STATES)
     license_type   = models.CharField(max_length=5,  blank=True, default="",
@@ -46,6 +46,9 @@ class License(models.Model):
     def __unicode__(self):
         r ="%s issued by %s is %s." % (self.number, self.state, self.status)
         return r
+
+    def license_number(self):
+        return self.number
 
         
 

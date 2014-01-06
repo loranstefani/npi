@@ -24,7 +24,7 @@ class AutoVerifyLicenseForm(ModelForm):
        
     class Meta:
         model = License
-        fields = ('license_type','state', 'number', 'status')
+        fields = ('license_type','state', 'number',)
     
     required_css_class = 'required'
 
@@ -52,7 +52,7 @@ class AutoVerifyLicenseForm(ModelForm):
             try:
                 lv = LicenseValidator.objects.get(state=state)
             except LicenseValidator.DoesNotExist:
-                msg = """Your state does not support auto license verification."""
+                msg = """Your state does not support automatic license verification."""
                 raise forms.ValidationError(msg)
       
             url = build_mlvs_url(lv.url, state, number)
