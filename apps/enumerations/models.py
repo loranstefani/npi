@@ -302,7 +302,8 @@ class Enumeration(models.Model):
                                     max_length=255L, upload_to="enumeration-avatars",
                                     verbose_name= "Profile Photo")
 
-    contact_person_email       = models.EmailField(blank=True, default="")
+    contact_person_email       = models.EmailField(blank=True, default="",
+                                    help_text = "Required if contact person has an email.")
     contact_person_first_name  = models.CharField(max_length=150,
                                                   blank=True, default="")
     contact_person_middle_name = models.CharField(max_length=150,
@@ -320,7 +321,7 @@ class Enumeration(models.Model):
                                                   )
     
     contact_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone."
+                                           help_text="Format: XXX-XXX-XXXX."
                                            )
     contact_person_telephone_extension   = models.CharField(max_length=10,
                                                   blank=True, default="")
@@ -330,7 +331,8 @@ class Enumeration(models.Model):
     contact_person_title       = models.CharField(max_length=150,
                                                   blank=True, default="")
 
-    authorized_person_email      = models.EmailField(blank=True, default="")
+    authorized_person_email      = models.EmailField(blank=True, default="",
+                                                     help_text = "Required if authorized person has an email.")
     authorized_person_first_name  = models.CharField(max_length=150,
                                                   blank=True, default="")
     authorized_person_middle_name = models.CharField(max_length=150,
@@ -348,7 +350,7 @@ class Enumeration(models.Model):
                                                   )
     
     authorized_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
-                                            help_text="Format: XXX-XXX-XXXX. Required if the authorized person has a telephone.")
+                                            help_text="Format: XXX-XXX-XXXX.")
     authorized_person_telephone_extension   = models.CharField(max_length=10,
                                                   blank=True, default="")
     

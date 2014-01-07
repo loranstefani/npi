@@ -81,9 +81,13 @@ class CreateEnumerationOrganizationForm(ModelForm):
         self.fields['organization_name'].required = True
         self.fields['ein'].required = True
         self.fields['ein'].help_text = "EINs are issued by the IRS. This is required for organizations."
-        self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
+        self.fields['cpntact_person_telephone_number'].required = True
+        self.fields['authorized_person_first_name'].required = True
+        self.fields['authorized_person_last_name'].required = True
+        self.fields['authorized_person_telephone_number'].required = True
+
 
         
     class Meta:
@@ -114,9 +118,12 @@ class CreateEnumerationIndividualForm(ModelForm):
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
         self.fields['ein'].help_text = "EINs are issued by the IRS. This is optional for individuals."
-        self.fields['contact_person_email'].required = True
         self.fields['contact_person_first_name'].required = True
         self.fields['contact_person_last_name'].required = True
+        self.fields['cpntact_person_telephone_number'].required = True
+        self.fields['authorized_person_first_name'].required = True
+        self.fields['authorized_person_last_name'].required = True
+        self.fields['authorized_person_telephone_number'].required = True
         self.fields['ssn'].required = True
         
     class Meta:
