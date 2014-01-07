@@ -88,7 +88,7 @@ class CreateEnumerationOrganizationForm(ModelForm):
         
     class Meta:
         model = Enumeration
-        fields = ('organization_name', 'ein', 'doing_business_as',
+        fields = ('organization_name', 'ein', 'ein_image', 'doing_business_as',
                     'contact_person_email', 'contact_person_first_name',
                     'contact_person_last_name',
                     'contact_person_suffix', 'contact_person_credential',
@@ -121,7 +121,10 @@ class CreateEnumerationIndividualForm(ModelForm):
         
     class Meta:
         model = Enumeration
-        fields = ('first_name', 'last_name', 'ssn', 'sole_proprietor',
+        fields = ('first_name', 'last_name', 'ssn',
+                'state_of_birth','country_of_birth',
+                  'birth_date', 'gender',
+                  'sole_proprietor',
                   'doing_business_as','itin', 'ein',
                     'contact_person_email', 'contact_person_first_name',
                     'contact_person_last_name',
@@ -129,7 +132,8 @@ class CreateEnumerationIndividualForm(ModelForm):
                     'contact_person_title_or_position',
                     'contact_person_telephone_number' ,
                     'contact_person_telephone_extension',
-                    
+
+
                     'authorized_person_email', 'authorized_person_first_name',
                     'authorized_person_last_name',
                     'authorized_person_suffix', 'authorized_person_credential',

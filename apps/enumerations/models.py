@@ -165,6 +165,10 @@ class Enumeration(models.Model):
     country_of_birth    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRIES)
     
+    birth_date          = models.DateField(blank=True, null=True)
+    gender              = models.CharField(max_length=2,  blank=True, default="",
+                                    choices = (("F","Female"), ("M","Male"),
+                                               ("T","Transgender")))
     
     name_suffix           = models.CharField(max_length=10, blank=True,
                                                    default="")
