@@ -368,17 +368,17 @@ class Enumeration(models.Model):
 
     def name(self):
         name = "UNK"
-        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
+        if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
             name = self.organization_name
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as,
                                     self.organization_name)
-        elif self.enumeration_type in ("OEID-1", "NPI-1"):
+        elif self.enumeration_type in ("NPI-1", ):
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
-                name = "%s (%s %s)" % (self.doing_business_as,
-                                    self.first_name,
-                                    self.last_name)
+                name = "%s %s (%s)" % (self.first_name,
+                                       self.last_name,
+                                       self.doing_business_as,)
 
         if not name or name== " ":
             return "UNK"
@@ -388,13 +388,22 @@ class Enumeration(models.Model):
 
     def entity_type(self):
         entity_type = None
-        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
+        if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
             entity_type = "Organization"
-        elif self.enumeration_type in ("OEID-1", "NPI-1"):
+        elif self.enumeration_type in ("NPI-1",):
             entity_type = "Individual"
         return entity_type
     
-    
+
+    def entity_type_code(self):
+        entity_type = None
+        if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
+            entity_type = "2"
+        elif self.enumeration_type in ("NPI-1",):
+            entity_type = "1"
+        return entity_type
+
+ 
     def pretty_status(self):
         pretty_status = None
         if str(self.status) == "A":
