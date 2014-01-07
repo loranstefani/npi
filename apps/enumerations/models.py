@@ -367,7 +367,7 @@ class Enumeration(models.Model):
 
 
     def name(self):
-        name = "UNK"
+        name = "No Provided"
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
             name = self.organization_name
             if self.doing_business_as:
@@ -381,7 +381,7 @@ class Enumeration(models.Model):
                                        self.doing_business_as,)
 
         if not name or name== " ":
-            return "UNK"
+            return "Not Provided"
         return name
 
 

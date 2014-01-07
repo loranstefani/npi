@@ -106,7 +106,7 @@
     </td>
     <td>{{ e.enumeration_type }} ({{ e.entity_type }})</td>
     <td>{{ e.pretty_number }}</td>
-    <td>{{ e.pretty_status }}</td>
+    <td>{{ e.get_status_display }}</td>
     <td>
       <a href="view">View</a> |
       {% if surrogate.user in e.managers.all %}

@@ -54,6 +54,7 @@ def add_license(request, enumeration_id):
                                             request.user)
             l = form.save(commit=False)
             l.verified_by_issuing_board = True
+            l.status = "ACTIVE"
             l.save()
             
             e.licenses.add(l)
