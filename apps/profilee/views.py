@@ -2,14 +2,17 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
-
+import random
 from django.utils.translation import ugettext_lazy as _
 
 from ..enumerations.models import Enumeration
 
 def display_enumeration_profile(request, number):
     e = get_object_or_404(Enumeration, number=number)
-    context ={"enumeration": e}
+    random_background = "%s.jpg" % (random.randrange(1,26))
+    context ={"enumeration": e,
+              "random_bg_image": random_background,
+              }
     return render(request,'stylish-portfolio.html', context) 
 
 

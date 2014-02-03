@@ -25,7 +25,12 @@
         height: 100%;
         width: 100%;
         position: relative;
-        background: url({{ MEDIA_URL }}{{ enumeration.background_image }}) no-repeat center center fixed; 
+        
+        {% if not enumeration.background_image %}
+          background: url({{ STATIC_URL }}stylish-portfolio/img/stock-bgs/{{random_bg_image}}) no-repeat center center fixed; 
+        {% else %}
+          background: url({{ MEDIA_URL }} {{ enumeration.background_image }}) no-repeat center center fixed; 
+        {% endif %}
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
