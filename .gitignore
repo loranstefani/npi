@@ -5,3 +5,5 @@ db/*
 .idea/*
 3rdparty/*
 settings_local.py
+uploads/*
+build/*
