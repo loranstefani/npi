@@ -44,9 +44,12 @@
         <a id="menu-close" href="#" class="btn btn-default btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
         <li class="sidebar-brand"><a href="http://startbootstrap.com">Start Bootstrap</a></li>
         <li><a href="#top">Home</a></li>
+        <li><a href="#details">Details</a></li>
         <li><a href="#about">About</a></li>
-        <li><a href="#portfolio">Pictures</a></li>
-        <li><a href="#contact">Directions</a></li>
+        <li><a href="#directions">Directions</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="/enumerations/edit/{{enumeration.id}}">Edit</a></li>
+        
       </ul>
     </div>
     <!-- /Side Menu -->
@@ -54,44 +57,53 @@
     <!-- Full Page Image Header Area -->
     <div id="top" class="header">
       <div class="vert-text">
-        <h1>{{enumeration.name}}</h1>
-        <h3>{{enumeration.taxonomy }}</h3>
-        <a href="#about" class="btn btn-default btn-lg">Find Out More</a>
-        <a href="#contact" class="btn btn-default btn-lg">Directions</a>
+        <h1>{{enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}</h1>
+        <h3>{{enumeration.credential }}</h3>
+        <a href="#details" class="btn btn-default btn-lg btn-primary">Details</a>
+        <a href="#about" class="btn btn-default btn-lg btn-primary">About</a>
+        <a href="#directions" class="btn btn-default btn-lg btn-primary ">Directions</a>
+        <a href="#contact" class="btn btn-default btn-lg btn-primary">Contact</a>
       </div>
     </div>
     <!-- /Full Page Image Header Area -->
   
+  
+  
+
+  
+  
+  
+  
     <!-- Intro -->
-    <div id="about" class="intro">
+    <div id="details" class="intro">
       <div class="container">
         <div class="row">
           <div class="col-md-6 col-md-offset-3 text-center">
-            <h2>{{enumeration.bio}}</h2>
-            <p class="lead"> A more in depth bio.  Spending time with patients
-            and making a real difference is what matters to me. Please <a target="_blank" href="http://example.com">check out my website</a>.</p>
+            <h2>Details</h2>
+            <p class="lead"> Taxonomies, Licenses, and Specalties go here.</p>
           </div>
         </div>
       </div>
     </div>
     <!-- /Intro -->
   
-  
 
-    <!-- Callout -->
-    <div class="callout">
-      <div class="vert-text">
-        <h1>A Dramatic Text Area</h1>
-      </div>
-    </div>
-    <!-- /Callout -->
+
+
+
+
+
+
+
+
+
 
     <!-- Portfolio -->
-    <div id="portfolio" class="portfolio">
+    <div id="about" class="portfolio">
       <div class="container">
         <div class="row">
           <div class="col-md-4 col-md-offset-4 text-center">
-            <h2>Pictures</h2>
+            <h2>About</h2>
             <hr>
           </div>
         </div>
@@ -115,44 +127,74 @@
       </div>
     </div>
     <!-- /Portfolio -->
+    
+   <!-- Callout -->
+    <div class="callout">
+      <div class="vert-text">
+        <h1>{{enumeration.bio_headline}}</h1>
+      </div>
+    </div>
+    <!-- /Callout -->
 
-    <!-- Call to Action -->
-    <div class="call-to-action">
+
+    <!-- extended_bio -->
+    <div class="intro">
       <div class="container">
         <div class="row">
           <div class="col-md-6 col-md-offset-3 text-center">
-            <h3>Hours of Operation: {{enumeration.hours_of_operation}}</h3>
-            <h4>Mailing Address: {{enumeration.mailing_address}}</h4>
-            <h4>Primary Practice Address: {{enumeration.location_address}}</h4>
-            <a href="#" class="btn btn-lg btn-default">Back to Top</a>
-          
+            <p class="lead"> {{enumeration.bio_detail}}</p>
           </div>
         </div>
       </div>
     </div>
-    <!-- /Call to Action -->
+    <!-- /Extended bio -->
+  
+    
+    
+    
+    
+    
+    
+
+  <!-- contact -->
+    <div id="contact" class="call-to-action">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3 text-center">
+              <h3>Hours of Operation: {{enumeration.hours_of_operation}}</h3>
+              <h3>Mailing Address: {{enumeration.mailing_address}}</h3>
+              <h3>Primary Practice Address: {{enumeration.location_address}}</h3>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /contact-->
+
+
 
     <!-- Map -->
-    <div id="contact" class="map">
+    <div id="directions" class="map">
       <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q={{enumeration.google_map_q}}&amp;aq=0&amp;ie=UTF8&amp;hq={{enumeration.google_map_q}}&amp;t=m&amp;z=15&amp;iwloc=A&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q={{enumeration.google_map_q}}&amp;aq=0&amp;ie=UTF8&amp;hq={{enumeration.google_map_q}}&amp;t=m&amp;z=15&amp;iwloc=A"></a></small></iframe>
     </div>
     <!-- /Map -->
     
+    {% if enumeration.driving_directions %}
     
-        <!-- Additional Directions -->
+    <!-- Additional Directions -->
     <div class="call-to-action">
       <div class="container">
         <div class="row">
           <div class="col-md-6 col-md-offset-3 text-center">
-            <h3>Additional Directions: {{eneumeration.driving_directions}}</h3>
+            <h3>{{enumeration.driving_directions}}</h3>
             
           
           </div>
         </div>
       </div>
     </div>
-    <!-- /Call to Action -->
-    
+    <!-- /Additional Directions-->
+    {% endif %}
     
     
     <!-- Footer -->
@@ -161,13 +203,23 @@
         <div class="row">
           <div class="col-md-6 col-md-offset-3 text-center">
             <ul class="list-inline">
-              <li><a href="/facebook"><i class="fa fa-facebook fa-3x"></i></a></li>
-              <li><i class="fa fa-twitter fa-3x"></i></li>
-              <li><i class="fa fa-dribbble fa-3x"></i></li>
+              
+              {% if enumeration.website %} 
+              <li><a target="_blank" href="{{enumeration.website}}"><i class="fa fa-dribbble fa-3x"></i></a></li>
+               {% endif %}
+              
+              {% if enumeration.facebook_handle %} 
+              <li><a href="https://www.facebook.com/{{enumeration.facebook_handle}}"><i class="fa fa-facebook fa-3x"></i></a></li>
+              {% endif %}
+              
+              {% if enumeration.twitter_handle %} 
+              <li><a target="_blank" href="http://twitter.com/{{enumeration.twitter_handle}}"><i class="fa fa-twitter fa-3x"></i></a></li>
+              {% endif %}
             </ul>
             <div class="top-scroll">
               <a href="#top"><i class="fa fa-circle-arrow-up scroll fa-4x"></i></a>
             </div>
+            <a href="#" class="btn btn-lg btn-default">Back to Top</a>
             <hr>
             <p>Copyright &copy; Center for Medicare and Medicaid Services 2014</p>
           </div>

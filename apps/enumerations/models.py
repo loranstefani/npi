@@ -174,7 +174,7 @@ class Enumeration(models.Model):
 
     sole_proprietor             = models.BooleanField(default=False)
 
-    #PII
+    #PII --------------------------------------------------------------------
     state_of_birth      = models.CharField(max_length=2,  blank=True, default="",
                                     choices = US_STATE_CHOICES)
     
@@ -188,34 +188,42 @@ class Enumeration(models.Model):
                                                ("T","Transgender")))
     
     
-    itin                        = models.CharField(max_length=10, blank=True,
-                                        default="", verbose_name="IRS Individual Tax Payer  Number (ITIN)",
-                                        help_text = "An ITIN is required for individuals that are not eligible for a social security number."
+    itin        = models.CharField(max_length=10, blank=True,
+                        default="", verbose_name="IRS Individual Tax Payer  Number (ITIN)",
+                        help_text = "An ITIN is required for individuals that are not eligible for a social security number."
                                         )
-    ssn                         = models.CharField(max_length=10, blank=True, default="",
-                                        verbose_name = "Social Security Number",
-                                        help_text= "Required for individuals.")
+    ssn          = models.CharField(max_length=10, blank=True, default="",
+                        verbose_name = "Social Security Number",
+                        help_text= "Required for individuals.")
 
-    ein                        = models.CharField(max_length=9, blank=True,
-                                        default="", verbose_name="Employer Identification Number (EIN)",
-                                        help_text = "An EIN is issued by the IRS. This is required for organizations and optional for individuals."
-                                        )
+    ein         = models.CharField(max_length=9, blank=True,
+                    default="", verbose_name="Employer Identification Number (EIN)",
+                    help_text = "An EIN is issued by the IRS. This is required for organizations."
+                    )
 
-    ein_image               = models.ImageField(blank = True, null=False, default='',
-                                    max_length=255L, upload_to="ein-verification",
-                                    verbose_name= "EIN Image",
-                                    help_text ="A PDF or PNG of your EIN assigned by the IRS",
-                                    )
+    ein_image   = models.ImageField(blank = True, null=False, default='',
+                    max_length=255L, upload_to="ein-verification",
+                    verbose_name= "EIN Image",
+                    help_text ="A PDF or PNG of your EIN assigned by the IRS",)
     
-    modify_token               = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
+    modify_token  = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
    
     
-
-    #CMS System of Record - Private information
     national_agency_check = models.BooleanField(default=False)
     fingerprinted         = models.BooleanField(default=False)
     negative_action       = models.BooleanField(default=False,
                                  verbose_name="Negative Action on file with HRSA")
+    
+    #Deactivation information ---------------------------
+    decactvation_reason_code  = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
+                                    default="", blank=True)
+    deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
+
+    deactiviation_date               = models.DateField(blank=True, null=True)
+    reactiviation_date               = models.DateField(blank=True, null=True)
+    
+    
+    
     
     contact_person_email        = models.EmailField(blank=True, default="",
                                     help_text = "Required if contact person has an email.")
@@ -249,7 +257,8 @@ class Enumeration(models.Model):
     authorized_person_email = models.EmailField(blank=True, default="",
                                help_text = "Required if authorized person has an email.")
     
-    # End PII ---------------------------------------------------
+    
+    # End PII -----------------------------------------------------------------
 
     authorized_person_first_name    = models.CharField(max_length=150,
                                             blank=True, default="")
@@ -276,16 +285,6 @@ class Enumeration(models.Model):
     authorized_person_title       = models.CharField(max_length=150,
                                                   blank=True, default="")
 
-
-    #Deactivation information
-    decactvation_reason_code  = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
-                                    default="", blank=True)
-    deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
-
-    deactiviation_date               = models.DateField(blank=True, null=True)
-    reactiviation_date               = models.DateField(blank=True, null=True)
-    
-    
     #Record management
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
