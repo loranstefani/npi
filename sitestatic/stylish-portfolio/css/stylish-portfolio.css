@@ -17,6 +17,12 @@ body {
   margin: 0;
   font-size: 4.5em;
   font-weight: 700;
+  color: #FFF;
+}
+
+
+.vert-text h3 {
+  color: #FFF;
 }
 
 /* Side Menu */
@@ -116,7 +122,9 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  
 }
+
 
 /* Intro */
 
@@ -130,7 +138,6 @@ body {
   background: #7fbbda;
   padding: 50px 0;
   color: #ffffff;
-  color: red
 }
 
 .service-item {
@@ -225,6 +232,8 @@ i.scroll:hover {
   .header {
 	background: url(../img/bg.jpg) no-repeat center center scroll; 
   }
+
+
 
   .callout {
 	background: url(../img/callout.jpg) no-repeat center center scroll; 
