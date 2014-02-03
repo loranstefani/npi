@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Address, Enumeration
+from models import Enumeration
 
 
 
@@ -9,5 +9,5 @@ class EnumerationAdmin(admin.ModelAdmin):
               'organization_name')
 admin.site.register(Enumeration, EnumerationAdmin)
 
-admin.site.register(Address)
+
 

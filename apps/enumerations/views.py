@@ -7,9 +7,12 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from models import Address, Enumeration, License
+from models import Enumeration
+from ..addresses.models import Address
+from ..licenses.models import License
 import sys
 from forms import *
+from ..addresses.forms import *
 from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate
 
@@ -184,7 +187,8 @@ def edit_enhanced_enumeration(request, id):
     
     
     if request.method == 'POST':
-        form = EnumerationEnhancementForm(request.POST, instance=e)
+        form = EnumerationEnhancementForm(request.POST, request.FILES, instance=e)
+        print "here"
         if form.is_valid():
             e = form.save()
             return HttpResponseRedirect(reverse('edit_enumeration',
