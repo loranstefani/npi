@@ -50,9 +50,12 @@
         <li class="sidebar-brand"><a href="http://startbootstrap.com">Start Bootstrap</a></li>
         <li><a href="#top">Home</a></li>
         <li><a href="#details">Details</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#directions">Directions</a></li>
+        {% if enumeration.bio_headline != "" %}
+            <li><a href="#biography">Biography</a></li>
+        {% endif %}
         <li><a href="#contact">Contact</a></li>
+        <li><a href="#directions">Directions</a></li>
+        
         <li><a href="/enumerations/edit/{{enumeration.id}}">Edit</a></li>
         
       </ul>
@@ -65,9 +68,15 @@
         <h1>{{enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}</h1>
         <h3>{{enumeration.credential }}</h3>
         <a href="#details" class="btn btn-default btn-lg btn-primary">Details</a>
-        <a href="#about" class="btn btn-default btn-lg btn-primary">About</a>
-        <a href="#directions" class="btn btn-default btn-lg btn-primary ">Directions</a>
+        
+        {% if enumeration.bio_headline != "" %}
+        <a href="#biography" class="btn btn-default btn-lg btn-primary">Biography</a>
+        {% endif %}
+        
         <a href="#contact" class="btn btn-default btn-lg btn-primary">Contact</a>
+        
+        <a href="#directions" class="btn btn-default btn-lg btn-primary ">Directions</a>
+        
       </div>
     </div>
     <!-- /Full Page Image Header Area -->
@@ -79,7 +88,7 @@
   
   
   
-    <!-- Intro -->
+    <!-- Details -->
     <div id="details" class="intro">
       <div class="container">
         <div class="row">
@@ -90,51 +99,17 @@
         </div>
       </div>
     </div>
-    <!-- /Intro -->
+    <!-- /Details -->
   
 
 
 
 
 
+{% if enumeration.bio_headline != "" %}
 
-
-
-
-
-
-    <!-- Portfolio -->
-    <div id="about" class="portfolio">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-4 col-md-offset-4 text-center">
-            <h2>About</h2>
-            <hr>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4 col-md-offset-2 text-center">
-            <div class="portfolio-item">
-              <a href="#"><img class="img-portfolio img-responsive" src="{{ STATIC_URL }}stylish-portfolio/img/portfolio-1.jpg"></a>
-              <h4>Cityscape</h4>
-            </div>
-          </div>
-          <div class="col-md-4 text-center">
-            <div class="portfolio-item">
-              <a href="#"><img class="img-portfolio img-responsive" src="{{ STATIC_URL }}stylish-portfolio/img/portfolio-2.jpg"></a>
-              <h4>Is That On Fire?</h4>
-            </div>
-          </div>
-        </div>
-        
-          
-        </div>
-      </div>
-    </div>
-    <!-- /Portfolio -->
-    
    <!-- Callout -->
-    <div class="callout">
+    <div id="biography" class="callout">
       <div class="vert-text">
         <h1>{{enumeration.bio_headline}}</h1>
       </div>
@@ -153,8 +128,8 @@
       </div>
     </div>
     <!-- /Extended bio -->
-  
-    
+
+{% endif %}
     
     
     
@@ -165,12 +140,31 @@
     <div id="contact" class="call-to-action">
       <div class="container">
         <div class="row">
-          <div class="col-md-6 col-md-offset-3 text-center">
-              <h3>Hours of Operation: {{enumeration.hours_of_operation}}</h3>
-              <h3>Mailing Address: {{enumeration.mailing_address}}</h3>
-              <h3>Primary Practice Address: {{enumeration.location_address}}</h3>
-            
-          </div>
+          <h3>Practice Address:</h3>
+          <h4>
+            {{ enumeration.location_address }} (<a href="#directions">Map Below</a>)
+            Phone: +1 {{ enumeration.location_address.us_telephone_number}}
+            Fax: +1 {{ enumeration.location_address.us_fax_number}}
+          </h4>
+          
+          <h5>
+            <em>This may not be the address you are seeking. Health
+            care providers often practice from multiple locations.
+            </em>
+          </h5>
+          
+          <h3>Mailing Addresss</h3>
+          
+          <h4>{{ enumeration.mailing_address }}
+                Phone: +1 {{ enumeration.location_address.us_telephone_number}}
+                Fax: +1 {{ enumeration.location_address.us_fax_number}}
+          </h4>
+          
+          <h5>
+            <em>This may not be the address you are seeking. Health
+            care providers often use third paties to handle mail and billing correspondence.
+            </em>
+        </h5>
         </div>
       </div>
     </div>
@@ -184,14 +178,14 @@
     </div>
     <!-- /Map -->
     
-    {% if enumeration.driving_directions %}
-    
     <!-- Additional Directions -->
     <div class="call-to-action">
       <div class="container">
         <div class="row">
           <div class="col-md-6 col-md-offset-3 text-center">
-            <h3>{{enumeration.driving_directions}}</h3>
+            <h3>This may not be the address you are seeking. Health
+          care providers often practice from multiple locations and CMS may not
+          have the latest information on file within NPPES.</h3>
             
           
           </div>
@@ -199,7 +193,7 @@
       </div>
     </div>
     <!-- /Additional Directions-->
-    {% endif %}
+
     
     
     <!-- Footer -->
