@@ -8,11 +8,13 @@ from django.utils.translation import ugettext_lazy as _
 from ..enumerations.models import Enumeration
 
 def display_enumeration_profile(request, number):
+    
     e = get_object_or_404(Enumeration, number=number)
-    random_background = "%s.jpg" % (random.randrange(1,26))
+    random_background = "%s.jpg" % (random.randrange(1,27))
     context ={"enumeration": e,
               "random_bg_image": random_background,
               }
+    
     return render(request,'stylish-portfolio.html', context) 
 
 
