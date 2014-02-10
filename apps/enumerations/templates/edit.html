@@ -45,6 +45,7 @@
   <thead>
   <tr>
     <th>Section</th>
+    <th>Required</th>
     <th>Information</th>
     <th>Actions</th>
   </tr>
@@ -52,6 +53,7 @@
   
    <tr>
     <td>Enumeration Type / Number / Status</td>
+    <td>Yes</td>
     <td>{{enumeration.enumeration_type}} / {{enumeration.number|default:"Unassigned"}} / {{enumeration.pretty_status}}</td>
     <td>
        <a href="/enumeration/deactiviate/{{enumeration.id}}">Deactivate</a> |
@@ -62,10 +64,11 @@
   
   <tr>
     <td>Basic Information</td>
+    <td>Yes</td>
     <td>
-    Point of contact for {{ enumeration.name }} is {{ enumeration.contact_person_first_name }}
-    {{ enumeration.contact_person_last_name }}.
+    Contact Person, Authorized Official, etc.
     </td>
+    
     <td>
       <a href="/enumerations/edit-basic/{{enumeration.id}}">Edit</a>
       </td>
@@ -74,8 +77,9 @@
  
    <tr>
     <td>Profile Enhancements</td>
+   <td>No</td>
    <td>
-    {{ enumeration.website|default:"No website" }}
+    Provide a website, social media links, etc. 
     </td>
     <td>
       <a href="/enumerations/edit-enhanced/{{enumeration.id}}">Edit</a>
@@ -85,6 +89,7 @@
   {% if enumeration.enumeration_type == "NPI-2" %}
    <tr>
     <td>Parent Organization</td>
+    <td>No</td>
    <td>
     {{ enumeration.parent_organization|default:"No parent organization" }}
     </td>
@@ -100,7 +105,7 @@
 
 
     <tr>
-    <td>Mailing Address (Correspondence)</td>
+    <td>Mailing Address (Correspondence)</td><td>Yes</td>
     <td>{{ enumeration.mailing_address }}</td>
     {% if enumeration.mailing_address  %}
     <td>
@@ -114,6 +119,7 @@
  
     <tr>
     <td>Location Address (Physical)</td>
+    <td>Yes</td>
     <td>{{ enumeration.location_address }}</td>
     {% if enumeration.location_address  %}
     <td>
@@ -131,6 +137,7 @@
     
     <tr>
     <td>1099 Address</td>
+    <td>Yes</td>
     <td>{{ enumeration.ten_ninety_nine_address }}</td>
     {% if enumeration.ten_ninety_nine_address  %}
     <td>
@@ -147,6 +154,7 @@
   
     <tr>
     <td>Medical Record Storage Address</td>
+    <td>Yes</td>
     <td>{{ enumeration.medical_record_storage_address }}</td>
     {% if enumeration.medical_record_storage_address  %}
     <td>
@@ -163,6 +171,7 @@
   
     <tr>
     <td>Medicare Provider Validation Address</td>
+    <td>Yes</td>
     <td>{{ enumeration.revalidation_address }}</td>
     {% if enumeration.revalidation_address  %}
     <td>
