@@ -4,6 +4,7 @@ from localflavor.us.us_states import US_STATES
 
 class DirectAddress(models.Model):
     email         = models.EmailField(max_length=150)
+    organization  = models.CharField(max_length=150,  default="")
     dns           = models.CharField(max_length=150,  blank=True, default="",
                                     editable=False)
     certificate    = models.FileField(blank = True, null=False, default='',

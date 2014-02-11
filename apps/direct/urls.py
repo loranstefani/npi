@@ -14,5 +14,7 @@ urlpatterns = patterns('',
     url(r'^add/(?P<enumeration_id>\S+)',
                     add_direct_address, name="add_direct_address"),
 
+    url(r'^delete/(?P<direct_id>\S+)/(?P<enumeration_id>\S+)',
+                    delete_direct_address, name="delete_direct_address"),
 
     )
