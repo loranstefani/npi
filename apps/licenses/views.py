@@ -14,7 +14,7 @@ from ..enumerations.utils import get_enumeration_user_manages_or_404
 
 @login_required
 def manual_add_license(request, enumeration_id):
-    name = _("Create License")
+    name = _("Add License")
     if request.method == 'POST':
         form = CreateLicenseForm(request.POST)
         
