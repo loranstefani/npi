@@ -18,7 +18,7 @@ from ..surrogates.models import Surrogate
 
 
 def search_enumeration(request):
-    name = _("Search for Enumeration Records")
+    name = _("Search")
     if request.method == 'POST':
     
         form = SearchForm(request.POST,)

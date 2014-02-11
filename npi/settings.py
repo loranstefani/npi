@@ -149,7 +149,6 @@ INSTALLED_APPS = (
     'apps.profilee',
     'apps.surrogates',
     'apps.downloads',
-    'apps.search',
     'apps.statistics',
     
 )
