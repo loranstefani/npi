@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'apps.taxonomy',
     'apps.enumerations',
     'apps.licenses',
+    'apps.specialties',
     'apps.addresses',
     'apps.direct',
     'apps.home',

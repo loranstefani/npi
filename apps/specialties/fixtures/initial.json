@@ -1,0 +1,920 @@
+[
+{
+    "pk": 1, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BG0000Y", 
+        "code": "1", 
+        "description": "General Practice"
+    }
+},
+{
+    "pk": 2, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0100Y", 
+        "code": "2", 
+        "description": "General Surgery"
+    }
+},
+{
+    "pk": 3, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BA0201Y", 
+        "code": "3", 
+        "description": "Allergy/Immunology"
+    }
+},
+{
+    "pk": 4, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX0500Y", 
+        "code": "4", 
+        "description": "Otolaryngology"
+    }
+},
+{
+    "pk": 5, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BA0300Y", 
+        "code": "5", 
+        "description": "Anesthesiology"
+    }
+},
+{
+    "pk": 6, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BC0100Y", 
+        "code": "6", 
+        "description": "Cardiology"
+    }
+},
+{
+    "pk": 7, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BD0100Y", 
+        "code": "7", 
+        "description": "Dermatology"
+    }
+},
+{
+    "pk": 8, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BF0100Y", 
+        "code": "8", 
+        "description": "Family Practice"
+    }
+},
+{
+    "pk": 9, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "unknown", 
+        "code": "9", 
+        "description": "Interventional Pain Management (IPM)"
+    }
+},
+{
+    "pk": 10, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BG0100Y", 
+        "code": "10", 
+        "description": "Gastroenterology"
+    }
+},
+{
+    "pk": 11, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BI0300Y", 
+        "code": "11", 
+        "description": "Internal Medicine"
+    }
+},
+{
+    "pk": 12, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX2100Y", 
+        "code": "12", 
+        "description": "Osteopathic Manipulative Therapy"
+    }
+},
+{
+    "pk": 13, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BN0400Y", 
+        "code": "13", 
+        "description": "Neurology"
+    }
+},
+{
+    "pk": 14, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0110Y", 
+        "code": "14", 
+        "description": "Neurosurgery"
+    }
+},
+{
+    "pk": 15, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX0001Y", 
+        "code": "16", 
+        "description": "Obstetrics/Gynecology"
+    }
+},
+{
+    "pk": 16, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX0300Y", 
+        "code": "18", 
+        "description": "Ophthalmology"
+    }
+},
+{
+    "pk": 17, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "1223S0112Y", 
+        "code": "19", 
+        "description": "Oral Surgery (dental only)"
+    }
+},
+{
+    "pk": 18, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0113Y", 
+        "code": "20", 
+        "description": "Orthopedic Surgery"
+    }
+},
+{
+    "pk": 19, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP0100Y", 
+        "code": "22", 
+        "description": "Pathology"
+    }
+},
+{
+    "pk": 20, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0122Y", 
+        "code": "24", 
+        "description": "Plastic and Reconstructive Surgery"
+    }
+},
+{
+    "pk": 21, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP0400Y", 
+        "code": "25", 
+        "description": "Physical Medicine and Rehabilitation"
+    }
+},
+{
+    "pk": 22, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP0800Y", 
+        "code": "26", 
+        "description": "Psychiatry"
+    }
+},
+{
+    "pk": 23, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0101Y", 
+        "code": "28", 
+        "description": "Colorectal Surgery (Formerly Proctology)"
+    }
+},
+{
+    "pk": 24, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP1001Y", 
+        "code": "29", 
+        "description": "Pulmonary Disease"
+    }
+},
+{
+    "pk": 25, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BR0202Y", 
+        "code": "30", 
+        "description": "Diagnostic Radiology"
+    }
+},
+{
+    "pk": 26, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "unknown", 
+        "code": "32", 
+        "description": "Anesthesiologist Assistant (AA)"
+    }
+},
+{
+    "pk": 27, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0125Y", 
+        "code": "33", 
+        "description": "Thoracic Surgery"
+    }
+},
+{
+    "pk": 28, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BU0100Y", 
+        "code": "34", 
+        "description": "Urology"
+    }
+},
+{
+    "pk": 29, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "111N00000N", 
+        "code": "35", 
+        "description": "Chiropractic"
+    }
+},
+{
+    "pk": 30, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BN0900Y", 
+        "code": "36", 
+        "description": "Nuclear Medicine"
+    }
+},
+{
+    "pk": 31, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP0200Y", 
+        "code": "37", 
+        "description": "Pediatric Medicine"
+    }
+},
+{
+    "pk": 32, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BG0300N", 
+        "code": "38", 
+        "description": "Geriatric Medicine"
+    }
+},
+{
+    "pk": 33, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BN0300Y", 
+        "code": "39", 
+        "description": "Nephrology"
+    }
+},
+{
+    "pk": 34, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0105Y", 
+        "code": "40", 
+        "description": "Hand Surgery"
+    }
+},
+{
+    "pk": 35, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "152W00000N", 
+        "code": "41", 
+        "description": "Optometry"
+    }
+},
+{
+    "pk": 36, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "366B00000N", 
+        "code": "42", 
+        "description": "Certified Nurse Midwife"
+    }
+},
+{
+    "pk": 37, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "367500000N", 
+        "code": "43", 
+        "description": "Certified Registered Nurse Anesthetist (CRNA)"
+    }
+},
+{
+    "pk": 38, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BI0200Y", 
+        "code": "44", 
+        "description": "Infectious Disease"
+    }
+},
+{
+    "pk": 39, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "261QR0206N*", 
+        "code": "45", 
+        "description": "Mammography Screening Center"
+    }
+},
+{
+    "pk": 40, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BE0100Y", 
+        "code": "46", 
+        "description": "Endocrinology"
+    }
+},
+{
+    "pk": 41, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "293D00000N", 
+        "code": "47", 
+        "description": "Independent Diagnostic Testing Facility (IDTF)"
+    }
+},
+{
+    "pk": 42, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "213E00000N", 
+        "code": "48", 
+        "description": "Podiatry"
+    }
+},
+{
+    "pk": 43, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "261QA1903N*", 
+        "code": "49", 
+        "description": "Ambulatory Surgical Center"
+    }
+},
+{
+    "pk": 44, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "363L00000N", 
+        "code": "50", 
+        "description": "Nurse Practitioner"
+    }
+},
+{
+    "pk": 45, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "335E00000N*", 
+        "code": "51", 
+        "description": "Medical Supply Co. w/Certified Orthotist"
+    }
+},
+{
+    "pk": 46, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "335E00000N*", 
+        "code": "52", 
+        "description": "Medical Supply Co. w/Certified Prosthetist"
+    }
+},
+{
+    "pk": 47, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "335E00000N*", 
+        "code": "53", 
+        "description": "Medical Supply Co. w/Certified Orthotist-Prosthetist"
+    }
+},
+{
+    "pk": 48, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "54", 
+        "description": "Medical Supply Co. w/o certification (DME) (Note: With the implementation of CR50300, all DME related logic was removed from MCS)"
+    }
+},
+{
+    "pk": 49, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "222Z00000N", 
+        "code": "55", 
+        "description": "Individual Certified Orthotist"
+    }
+},
+{
+    "pk": 50, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "224P00000N", 
+        "code": "56", 
+        "description": "Individual Certified Prosthetist"
+    }
+},
+{
+    "pk": 51, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "225000000N", 
+        "code": "57", 
+        "description": "Individual Certified Prosthetist-Orthotist"
+    }
+},
+{
+    "pk": 52, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "58", 
+        "description": "Medical Supply Co. w/Registered Pharmacist"
+    }
+},
+{
+    "pk": 53, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BR0500Y", 
+        "code": "66", 
+        "description": "Rheumatology"
+    }
+},
+{
+    "pk": 54, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "3416L0300N*", 
+        "code": "59", 
+        "description": "Ambulance Service Supplier"
+    }
+},
+{
+    "pk": 55, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "2514P0906N*", 
+        "code": "60", 
+        "description": "Public Health or Welfare Agency"
+    }
+},
+{
+    "pk": 56, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "2514V0001N*", 
+        "code": "61", 
+        "description": "Voluntary Health or Charitable Agency"
+    }
+},
+{
+    "pk": 57, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "103T00000N", 
+        "code": "62", 
+        "description": "Psychologist (Billing Independently)"
+    }
+},
+{
+    "pk": 58, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "335V00000N*", 
+        "code": "63", 
+        "description": "Portable X-Ray Supplier (Billing Independently)"
+    }
+},
+{
+    "pk": 59, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "231H00000N", 
+        "code": "64", 
+        "description": "Audiologist (Billing Independently)"
+    }
+},
+{
+    "pk": 60, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "225100000N", 
+        "code": "65", 
+        "description": "Physical Therapist in Private Practice"
+    }
+},
+{
+    "pk": 61, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "225X00000N", 
+        "code": "67", 
+        "description": "Occupational Therapist in Private Practice"
+    }
+},
+{
+    "pk": 62, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "103TC0700N", 
+        "code": "68", 
+        "description": "Clinical Psychologist"
+    }
+},
+{
+    "pk": 63, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "291U00000N*", 
+        "code": "69", 
+        "description": "Clinical Laboratory (Billing Independently)"
+    }
+},
+{
+    "pk": 64, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "261QM1300N*", 
+        "code": "70", 
+        "description": "Multispecialty Clinic or Group Practice"
+    }
+},
+{
+    "pk": 65, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "133V00000N*", 
+        "code": "71", 
+        "description": "Registered Dietitian/Nutrition Professional"
+    }
+},
+{
+    "pk": 66, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP2900N*", 
+        "code": "72", 
+        "description": "Pain Management"
+    }
+},
+{
+    "pk": 67, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "Unknown", 
+        "code": "73", 
+        "description": "Mass Immunization Roster Biller"
+    }
+},
+{
+    "pk": 68, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "Unknown", 
+        "code": "74", 
+        "description": "Radiation Therapy Centers"
+    }
+},
+{
+    "pk": 69, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "unknown", 
+        "code": "75", 
+        "description": "Slide Preparation Facilities"
+    }
+},
+{
+    "pk": 70, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0129Y", 
+        "code": "76", 
+        "description": "Peripheral Vascular Disease"
+    }
+},
+{
+    "pk": 71, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0129Y", 
+        "code": "77", 
+        "description": "Vascular Surgery"
+    }
+},
+{
+    "pk": 72, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0133N", 
+        "code": "78", 
+        "description": "Cardiac Surgery"
+    }
+},
+{
+    "pk": 73, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BA0401N", 
+        "code": "79", 
+        "description": "Addiction Medicine"
+    }
+},
+{
+    "pk": 74, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "1041C0700N", 
+        "code": "80", 
+        "description": "Clinical Social Worker"
+    }
+},
+{
+    "pk": 75, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BC0200Y", 
+        "code": "81", 
+        "description": "Critical Care (Intensivists)"
+    }
+},
+{
+    "pk": 76, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BH0000Y", 
+        "code": "82", 
+        "description": "Hematology"
+    }
+},
+{
+    "pk": 77, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BH0003Y", 
+        "code": "83", 
+        "description": "Hematology/Oncology"
+    }
+},
+{
+    "pk": 78, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP0500Y", 
+        "code": "84", 
+        "description": "Preventive Medicine"
+    }
+},
+{
+    "pk": 79, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BS0123Y", 
+        "code": "85", 
+        "description": "Maxillofacial Surgery"
+    }
+},
+{
+    "pk": 80, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BP0801Y", 
+        "code": "86", 
+        "description": "Neuropsychiatry"
+    }
+},
+{
+    "pk": 81, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "87", 
+        "description": "All Other Suppliers"
+    }
+},
+{
+    "pk": 82, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "88", 
+        "description": "Unknown Supplier/Provider (hospital)."
+    }
+},
+{
+    "pk": 83, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "364S00000N", 
+        "code": "89", 
+        "description": "Clinical Nurse Specialist"
+    }
+},
+{
+    "pk": 84, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX0202Y", 
+        "code": "90", 
+        "description": "Medical Oncology"
+    }
+},
+{
+    "pk": 85, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX0200Y", 
+        "code": "91", 
+        "description": "Surgical Oncology"
+    }
+},
+{
+    "pk": 86, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BR0001Y", 
+        "code": "92", 
+        "description": "Radiation Oncology"
+    }
+},
+{
+    "pk": 87, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BE0004Y", 
+        "code": "93", 
+        "description": "Emergency Medicine"
+    }
+},
+{
+    "pk": 88, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BR0201Y", 
+        "code": "94", 
+        "description": "Interventional Radiology"
+    }
+},
+{
+    "pk": 89, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "156FX1800N", 
+        "code": "96", 
+        "description": "Optician"
+    }
+},
+{
+    "pk": 90, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "363A00000N", 
+        "code": "97", 
+        "description": "Physician Assistant"
+    }
+},
+{
+    "pk": 91, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203BX0201Y", 
+        "code": "98", 
+        "description": "Gynecological /Oncology"
+    }
+},
+{
+    "pk": 92, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "203B00000N", 
+        "code": "99", 
+        "description": "Unknown Physician Specialty"
+    }
+},
+{
+    "pk": 93, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "282N00000N*", 
+        "code": "A0", 
+        "description": "Hospital"
+    }
+},
+{
+    "pk": 94, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "314000000N*", 
+        "code": "A1", 
+        "description": "Skilled Nursing Facility"
+    }
+},
+{
+    "pk": 95, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "313M00000N*", 
+        "code": "A2", 
+        "description": "Intermediate Care Nursing Facility"
+    }
+},
+{
+    "pk": 96, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "313M00000N*", 
+        "code": "A3", 
+        "description": "Nursing Facility, Other"
+    }
+},
+{
+    "pk": 97, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "2514H0200N*", 
+        "code": "A4", 
+        "description": "Home Health Agency"
+    }
+},
+{
+    "pk": 98, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "333600000N*", 
+        "code": "A5", 
+        "description": "Pharmacy"
+    }
+},
+{
+    "pk": 99, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "A6", 
+        "description": "Medical Supply Co. w/Respiratory Therapist"
+    }
+},
+{
+    "pk": 100, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "A7", 
+        "description": "Department Store"
+    }
+},
+{
+    "pk": 101, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "332B00000N*", 
+        "code": "A8", 
+        "description": "Grocery Store"
+    }
+},
+{
+    "pk": 102, 
+    "model": "specialties.specialty", 
+    "fields": {
+        "taxonomy": "207RS0012X", 
+        "code": "C0", 
+        "description": "Sleep Medicine"
+    }
+}
+]
