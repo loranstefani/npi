@@ -36,6 +36,8 @@ MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
 
 
 
+
+
 class Address(models.Model):
     address_type    = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
     address_purpose = models.CharField(max_length=20, choices=ADDRESS_PURPOSE_CHOICES)
@@ -50,16 +52,14 @@ class Address(models.Model):
     foreign_state         = models.CharField(max_length=2,  blank=True, default="")
     foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
     us_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone."
-                                           )
+                                           help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone.")
     us_fax_number   = models.CharField(max_length=12,  blank=True, default="",)
     foreign_telephone_number   = models.CharField(max_length=20,  blank=True, default="")
     foreign_fax_number   = models.CharField(max_length=20,  blank=True, default="") 
-    mpo                    = models.CharField(max_length=3, choices= MPO_CHOICES,
+    mpo             = models.CharField(max_length=3, choices= MPO_CHOICES,
                                               blank=True, default="",
                                               verbose_name="Military Post Office")
-    latitude                = models.CharField(max_length=20, default="", blank=True)
-    longitude               = models.CharField(max_length=20, default="", blank=True)
+    
     website                 = models.CharField(max_length=15,  blank=True, default="")
     driving_details         = models.CharField(max_length=15,  blank=True, default="")
     hours_of_operation      = models.TextField(max_length=255,  blank=True, default="")
@@ -70,14 +70,19 @@ class Address(models.Model):
     display_fax             = models.BooleanField(default=False)
     usps_stadardized        = models.BooleanField(default=False)
     ignore_standardized     = models.BooleanField(default=False,
-                            help_text="Check this if the USPS is just wrong and causes missed correspondence.")
-    background_image            = models.ImageField(blank = True, null=False, default='',
-                                    max_length=255L, upload_to="address-backgrounds",
-                                    verbose_name= "Background Image")
-    
-    avatar_image                = models.ImageField(blank = True, null=False, default='',
-                                    max_length=255L, upload_to="address-avatars",
-                                    verbose_name= "Profile Photo")
+                                      help_text="Check this if the USPS is just wrong and causes missed correspondence.")             
+     
+     
+    county_name             = models.CharField(max_length=150,  blank=True, default="")
+    active                  = models.CharField(max_length=2,  blank=True, default="")
+    vacant                  = models.CharField(max_length=2,  blank=True, default="")
+    record_type             = models.CharField(max_length=2,  blank=True, default="")
+    rdi                     = models.CharField(max_length=15,  blank=True, default="")
+    lat                     = models.CharField(max_length=20, default="", blank=True)
+    long                    = models.CharField(max_length=20, default="", blank=True)                                             
+                                                  
+                                                  
+                           
 
     def __unicode__(self):
         
