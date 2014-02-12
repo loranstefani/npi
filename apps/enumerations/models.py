@@ -7,6 +7,7 @@ import uuid, random
 from ..addresses.models import Address, US_STATE_CHOICES
 from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
+from ..specialties.models import Specialty
 from ..direct.models import DirectAddress
 from localflavor.us.models import PhoneNumberField
 
@@ -35,6 +36,8 @@ class Enumeration(models.Model):
     status                = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
+    enumeration_type            = models.CharField(max_length=10,
+                                    choices=ENUMERATION_TYPE_CHOICES,)
         
     number              = models.CharField(max_length=10, blank=True, default="",
                                                    #editable=False
@@ -54,6 +57,7 @@ class Enumeration(models.Model):
     name_suffix           = models.CharField(max_length=15, blank=True,
                                                    default="")
     
+    sole_proprietor             = models.BooleanField(default=False)
     credential           = models.CharField(max_length=15, blank=True,
                                                    default="",
                                                    help_text ="e.g. MD, PA, OBGYN, DO")
@@ -79,60 +83,52 @@ class Enumeration(models.Model):
     other_last_name_2     = models.CharField(max_length=100, blank=True,
                                                    default="",
                                                    help_text="Another previous or maiden last name")
-    
 
-    public_email               = models.CharField(max_length=150,  blank=True, default="")
-    
-    taxonomy                   = models.ForeignKey(TaxonomyCode, null=True, blank=True,
-                                        related_name ="enumeration_primary_taxonomy",
-                                        verbose_name="Primary Taxonomy")
-    other_taxonomies           = models.ManyToManyField(TaxonomyCode, null=True,
-                                        blank=True, related_name ="enumeration_other_taxonomies")
     
     #Profile Enhancements
-    website                    = models.CharField(max_length=300,   blank=True, default="")
-    facebook_handle            = models.CharField(max_length=300,   blank=True, default="")
-    twitter_handle             = models.CharField(max_length=300,   blank=True, default="")
+    custom_profile_url         = models.CharField(max_length=100,   blank=True, default="")
+    website                    = models.CharField(max_length=200,   blank=True, default="")
+    facebook_handle            = models.CharField(max_length=100,   blank=True, default="")
+    twitter_handle             = models.CharField(max_length=100,   blank=True, default="")
     public_email               = models.EmailField(blank=True,      default="")
     driving_directions         = models.TextField(max_length=256,   blank=True, default="")
-    hours_of_operation         = models.TextField(max_length=256,   blank=True, default="")
     bio_headline               = models.CharField(max_length=255,   blank=True, default="")
     bio_detail                 = models.TextField(max_length=1024,  blank=True, default="")
     background_image           = models.ImageField(blank = True,    null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
                                     verbose_name= "Background Image")
-    
     avatar_image               = models.ImageField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="enumeration-avatars",
                                     verbose_name= "Avatar Photo")
+    #PECOS Related
+    pecos_id                    = models.CharField(max_length=20, blank=True,
+                                                   default="")
+    # Associations is stubbed out for future provider to organization or group relations.
+    # This feature is not implemented, but wanted to create the DB model.
+    associations                = models.ManyToManyField('self', null=True,
+                                    blank=True, editable=False,
+                                    related_name = "enumerations_associations")
     
-    image_left                 = models.ImageField(blank = True, null=False, default='',
-                                    max_length=255L, upload_to="image_left",
-                                    verbose_name= "Left Profile Photo")
     
-    image_right                = models.ImageField(blank = True, null=False, default='',
-                                    max_length=255L, upload_to="image_right",
-                                    verbose_name= "Right Profile Photo")
-
-
-    medicare_id                 = models.CharField(max_length=20, blank=True, default="")
-    
-
-    managers                    = models.ManyToManyField(User, null=True, blank=True)
-    
-
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
                                     null=True, blank=True)
     
+    parent_organization         = models.ForeignKey('self', null=True, blank=True,
+                                        related_name = "enumeration_parent_organization")
+    
+    
 
+    
+
+    
     mailing_address             = models.ForeignKey(Address,
                                     related_name = "enumeration_primary_mailing_address",
-                                    verbose_name = "Business address for correspondence",
+                                    verbose_name = "Mailing Address",
                                     null=True, blank=True)
     
     location_address            = models.ForeignKey(Address,
-                                        help_text = "Primary location is a physical address of your practice or business",
+                                        help_text = "Location is a physical address of your practice or business",
                                         related_name = "enumeration_location_address",
                                         null=True, blank=True)
     
@@ -151,28 +147,38 @@ class Enumeration(models.Model):
     revalidation_address    = models.ForeignKey(Address, verbose_name="PECOS Revalidation Address",
                                         related_name = "enumeration_revalidation_address",
                                         null=True, blank=True)
-   
-    parent_organization         = models.ForeignKey('self', null=True, blank=True,
-                                        related_name = "enumeration_parent_organization")
     
-    associations                = models.ManyToManyField('self', null=True, blank=True,
-                                        related_name = "enumerations_associations")
     
-    enumeration_type            = models.CharField(max_length=10, choices=ENUMERATION_TYPE_CHOICES,)
+    
+       
+    taxonomy                   = models.ForeignKey(TaxonomyCode, null=True, blank=True,
+                                        related_name ="enumeration_primary_taxonomy",
+                                        verbose_name="Primary Taxonomy")
+    
+    other_taxonomies           = models.ManyToManyField(TaxonomyCode, null=True,
+                                        blank=True, related_name ="enumeration_other_taxonomies")
+    
     
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
                                         related_name = "enumerations_licenses")
+    
+
+    
+    specialties                 = models.ManyToManyField(Specialty, null=True, blank=True,
+                                        related_name = "enumerations_specialties")
+    
     
     direct_addresses            = models.ManyToManyField(DirectAddress, null=True, blank=True,
                                         related_name = "enumerations_direct_addresses")
 
     
+    managers                    = models.ManyToManyField(User, null=True, blank=True)
+    
+    
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
     
 
     
-
-    sole_proprietor             = models.BooleanField(default=False)
 
     #PII --------------------------------------------------------------------
     state_of_birth      = models.CharField(max_length=2,  blank=True, default="",
@@ -256,6 +262,22 @@ class Enumeration(models.Model):
     
     authorized_person_email = models.EmailField(blank=True, default="",
                                help_text = "Required if authorized person has an email.")
+    
+    primary_location_telephone_number  = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX."
+                                           )
+    primary_location_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX."
+                                           )
+    primary_location_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX."
+                                           )
+    
+    
+    primary_mailing_telephone_number  = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX."
+                                           )
+    
     
     
     # End PII -----------------------------------------------------------------

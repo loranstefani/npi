@@ -102,13 +102,13 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
         super(CreateEnumerationOrganizationForm,self).__init__(*args,**kwargs)
         self.fields['organization_name'].required = True
         self.fields['ein'].required = True
-        self.fields['ein'].help_text = "EINs are issued by the IRS. This is required for organizations."
-        self.fields['contact_person_first_name'].required = True
-        self.fields['contact_person_last_name'].required = True
-        self.fields['contact_person_telephone_number'].required = True
-        self.fields['authorized_person_first_name'].required = True
-        self.fields['authorized_person_last_name'].required = True
-        self.fields['authorized_person_telephone_number'].required = True
+        self.fields['ein'].help_text = "An EIN is issued by the IRS. This is required for organizations."
+        #self.fields['contact_person_first_name'].required = True
+        #self.fields['contact_person_last_name'].required = True
+        #self.fields['contact_person_telephone_number'].required = True
+        #self.fields['authorized_person_first_name'].required = True
+        #self.fields['authorized_person_last_name'].required = True
+        #self.fields['authorized_person_telephone_number'].required = True
 
 
         
@@ -139,13 +139,13 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
         super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
-        self.fields['contact_person_first_name'].required = True
-        self.fields['contact_person_last_name'].required = True
-        self.fields['contact_person_telephone_number'].required = True
-        self.fields['authorized_person_first_name'].required = True
-        self.fields['authorized_person_last_name'].required = True
-        self.fields['authorized_person_telephone_number'].required = True
-        self.fields['ssn'].required = True
+        #self.fields['contact_person_first_name'].required = True
+        #self.fields['contact_person_last_name'].required = True
+        #self.fields['contact_person_telephone_number'].required = True
+        #self.fields['authorized_person_first_name'].required = True
+        #self.fields['authorized_person_last_name'].required = True
+        #self.fields['authorized_person_telephone_number'].required = True
+        #self.fields['ssn'].required = True
         
     class Meta:
         model = Enumeration
@@ -178,17 +178,14 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
 class EnumerationEnhancementForm(forms.ModelForm):
     class Meta:
         model = Enumeration
-        fields = ('website', 'facebook_handle', 'twitter_handle', 'driving_directions',
-                  'hours_of_operation', 'bio_headline', 'bio_detail',
-                  'avatar_image', 'background_image','image_left', 'image_right',
-                  )
+        fields = ('custom_profile_url', 'website', 'facebook_handle',
+                  'twitter_handle', 'driving_directions', 'bio_headline',
+                  'bio_detail', 'avatar_image', 'background_image',)
     required_css_class = 'required'
 
 
 
 class AddParentForm(forms.Form):
-    
-    
     number = forms.CharField(max_length=20, initial="", label="Number (e.g. NPI, OEID)")
     required_css_class = 'required'
 
