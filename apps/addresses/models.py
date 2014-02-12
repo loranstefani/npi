@@ -23,7 +23,9 @@ ADDRESS_PURPOSE_CHOICES = (("LOCATION",     "Location Address (Phyiscal)"),
                            ("MEDREC-STORAGE",       "Medical Records Storage Address"),
                            ("1099",                 "1099 Address"),
                            ("REVALIDATION",         "Revalidation Address"),
-                           ("ADDITIONAL-LOCATION",  "Additional Location Address"),)
+                           ("ADDITIONAL-LOCATION",  "Additional Location Address"),
+                           ("REMITTANCE",            "Remmitance Address"),
+                           )
 
 
 #AE (ZIPs 09xxx) for Armed Forces Europe which includes Canada, Middle East, and Africa
@@ -75,6 +77,7 @@ class Address(models.Model):
      
     county_name             = models.CharField(max_length=150,  blank=True, default="")
     active                  = models.CharField(max_length=2,  blank=True, default="")
+    deliverable             = models.CharField(max_length=2,  blank=True, default="")
     vacant                  = models.CharField(max_length=2,  blank=True, default="")
     record_type             = models.CharField(max_length=2,  blank=True, default="")
     rdi                     = models.CharField(max_length=15,  blank=True, default="")
