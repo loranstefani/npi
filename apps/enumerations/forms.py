@@ -4,14 +4,16 @@
 
 
 from django import forms
-from django.forms.extras.widgets import SelectDateWidget
+from localflavor.us.us_states import US_STATES
 from models import  Enumeration, License
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
+MY_US_STATES = [("", "No State"), ]
 
+MY_US_STATES = MY_US_STATES + list(US_STATES)
 
 
 class SearchForm(forms.ModelForm):
@@ -19,7 +21,11 @@ class SearchForm(forms.ModelForm):
         model = Enumeration
         fields = (
                   'number', 'first_name', 'last_name', 'organization_name',
+                  'ein'
                   )
+    
+    city  = forms.CharField(required=False)
+    state = forms.ChoiceField(choices=MY_US_STATES, required=False)
     required_css_class = 'required'
     
     def save(self, force_insert=False, force_update=False, commit=True):
@@ -29,6 +35,9 @@ class SearchForm(forms.ModelForm):
         first_name          = self.cleaned_data.get("first_name", "")
         last_name           = self.cleaned_data.get("last_name", "")
         organization_name   = self.cleaned_data.get("organization_name", "")
+        city                = self.cleaned_data.get("city", "")
+        state               = self.cleaned_data.get("state", "")
+        ein                 = self.cleaned_data.get("ein", "")
         
         
         if number:
@@ -42,9 +51,22 @@ class SearchForm(forms.ModelForm):
         
         if organization_name:
             q['organization_name']=organization_name
-        
             
-        qs = Enumeration.objects.filter(**q)
+            
+        if ein:
+            q['ein']=organization_name
+            
+        if state and not city:
+            
+            qs = Enumeration.objects.filter(location_address__state=state, **q)
+        
+        elif state and city:
+            qs = Enumeration.objects.filter(location_address__state=state,
+                                            location_address__city=city,
+                                            **q)
+        else:
+            qs = Enumeration.objects.filter(**q)
+        
         for i in qs:
             print i
         return qs

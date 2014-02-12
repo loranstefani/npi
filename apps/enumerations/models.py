@@ -131,40 +131,40 @@ class Enumeration(models.Model):
                                     verbose_name = "Business address for correspondence",
                                     null=True, blank=True)
     
-    location_address    = models.ForeignKey(Address,
-                            help_text = "Primary location (a physical address of your practice or business",
-                            related_name = "enumeration_location_address",
-                            null=True, blank=True)
+    location_address            = models.ForeignKey(Address,
+                                        help_text = "Primary location is a physical address of your practice or business",
+                                        related_name = "enumeration_location_address",
+                                        null=True, blank=True)
     
     medical_record_storage_address  = models.ForeignKey(Address,
-                                    related_name = "enumeration_medical_record_storage_address",
-                                    null=True, blank=True)
+                                        related_name = "enumeration_medical_record_storage_address",
+                                        null=True, blank=True)
     
     correspondence_address    = models.ForeignKey(Address,
-                                    related_name = "enumeration_correspondence_address",
-                                    null=True, blank=True)
+                                        related_name = "enumeration_correspondence_address",
+                                        null=True, blank=True)
     
     ten_ninety_nine_address = models.ForeignKey(Address, verbose_name="1099 Address",
-                                    related_name = "enumeration_ten_ninety_nine_address",
-                                    null=True, blank=True)
+                                        related_name = "enumeration_ten_ninety_nine_address",
+                                        null=True, blank=True)
     
     revalidation_address    = models.ForeignKey(Address, verbose_name="PECOS Revalidation Address",
-                                    related_name = "enumeration_revalidation_address",
-                                    null=True, blank=True)
+                                        related_name = "enumeration_revalidation_address",
+                                        null=True, blank=True)
    
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
-                                    related_name = "enumeration_parent_organization")
+                                        related_name = "enumeration_parent_organization")
     
     associations                = models.ManyToManyField('self', null=True, blank=True,
-                                    related_name = "enumerations_associations")
+                                        related_name = "enumerations_associations")
     
     enumeration_type            = models.CharField(max_length=10, choices=ENUMERATION_TYPE_CHOICES,)
     
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
-                                    related_name = "enumerations_licenses")
+                                        related_name = "enumerations_licenses")
     
     direct_addresses            = models.ManyToManyField(DirectAddress, null=True, blank=True,
-                                    related_name = "enumerations_direct_addresses")
+                                        related_name = "enumerations_direct_addresses")
 
     
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
@@ -276,14 +276,14 @@ class Enumeration(models.Model):
     authorized_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
                                             help_text="Format: XXX-XXX-XXXX.")
     
-    authorized_person_telephone_extension   = models.CharField(max_length=10,
+    authorized_person_telephone_extension  = models.CharField(max_length=10,
                                                   blank=True, default="")
     
-    authorized_person_title_or_position       = models.CharField(max_length=150,
+    authorized_person_title_or_position     = models.CharField(max_length=150,
                                                   blank=True, default="")
     
-    authorized_person_title       = models.CharField(max_length=150,
-                                                  blank=True, default="")
+    authorized_person_title      = models.CharField(max_length=150,
+                                                    blank=True, default="")
 
     #Record management
     added               = models.DateField(auto_now_add=True)
