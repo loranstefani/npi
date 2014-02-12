@@ -54,7 +54,7 @@ class SearchForm(forms.ModelForm):
             
             
         if ein:
-            q['ein']=organization_name
+            q['ein']=ein
             
         if state and not city:
             
