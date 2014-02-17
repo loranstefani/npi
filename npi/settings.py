@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     #'django.contrib.admindocs',
     
     #3rd party
+    'ajax_select',
     'bootstrapform',
     'localflavor',
     'django_extensions',
@@ -157,6 +158,18 @@ INSTALLED_APPS = (
     'apps.statistics',
     
 )
+
+
+AJAX_LOOKUP_CHANNELS = {
+    'address' : {'model':'addresses.Address', 'search_field':'address_1'},
+    'license' : {'model':'licenses.License', 'search_field':'number'},
+     'manager' : {'model':'auth.User', 'search_field': 'email'},   
+    'direct' : {'model':'direct.DirectAddress', 'search_field': 'email'},  
+}
+
+
+
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

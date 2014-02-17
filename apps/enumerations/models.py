@@ -81,10 +81,11 @@ class Enumeration(models.Model):
                                        help_text="Another previous first name")
     
     other_last_name_2     = models.CharField(max_length=100, blank=True,
-                                                   default="",
-                                                   help_text="Another previous or maiden last name")
+                                default="",
+                                help_text="Another previous or maiden last name")
 
-    
+    parent_organization         = models.ForeignKey('self', null=True, blank=True,
+                                        related_name = "enumeration_parent_organization")
     #Profile Enhancements
     custom_profile_url         = models.CharField(max_length=100,   blank=True, default="")
     website                    = models.CharField(max_length=200,   blank=True, default="")
@@ -114,8 +115,7 @@ class Enumeration(models.Model):
                                     related_name = "enumeration_other_addresses",
                                     null=True, blank=True)
     
-    parent_organization         = models.ForeignKey('self', null=True, blank=True,
-                                        related_name = "enumeration_parent_organization")
+
     
     
 
