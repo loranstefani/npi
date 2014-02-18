@@ -20,19 +20,21 @@ military = ("APO","FPS", "DPO")
 
 
 
-def import_public_corrected_addresses():
-    print "Hello"
-    csvfile = csv.reader(open('scripts/out.csv', 'rb'), delimiter=',')
-    """#skip the first row """
+def import_public_corrected_addresses(filename):
+    print "Opening", filename
+    csvfile = csv.reader(open(filename, 'rb'), delimiter=',')
+    print """Skiping the first header row. """
     next(csvfile)
-    next(csvfile)
+    #next(csvfile)
     print "start file iteration"
-    
+    i=1
     for row in csvfile:
         if not row[2]:
             #skip if there is no data . revoked/deactivated
             break
         if Enumeration.objects.filter(number=row[1]).count()==0:
+            print i
+            i+=1
             
             #Set the enumeration type
             if str(row[2])=="1":
@@ -83,7 +85,6 @@ def import_public_corrected_addresses():
             else:
                 mailing_address_type = "FGN"
             
-                        
             try:
                 location_address = Address.objects.get(address_1 = practice_address_1,
                                     address_2 = practice_address_2,
@@ -108,17 +109,16 @@ def import_public_corrected_addresses():
                                     rdi        =practice_rdi,)
                 location_address=location_address[0]
             
-
-        
             try:
                 mailing_address = Address.objects.get(address_1 = mailing_address_1,
                                     address_2 = mailing_address_2,
                                     city = mailing_city,       
                                     state = mailing_state,      
                                     zip = mailing_zip,
-                                    address_type = mailing_address_type
-                                    )
+                                    address_type = mailing_address_type)
+                
             except Address.DoesNotExist:
+                
                 mailing_address = Address.objects.get_or_create(address_1 = mailing_address_1,
                                     address_2 = mailing_address_2,
                                     city = mailing_city,       
@@ -132,6 +132,7 @@ def import_public_corrected_addresses():
                                     lat        =mailing_lat,
                                     long       =mailing_long,
                                     rdi        =mailing_rdi,)
+                
                 mailing_address=mailing_address[0]
         
           
@@ -145,11 +146,12 @@ def import_public_corrected_addresses():
                                            location_address = location_address,
                                            mailing_address = mailing_address
                                            )
+    print "Done."
             
 def run():
     #print "hi"
     try:
-        import_public_corrected_addresses()
+        import_public_corrected_addresses('scripts/npi_corrected_addresses.csv')
     except:
         print "Error."
         print sys.exc_info()
