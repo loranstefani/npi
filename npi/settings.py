@@ -163,9 +163,10 @@ INSTALLED_APPS = (
 AJAX_LOOKUP_CHANNELS = {
     'address' : {'model':'addresses.Address', 'search_field':'address_1'},
     'license' : {'model':'licenses.License', 'search_field':'number'},
-     'manager' : {'model':'auth.User', 'search_field': 'email'},   
-    'direct' : {'model':'direct.DirectAddress', 'search_field': 'email'},  
-}
+    'manager' : {'model':'auth.User', 'search_field': 'email'},   
+    'direct' : {'model':'direct.DirectAddress', 'search_field': 'email'},
+    'enumeration' : {'model':'enumerations.Enumeration', 'search_field': 'number'},
+    }
 
 
 

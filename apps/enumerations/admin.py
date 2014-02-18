@@ -21,37 +21,9 @@ class EnumerationAdmin(AjaxSelectAdmin):
                                         'revalidation_address': 'address', 
                                         'managers': 'manager',
                                         'direct_addresses': 'direct',
+                                        'licenses': 'license',
+                                        'parent_organization': 'enumeration',
                                         
                                         })
     
 admin.site.register(Enumeration, EnumerationAdmin)
-
-
-#class EnumerationInline(AjaxSelectAdminTabularInline):
-#
-#    # AjaxSelectAdminTabularInline enables the + add option
-#
-#    model = Enumeration
-#    form = make_ajax_form(Enumeration, {
-#                   'managers': 'manager',},
-#                show_help_text=True)
-#    extra = 2
-#    
-#    def get_formset(self, request, obj=None, **kwargs):
-#        from ajax_select.fields import autoselect_fields_check_can_add
-#        fs = super(EnumerationInline, self).get_formset(request, obj,**kwargs)
-#        autoselect_fields_check_can_add(fs.form, self.model, request.user)
-#        return fs
-#    
-#class EnumerationAdmin(AjaxSelectAdmin):
-#    list_display = ('name', 'enumeration_type', 'number', 'status', )
-#    search_fields = ('number', 'status',)
-#
-#
-#
-#    inlines = [
-#        EnumerationInline,
-#    ]
-#
-#admin.site.register(Enumeration, EnumerationAdmin)
-#    
