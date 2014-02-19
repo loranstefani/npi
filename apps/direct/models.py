@@ -3,10 +3,10 @@ from localflavor.us.us_states import US_STATES
 
 
 class DirectAddress(models.Model):
-    email         = models.EmailField(max_length=150)
+    email         = models.EmailField(max_length=150, db_index=True)
     organization  = models.CharField(max_length=150,  default="")
     dns           = models.CharField(max_length=150,  blank=True, default="",
-                                    editable=False)
+                                    editable=False, db_index=True)
     certificate    = models.FileField(blank = True, null=False, default='',
                                     max_length=255L, upload_to="direct_pems",
                                     verbose_name= "Certificate File")

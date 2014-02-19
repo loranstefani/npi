@@ -18,11 +18,12 @@ LICENSE_TYPE_CHOICES =(   ("MD", "Medical Doctor (MD)"),
                           ("OTHER","Other"), )
 
 class License(models.Model):
-    number         = models.CharField(max_length=20, verbose_name="License Number")
+    number         = models.CharField(max_length=20, verbose_name="License Number",
+                                                    db_index=True)
     state          = models.CharField(max_length=2,  blank=True, default="",
-                                    choices = US_STATES)
+                                    choices = US_STATES, db_index=True)
     license_type   = models.CharField(max_length=5,  blank=True, default="",
-                                    choices = LICENSE_TYPE_CHOICES)
+                                    choices = LICENSE_TYPE_CHOICES, db_index=True)
     status         = models.CharField(max_length=10, choices=LICENSE_STATUS_CHOICES,
                                          default ="UNKNOWN")
     verified_by_issuing_board   = models.BooleanField(default=False)

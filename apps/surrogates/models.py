@@ -10,8 +10,8 @@ class Surrogate(models.Model):
     is an attempted/requested surrogate relationship. To actually mananage the
     enumeration, the user must be added as a manager on the enumeration model
     """
-    user           = models.ForeignKey(User, unique=True)
-    enumerations   = models.ManyToManyField(Enumeration, null=True, blank=True)
+    user           = models.ForeignKey(User, unique=True,db_index=True)
+    enumerations   = models.ManyToManyField(Enumeration, null=True, blank=True, db_index=True)
   
     
     def __unicode__(self):
