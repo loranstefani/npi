@@ -40,20 +40,20 @@ class Enumeration(models.Model):
                                     choices=ENUMERATION_TYPE_CHOICES,)
         
     number              = models.CharField(max_length=10, blank=True, default="",
-                                                   #editable=False
+                                                   #editable=False,
+                                                   db_index=True
                                                    )
-    enumeration_date    = models.DateField(blank=True, null=True)
+    enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
     name_prefix         = models.CharField(max_length=10, blank=True,
                                                    default="")
     first_name          = models.CharField(max_length=100, blank=True,
-                                                   default="")
+                                                   default="", db_index=True)
     middle_name          = models.CharField(max_length=100, blank=True,
                                                    default="")
     
     last_name           = models.CharField(max_length=100, blank=True,
-                                                   default=
-                                                   "")
+                                                   default="", db_index=True)
     name_suffix           = models.CharField(max_length=15, blank=True,
                                                    default="")
     
@@ -63,7 +63,7 @@ class Enumeration(models.Model):
                                                    help_text ="e.g. MD, PA, OBGYN, DO")
     
     organization_name     = models.CharField(max_length=150, blank=True,
-                                                   default="")
+                                                   default="", db_index=True)
     
     doing_business_as     = models.CharField(max_length=150, blank=True, default="")
      
@@ -87,7 +87,8 @@ class Enumeration(models.Model):
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
                                         related_name = "enumeration_parent_organization")
     #Profile Enhancements
-    custom_profile_url         = models.CharField(max_length=100,   blank=True, default="")
+    custom_profile_url         = models.CharField(max_length=100,   blank=True, default="",
+                                                  db_index=True)
     website                    = models.CharField(max_length=200,   blank=True, default="")
     facebook_handle            = models.CharField(max_length=100,   blank=True, default="")
     twitter_handle             = models.CharField(max_length=100,   blank=True, default="")
@@ -114,13 +115,6 @@ class Enumeration(models.Model):
     other_addresses             = models.ManyToManyField(Address,
                                     related_name = "enumeration_other_addresses",
                                     null=True, blank=True)
-    
-
-    
-    
-
-    
-
     
     mailing_address             = models.ForeignKey(Address,
                                     related_name = "enumeration_primary_mailing_address",
@@ -153,26 +147,31 @@ class Enumeration(models.Model):
        
     taxonomy                   = models.ForeignKey(TaxonomyCode, null=True, blank=True,
                                         related_name ="enumeration_primary_taxonomy",
-                                        verbose_name="Primary Taxonomy")
+                                        verbose_name="Primary Taxonomy",
+                                        db_index=True)
     
     other_taxonomies           = models.ManyToManyField(TaxonomyCode, null=True,
                                         blank=True, related_name ="enumeration_other_taxonomies")
     
     
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
-                                        related_name = "enumerations_licenses")
+                                        related_name = "enumerations_licenses",
+                                        db_index=True)
     
 
     
     specialties                 = models.ManyToManyField(Specialty, null=True, blank=True,
-                                        related_name = "enumerations_specialties")
+                                        related_name = "enumerations_specialties",
+                                        db_index=True)
     
     
     direct_addresses            = models.ManyToManyField(DirectAddress, null=True, blank=True,
-                                        related_name = "enumerations_direct_addresses")
+                                        related_name = "enumerations_direct_addresses",
+                                        db_index=True)
 
     
-    managers                    = models.ManyToManyField(User, null=True, blank=True)
+    managers                    = models.ManyToManyField(User, null=True, blank=True,
+                                                         db_index=True)
     
     
     tracking_number             = models.CharField(max_length=50, blank=True, default="")
@@ -196,15 +195,17 @@ class Enumeration(models.Model):
     
     itin        = models.CharField(max_length=10, blank=True,
                         default="", verbose_name="IRS Individual Tax Payer  Number (ITIN)",
-                        help_text = "An ITIN is required for individuals that are not eligible for a social security number."
-                                        )
+                        help_text = "An ITIN is required for individuals that are not eligible for a social security number.",
+                        db_index=True)
     ssn          = models.CharField(max_length=10, blank=True, default="",
                         verbose_name = "Social Security Number",
-                        help_text= "Required for individuals.")
+                        help_text= "Required for individuals.",
+                        db_index=True)
 
     ein         = models.CharField(max_length=9, blank=True,
                     default="", verbose_name="Employer Identification Number (EIN)",
-                    help_text = "An EIN is issued by the IRS. This is required for organizations."
+                    help_text = "An EIN is issued by the IRS. This is required for organizations.",
+                    db_index=True
                     )
 
     ein_image   = models.ImageField(blank = True, null=False, default='',
@@ -232,7 +233,8 @@ class Enumeration(models.Model):
     
     
     contact_person_email        = models.EmailField(blank=True, default="",
-                                    help_text = "Required if contact person has an email.")
+                                    help_text = "Required if contact person has an email.",
+                                    db_index=True)
     contact_person_first_name  = models.CharField(max_length=150,
                                                   blank=True, default="")
     contact_person_middle_name = models.CharField(max_length=150,
@@ -261,7 +263,8 @@ class Enumeration(models.Model):
                                                   blank=True, default="")
     
     authorized_person_email = models.EmailField(blank=True, default="",
-                               help_text = "Required if authorized person has an email.")
+                               help_text = "Required if authorized person has an email.",
+                               db_index=True)
     
     primary_location_telephone_number  = PhoneNumberField(max_length=12,  blank=True, default="",
                                            help_text="Format: XXX-XXX-XXXX."
@@ -269,15 +272,16 @@ class Enumeration(models.Model):
     primary_location_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
                                            help_text="Format: XXX-XXX-XXXX."
                                            )
-    primary_location_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX."
-                                           )
+
     
     
     primary_mailing_telephone_number  = PhoneNumberField(max_length=12,  blank=True, default="",
                                            help_text="Format: XXX-XXX-XXXX."
                                            )
     
+    primary_mailing_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
+                                           help_text="Format: XXX-XXX-XXXX."
+                                           )
     
     
     # End PII -----------------------------------------------------------------
