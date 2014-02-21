@@ -14,7 +14,7 @@ import sys
 from forms import *
 from ..addresses.forms import *
 from utils import get_enumeration_user_manages_or_404
-from ..surrogates.models import Surrogate
+from ..surrogates.models import Surrogate, SurrogateRequest
 
 
 def search_enumeration(request):
@@ -47,6 +47,49 @@ def search_enumeration(request):
 
 
 
+@login_required
+def surrogate_lookup(request):
+    name = _("Search")
+    if request.method == 'POST':
+    
+        form = SearchForm(request.POST,)
+        
+        if form.is_valid():
+            qs = form.save()
+            context= {'name':name,
+                      'search_results': qs,
+              'form': SearchForm()}
+            return render_to_response('surrogate-request.html',
+                              RequestContext(request, context,))
+
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,
+                                             'name':name,},
+                                            RequestContext(request))
+            
+    #this is a GET
+    context= {'name':name,
+              'form': SearchForm()}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+@login_required
+def request_to_manage_enumeration(request, id):
+    e = get_object_or_404(Enumeration, id=id)
+    
+    #Send an email to the authorized contact by reating a Surrogate Request
+    sr = surrogateRequest.object.create(user=request.user, enumeration=e)
+    #Add the enumeration to request.user's surrogate list
+    s = Surrogate.objects.get(user=request.user)      
+    s.enumerations.add(e)
+    s.save()
+    msg = _("Your request to manage enumeration was sent to the authorized official") 
+    messages.success(request, msg)
+    return HttpResponseRedirect(reverse('home'))
+
 
 @login_required
 def create_enumeration(request):
@@ -71,8 +114,6 @@ def create_enumeration(request):
             
             s.enumerations.add(e)
             s.save()
-            
-            
            
             if e.enumeration_type in ("NPI-1", "OEID-1"):
                return HttpResponseRedirect(reverse('create_individual_enumeration',

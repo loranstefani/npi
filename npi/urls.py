@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^licenses/',      include('apps.licenses.urls')),
     url(r'^direct/',        include('apps.direct.urls')),
     url(r'^profile/',       include('apps.profilee.urls')),
+    url(r'^surrogates/',    include('apps.surrogates.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
     

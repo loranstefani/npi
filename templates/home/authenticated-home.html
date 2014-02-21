@@ -108,12 +108,12 @@
     <td>{{ e.pretty_number }}</td>
     <td>{{ e.get_status_display }}</td>
     <td>
-      <a href="view">View</a> |
+      <a href="/profile/{{e.number}}">View</a> |
       {% if surrogate.user in e.managers.all %}
           <a href="/enumerations/edit/{{ e.id }}">Edit</a> | 
 	  <a href="/enumerations/stop-managing/{{ e.id }}"> Stop Managing</a>
       {% else %}
-          <a href="/enumerations/request-management/{{ e.id }}"> Request Permission to Manage</a>
+          <a href="/enumerations/request-to-manage/{{ e.id }}"> Re-Request Permission to Manage</a>
       {% endif %}
       </td>
   </tr>

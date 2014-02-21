@@ -265,24 +265,7 @@ class Enumeration(models.Model):
     authorized_person_email = models.EmailField(blank=True, default="",
                                help_text = "Required if authorized person has an email.",
                                db_index=True)
-    
-    primary_location_telephone_number  = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX."
-                                           )
-    primary_location_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX."
-                                           )
-
-    
-    
-    primary_mailing_telephone_number  = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX."
-                                           )
-    
-    primary_mailing_fax_number        = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX."
-                                           )
-    
+      
     
     # End PII -----------------------------------------------------------------
 
