@@ -85,21 +85,14 @@ def import_public_corrected_addresses(filename):
             else:
                 mailing_address_type = "FGN"
             
-            try:
-                location_address = Address.objects.get(address_1 = practice_address_1,
-                                    address_2 = practice_address_2,
-                                    city = practice_city,       
-                                    state = practice_state,      
-                                    zip = practice_zip,
-                                    address_type = practice_address_type
-                                    )
-            except Address.DoesNotExist:
-                location_address = Address.objects.get_or_create(address_1 = practice_address_1,
+
+            location_address = Address.objects.create(address_1 = practice_address_1,
                                     address_2 = practice_address_2,
                                     city = practice_city,       
                                     state = practice_state,      
                                     zip = practice_zip,
                                     address_type = practice_address_type,
+                                    address_purpose = "LOCATION",
                                     county_name  =   practice_county_name,
                                     vacant   =  practice_vacant,
                                     active    = practice_active,
@@ -107,33 +100,26 @@ def import_public_corrected_addresses(filename):
                                     lat        =practice_lat,
                                     long       =practice_long,
                                     rdi        =practice_rdi,)
-                location_address=location_address[0]
+   
             
-            try:
-                mailing_address = Address.objects.get(address_1 = mailing_address_1,
-                                    address_2 = mailing_address_2,
-                                    city = mailing_city,       
-                                    state = mailing_state,      
-                                    zip = mailing_zip,
-                                    address_type = mailing_address_type)
+
                 
-            except Address.DoesNotExist:
-                
-                mailing_address = Address.objects.get_or_create(address_1 = mailing_address_1,
-                                    address_2 = mailing_address_2,
-                                    city = mailing_city,       
-                                    state = mailing_state,      
-                                    zip = mailing_zip,
-                                    address_type = mailing_address_type,
-                                    county_name  =   mailing_county_name,
-                                    vacant   =  mailing_vacant,
-                                    active    = mailing_active,
-                                    record_type =mailing_record_type,
-                                    lat        =mailing_lat,
-                                    long       =mailing_long,
-                                    rdi        =mailing_rdi,)
-                
-                mailing_address=mailing_address[0]
+            mailing_address = Address.objects.create(
+                                    address_1       = mailing_address_1,
+                                    address_2       = mailing_address_2,
+                                    city            = mailing_city,       
+                                    state           = mailing_state,      
+                                    zip             = mailing_zip,
+                                    address_type    = mailing_address_type,
+                                    address_purpose = "MAILING",
+                                    county_name     = mailing_county_name,
+                                    vacant          = mailing_vacant,
+                                    active          = mailing_active,
+                                    record_type     = mailing_record_type,
+                                    lat             = mailing_lat,
+                                    long            = mailing_long,
+                                    rdi             = mailing_rdi,)
+
         
           
             #The record doesn't exist so lets add it.

@@ -42,7 +42,7 @@ MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
 
 class Address(models.Model):
     address_type    = models.CharField(max_length=12, choices=ADDRESS_TYPE_CHOICES)
-    #address_purpose = models.CharField(max_length=20, choices=ADDRESS_PURPOSE_CHOICES)
+    address_purpose = models.CharField(max_length=20, choices=ADDRESS_PURPOSE_CHOICES)
     address_1       = models.CharField(max_length=200, default="", db_index=True)
     address_2       = models.CharField(max_length=200, blank=True, default="")
     city            = models.CharField(max_length=200, blank=True, default="")

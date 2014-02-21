@@ -14,7 +14,7 @@ from countries import NO_US_COUNTRIES, US_COUNTRY_CHOICES
 class SelectAddressTypeForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ('address_type', )
+        fields = ('address_type', 'address_purpose')
     required_css_class = 'required'
     
 
@@ -54,7 +54,7 @@ class SelectAddressPurposeForm(forms.ModelForm):
 
     class Meta:
         model = Address
-        fields = ('address_type', )
+        fields = ('address_type', 'address_purpose' )
     required_css_class = 'required'
 
 
