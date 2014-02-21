@@ -55,11 +55,11 @@ Build the database and install fixtures:
 
     python manage.py syncdb
     
-Run the development server on http://127.0.0.1/8000.
+Run the development server on http://127.0.0.1:8000.
     
     python manage.py runserver
 
-Point your browser to http://127.0.0.1 to see the main page.
+Point your browser to http://127.0.0.1:8000 to see the main page.
 
 
 Other Important Notes:
