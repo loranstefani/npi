@@ -8,16 +8,40 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from ..enumerations.models import Enumeration
-from models import Surrogate, SurrogateRequest
+from models import Surrogate, SurrogateRequestEnumeration
 from utils import send_email_to_newly_authorized_manager
 # Create your views here.
 
 
-def grant_management(request, key):
-    sr = get_object_or_404(SurrogateRequest,key=key)
+def grant_management_enumeration(request, key):
+    sr = get_object_or_404(SurrogateRequestEnumeration,key=key)
     #The key was found so lets gant access
     sr.enumeration.managers.add(sr.user)
     messages.success(request,_("Management authority has been granted to the user."))
+    
+    #TODO Send a message to I&A that he user has gained a new permission.
+    
+    
+    #Send a message to the requestor that access is now granted.
+    send_email_to_newly_authorized_manager(sr)   
+    
+    
+    #cleanup delete the SurrogateRequest object
+    sr.delete()
+    return HttpResponseRedirect(reverse('home',))
+
+
+
+def grant_management_ein(request, key):
+    sr = get_object_or_404(SurrogateRequestEIN,key=key)
+    #The key was found so lets gant access
+    
+    enumerations = Enumeration.objects.filter(ein=sr.ein)
+    
+    for e in enumerations:
+        e.managers.add(sr.user)
+    
+    messages.success(request,_("Management authority to the EIN has been granted to the user."))
     
     #TODO Send a message to I&A that he user has gained a new permission.
     

@@ -51,13 +51,14 @@
     <td>{{e.pretty_number}}</td>
     <td>{{e.enumeration_type}}</td>
     <td>{{e.name}}</td>
+
     <td>{{e.primary_taxonomy}}</td>
     <td>{{e.get_status_display}}</td>
      <td>{{e.updated}}</td>
     
     <td>
        <a href="/profile/{{e.number}}">View</a> |
-       <a href="/enumerations/request-to-manage/{{e.id}}">Request Authorization to Manage</a>
+       <a href="/enumerations/request-to-manage-enumeration/{{e.id}}">Request Authorization to Manage this Enumeration</a>
       </td>
   </tr>
   {% endfor %}

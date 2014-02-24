@@ -60,18 +60,23 @@
         </div>
       </div>
     
-    
       
       <div class="btn-group">
-	<a href=/enumerations/surrogate-lookup><button type="button" class="btn btn-default">Manage an Existing Enumeration</button></a>
-	<a href=/enumerations/create><button type="button" class="btn btn-default">Start a New Enumeration Application</button></a>
+	<a href=/enumerations/create><button type="button" class="btn btn-default">Create a New Enumeration</button></a>	
+      </div>
+      <br><br>
+      
+      
+      <div class="btn-group">
+	<a href=/enumerations/surrogate-lookup><button type="button" class="btn btn-default">Request Authority to Manage an Existing Enumeration</button></a>
+	<a href=/enumerations/ein-lookup><button type="button" class="btn btn-default">Request Authority to Manage All Enumerations with the same ein (Tax ID)</button></a>
 	
       </div>
       <br><br>
       <div class="btn-group">
 
-	<a href=/enumerations/bulk-create><button type="button" class="btn btn-default">Bulk Enumeration Applications</button></a>
-	<a href=/enumerations/bulk-update><button type="button" class="btn btn-default">Bulk Enumeration Updates</button></a>
+	<a href=/enumerations/bulk-create><button type="button" class="btn btn-default">Create New Enumerations in Bulk with a CSV</button></a>
+	<a href=/enumerations/bulk-update><button type="button" class="btn btn-default">Update Enumerations in bulk with a CSV</button></a>
       </div>
       
       <br><br>
@@ -113,7 +118,8 @@
           <a href="/enumerations/edit/{{ e.id }}">Edit</a> | 
 	  <a href="/enumerations/stop-managing/{{ e.id }}"> Stop Managing</a>
       {% else %}
-          <a href="/enumerations/request-to-manage/{{ e.id }}"> Re-Request Permission to Manage</a>
+          <a href="/enumerations/request-to-manage-enumeration/{{ e.id }}"> Re-Request Authority to Manage</a> | 
+	  <a href="/enumerations/cance-request-to-manage-enumeration/{{ e.id }}"> Cancel Authority to Manage Request</a>
       {% endif %}
       </td>
   </tr>

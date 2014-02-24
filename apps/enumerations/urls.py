@@ -33,8 +33,15 @@ urlpatterns = patterns('',
     url(r'^search$', search_enumeration, name="search_enumeration"),
     url(r'^surrogate-lookup$', surrogate_lookup, name="surrogate_lookup"),
     
-    url(r'^request-to-manage/(?P<id>\S+)$',request_to_manage_enumeration,
+    url(r'^ein-lookup$', ein_lookup, name="ein_lookup"),
+    
+    
+    url(r'^request-to-manage-enumeration/(?P<id>\S+)$',request_to_manage_enumeration,
                             name="request_to_manage_enumeration"),
+    
+    
+    url(r'^request-to-manage-ein/(?P<ein>\S+)$',request_to_manage_ein,
+                            name="request_to_manage_ein"),
     
     url(r'^create$', create_enumeration, name="create_enumeration"),
     

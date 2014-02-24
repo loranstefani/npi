@@ -9,7 +9,10 @@ urlpatterns = patterns('',
    
     #surrogate URLs ------------------------------------
     
-    url(r'^grant-management/(?P<key>\S+)',
-                    grant_management, name="surrogate_grant_management"),
+    url(r'^grant-management-enumeration/(?P<key>\S+)',
+                    grant_management_enumeration, name="surrogate_grant_management_enumeration"),
+    
+    url(r'^grant-management-ein/(?P<key>\S+)',
+                    grant_management_ein, name="surrogate_grant_management_ein"),
 
     )

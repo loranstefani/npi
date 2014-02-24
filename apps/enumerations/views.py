@@ -14,7 +14,7 @@ import sys
 from forms import *
 from ..addresses.forms import *
 from utils import get_enumeration_user_manages_or_404
-from ..surrogates.models import Surrogate, SurrogateRequest
+from ..surrogates.models import Surrogate, SurrogateRequestEnumeration, SurrogateRequestEIN
 
 
 def search_enumeration(request):
@@ -49,7 +49,7 @@ def search_enumeration(request):
 
 @login_required
 def surrogate_lookup(request):
-    name = _("Search")
+    name = _("Search for an Enumeration to Manage")
     if request.method == 'POST':
     
         form = SearchForm(request.POST,)
@@ -59,7 +59,7 @@ def surrogate_lookup(request):
             context= {'name':name,
                       'search_results': qs,
               'form': SearchForm()}
-            return render_to_response('surrogate-request.html',
+            return render_to_response('surrogate-search.html',
                               RequestContext(request, context,))
 
         else:
@@ -75,18 +75,69 @@ def surrogate_lookup(request):
               'form': SearchForm()}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+    
+    
+    
+    
+@login_required
+def ein_lookup(request):
+    name = _("Search for an EIN to Manage")
+    if request.method == 'POST':
+    
+        form = SearchEINForm(request.POST,)
+        
+        if form.is_valid():
+            qs = form.save()
+            context= {'name':name,
+                      'search_results': qs,
+                      'ein':form.cleaned_data.get("ein", "")}
+            return render_to_response('ein-search.html',
+                              RequestContext(request, context,))
+
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,
+                                             'name':name,},
+                                            RequestContext(request))
+            
+    #this is a GET
+    context= {'name':name,
+              'form': SearchEINForm()}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+    
+    
+    
 
 @login_required
 def request_to_manage_enumeration(request, id):
     e = get_object_or_404(Enumeration, id=id)
     
-    #Send an email to the authorized contact by reating a Surrogate Request
-    sr = surrogateRequest.object.create(user=request.user, enumeration=e)
+    #Send an email to the authorized contact by creating a Surrogate Request
+    sr = SurrogateRequestEnumeration.objects.create(user=request.user, enumeration=e)
     #Add the enumeration to request.user's surrogate list
     s = Surrogate.objects.get(user=request.user)      
     s.enumerations.add(e)
     s.save()
-    msg = _("Your request to manage enumeration was sent to the authorized official") 
+    msg = _("Your request to manage the enumeration was sent to the authorized official") 
+    messages.success(request, msg)
+    return HttpResponseRedirect(reverse('home'))
+    
+    
+@login_required
+def request_to_manage_ein(request, ein):
+    enumerations = Enumeration.objects.filter(ein=ein)
+    sr = SurrogateRequestEIN.objects.create(user=request.user, ein=ein)
+        
+    for e in enumerations:   
+        #Add the enumeration to request.user's surrogate list
+        s = Surrogate.objects.get(user=request.user)      
+        s.enumerations.add(e)
+        s.save()
+    
+    msg = _("Your request to manage EIN was sent to the authorized officials") 
     messages.success(request, msg)
     return HttpResponseRedirect(reverse('home'))
 

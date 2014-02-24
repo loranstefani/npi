@@ -67,11 +67,32 @@ class SearchForm(forms.ModelForm):
         else:
             qs = Enumeration.objects.filter(**q)
         
-        for i in qs:
-            print i
         return qs
     
+class SearchEINForm(forms.ModelForm):
     
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""     
+        super(SearchEINForm,self).__init__(*args,**kwargs)
+        self.fields['ein'].required = True    
+    
+    
+    class Meta:
+        model = Enumeration
+        fields = ('ein',)
+        
+    required_css_class = 'required'
+    
+    def save(self, force_insert=False, force_update=False, commit=True):
+        
+        q={}
+        ein                 = self.cleaned_data.get("ein", "")
+        
+        if ein:
+            q['ein']=ein
+            
+        qs = Enumeration.objects.filter(**q)
+        return qs
 
 
 class CreateEnumeration1Form(forms.ModelForm):
