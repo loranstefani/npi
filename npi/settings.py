@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'apps.specialties',
     'apps.addresses',
     'apps.direct',
+    'apps.identifiers',
     'apps.home',
     'apps.profilee',
     'apps.surrogates',
