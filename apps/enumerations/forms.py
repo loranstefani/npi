@@ -127,9 +127,9 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
         #self.fields['contact_person_first_name'].required = True
         #self.fields['contact_person_last_name'].required = True
         #self.fields['contact_person_telephone_number'].required = True
-        #self.fields['authorized_person_first_name'].required = True
-        #self.fields['authorized_person_last_name'].required = True
-        #self.fields['authorized_person_telephone_number'].required = True
+        #self.fields['authorized_official_first_name'].required = True
+        #self.fields['authorized_official_last_name'].required = True
+        #self.fields['authorized_official_telephone_number'].required = True
 
 
         
@@ -137,17 +137,18 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
         model = Enumeration
         fields = ('organization_name', 'ein', 'ein_image', 'doing_business_as',
                     'contact_person_email', 'contact_person_first_name',
-                    'contact_person_last_name',
+                    'contact_person_middle_name', 'contact_person_last_name',
                     'contact_person_suffix', 'contact_person_title_or_position',
                     'contact_person_title_or_position',
                     'contact_person_telephone_number' ,
                     'contact_person_telephone_extension',
-                    'authorized_person_email', 'authorized_person_first_name',
-                    'authorized_person_last_name',
-                    'authorized_person_suffix', 'authorized_person_title_or_position',
-                    'authorized_person_title_or_position',
-                    'authorized_person_telephone_number' ,
-                    'authorized_person_telephone_extension',
+                    'authorized_official_email', 'authorized_official_prefix',
+                    'authorized_official_first_name',
+                    'authorized_official_last_name',
+                    'authorized_official_suffix', 'authorized_official_title_or_position',
+                    'authorized_official_title_or_position',
+                    'authorized_official_telephone_number' ,
+                    'authorized_official_telephone_extension',
                   )
     required_css_class = 'required'
     
@@ -176,21 +177,23 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
                   'sole_proprietor',
                   'doing_business_as',
                     'contact_person_email', 'contact_person_first_name',
+                    'contact_person_middle_name',
                     'contact_person_last_name',
                     'contact_person_suffix', 'contact_person_title_or_position',
                     'contact_person_title_or_position',
                     'contact_person_telephone_number' ,
                     'contact_person_telephone_extension',
-
-
-                    'authorized_person_email', 'authorized_person_first_name',
-                    'authorized_person_last_name',
-                    'authorized_person_suffix', 'authorized_person_title_or_position',
-                    'authorized_person_title_or_position',
-                    'authorized_person_telephone_number' ,
-                    'authorized_person_telephone_extension',
-                    'other_first_name_1',                  
-                    'other_last_name_1', 'other_first_name_2', 'other_last_name_2',
+                    'authorized_official_email', 'authorized_official_prefix',
+                    'authorized_official_first_name',
+                    'authorized_official_last_name',
+                    'authorized_official_suffix', 'authorized_official_title_or_position',
+                    'authorized_official_title_or_position',
+                    'authorized_official_telephone_number' ,
+                    'authorized_official_telephone_extension',
+                    'other_name_code_1', 'other_first_name_1', 'other_middle_name_1',          
+                    'other_last_name_1',
+                    'other_name_code_2',
+                    'other_first_name_2', 'other_middle_name_1', 'other_last_name_2',
                     )
         
     required_css_class = 'required'

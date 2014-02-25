@@ -55,6 +55,9 @@ class Address(models.Model):
     foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
     us_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
                                            help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone.")
+    
+    telephone_number_extension   = models.CharField(max_length=10,  blank=True, default="")
+    
     us_fax_number   = models.CharField(max_length=12,  blank=True, default="",)
     foreign_telephone_number   = models.CharField(max_length=20,  blank=True, default="")
     foreign_fax_number   = models.CharField(max_length=20,  blank=True, default="") 

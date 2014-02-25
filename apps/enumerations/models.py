@@ -9,19 +9,19 @@ from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
 from ..specialties.models import Specialty
 from ..direct.models import DirectAddress
+from ..identifiers.models import Identifier
 from localflavor.us.models import PhoneNumberField
 
 
 ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (NPI-1)"),
                             ("NPI-2","Organizational National Provider Identifier (NPI-2)"),
                             ("HPID","Health Plan Identifier (HPID)"),
-                            ("OEID","Other Entity Individual Atypical Provider (OEID)"),
-                            )
+                            ("OEID","Other Entity Individual Atypical Provider (OEID)"),)
 
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
 
-DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("D", "Deceased"), ("F", "Fraud"),
-                              ("O", "Other"), )
+DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandment"),
+                                ("FR", "Fraud"), ("OT", "Other"), )
 
 
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
@@ -29,6 +29,11 @@ ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization")
 
 COUNTRY_CHOICES = (("US", "United States"), ("CA", "Canada"), ("MX", "Mexico"))
 
+INDIVIDUAL_OTHER_NAME_CHOICES = (("","Blank"), ("1","Former Name"),
+        ("2","Professional Name"), ("5","Other Name"))
+
+ORGANIZATION_OTHER_NAME_CHOICES = (("","Blank"), ("3","Doing Business As"),
+                ("4","Former Legal Business Name"), ("5","Other Name"))
 
 
 class Enumeration(models.Model):
@@ -57,35 +62,78 @@ class Enumeration(models.Model):
     name_suffix           = models.CharField(max_length=15, blank=True,
                                                    default="")
     
-    sole_proprietor             = models.BooleanField(default=False)
-    credential           = models.CharField(max_length=15, blank=True,
-                                                   default="",
-                                                   help_text ="e.g. MD, PA, OBGYN, DO")
+    sole_proprietor         = models.BooleanField(default=False)
+    organizational_subpart  = models.BooleanField(default=False)
+    credential              = models.CharField(max_length=15, blank=True,
+                                    default="", help_text ="e.g. MD, PA, OBGYN, DO")
     
-    organization_name     = models.CharField(max_length=150, blank=True,
+    organization_name     = models.CharField(max_length=300, blank=True,
                                                    default="", db_index=True)
     
-    doing_business_as     = models.CharField(max_length=150, blank=True, default="")
+    doing_business_as     = models.CharField(max_length=300, blank=True, default="")
      
+    organization_other_name   = models.CharField(max_length=300, blank=True, default="")
+    
+    organization_other_name_code  = models.CharField(max_length=1, blank=True, default="",
+                                    choices=ORGANIZATION_OTHER_NAME_CHOICES)
     
     other_first_name_1    = models.CharField(max_length=100, blank=True,
                                                    default="",
-                                                   help_text="Previous first name")
+                                                   help_text="Previous First name")
+    
+    other_middle_name_1     = models.CharField(max_length=100, blank=True,
+                                default="",
+                                help_text="Another previous or maiden last name")
+    
     
     other_last_name_1     = models.CharField(max_length=100, blank=True,
                                                    default="",
-                                                   help_text="Previous or maiden last name") 
+                                                   help_text="Previous or Maiden Last Name") 
+
+    other_name_prefix_1     = models.CharField(max_length=20, blank=True,
+                                                   default="")
     
+    other_name_suffix_1     = models.CharField(max_length=20, blank=True,
+                                                   default="")
+
+    other_name_credential_1     = models.CharField(max_length=20, blank=True,
+                                                   default="")
+
+    other_name_code_1  = models.CharField(max_length=1, blank=True, default="",
+                                    choices=INDIVIDUAL_OTHER_NAME_CHOICES)
     other_first_name_2    = models.CharField(max_length=100, blank=True,
                                        default="",
-                                       help_text="Another previous first name")
+                                       help_text="Another Previous first name")
+    
+    
+    other_middle_name_2     = models.CharField(max_length=100, blank=True,
+                                default="",
+                                help_text="Another previous or maiden last name")
+    
     
     other_last_name_2     = models.CharField(max_length=100, blank=True,
                                 default="",
                                 help_text="Another previous or maiden last name")
+    
+    other_name_prefix_2     = models.CharField(max_length=20, blank=True,
+                                                   default="")
+    
+    other_name_suffix_2     = models.CharField(max_length=20, blank=True,
+                                                   default="")
+
+    other_name_credential_2     = models.CharField(max_length=20, blank=True,
+                                                   default="")
+
+    other_name_code_2  = models.CharField(max_length=1, blank=True, default="",
+                                    choices=INDIVIDUAL_OTHER_NAME_CHOICES)
 
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
                                         related_name = "enumeration_parent_organization")
+    
+    
+    parent_organization_legal_business_name  = models.CharField(max_length=300, default="", blank=True)
+    parent_organization_ein     = models.CharField(max_length=10, default="", blank=True)
+    
     #Profile Enhancements
     custom_profile_url         = models.CharField(max_length=100,   blank=True, default="",
                                                   db_index=True)
@@ -142,7 +190,9 @@ class Enumeration(models.Model):
                                         related_name = "enumeration_revalidation_address",
                                         null=True, blank=True)
     
-    
+    identifiers            = models.ManyToManyField(Identifier, null=True, blank=True,
+                                        related_name ="enumeration_identifiers",
+                                        db_index=True)
     
        
     taxonomy                   = models.ForeignKey(TaxonomyCode, null=True, blank=True,
@@ -170,13 +220,7 @@ class Enumeration(models.Model):
                                         db_index=True)
 
     
-    managers                    = models.ManyToManyField(User, null=True, blank=True,
-                                                         db_index=True)
-    
-    
-    tracking_number             = models.CharField(max_length=50, blank=True, default="")
-    
-
+    managers    = models.ManyToManyField(User, null=True, blank=True, db_index=True)
     
 
     #PII --------------------------------------------------------------------
@@ -192,21 +236,20 @@ class Enumeration(models.Model):
                                     choices = (("F","Female"), ("M","Male"),
                                                ("T","Transgender")))
     
-    
     itin        = models.CharField(max_length=10, blank=True,
-                        default="", verbose_name="IRS Individual Tax Payer  Number (ITIN)",
+                        default="", verbose_name="IRS Individual Tax Payer Identification Number (ITIN)",
                         help_text = "An ITIN is required for individuals that are not eligible for a social security number.",
                         db_index=True)
+    
     ssn          = models.CharField(max_length=10, blank=True, default="",
                         verbose_name = "Social Security Number",
-                        help_text= "Required for individuals.",
+                        help_text= "Required for individuals unless an ITIN is provided",
                         db_index=True)
 
     ein         = models.CharField(max_length=9, blank=True,
                     default="", verbose_name="Employer Identification Number (EIN)",
                     help_text = "An EIN is issued by the IRS. This is required for organizations.",
-                    db_index=True
-                    )
+                    db_index=True)
 
     ein_image   = models.ImageField(blank = True, null=False, default='',
                     max_length=255L, upload_to="ein-verification",
@@ -222,14 +265,14 @@ class Enumeration(models.Model):
                                  verbose_name="Negative Action on file with HRSA")
     
     #Deactivation information ---------------------------
-    decactvation_reason_code  = models.CharField(max_length=1, choices=DECACTIVAED_REASON_CHOICES,
+    deactivation_reason_code  = models.CharField(max_length=2,
+                                    choices=DECACTIVAED_REASON_CHOICES,
                                     default="", blank=True)
-    deactivated_details         = models.TextField(max_length=1000, blank=True, default="")
+    deactivated_details = models.TextField(max_length=1000, blank=True, default="")
 
-    deactiviation_date               = models.DateField(blank=True, null=True)
-    reactiviation_date               = models.DateField(blank=True, null=True)
-    
-    
+    deactivation_date  = models.DateField(blank=True, null=True)
+    reactivation_date   = models.DateField(blank=True, null=True)
+    replacement_npi     = models.CharField(max_length=10,blank=True, default="")
     
     
     contact_person_email        = models.EmailField(blank=True, default="",
@@ -241,19 +284,25 @@ class Enumeration(models.Model):
                                                   blank=True, default="")
     contact_person_last_name   = models.CharField(max_length=150,
                                                   blank=True, default="")
-    contact_person_suffix      = models.CharField(max_length=150,
-                                                  blank=True, default="",
-                                                  help_text = "For example, M.D., R.N., PhD"
-                                                  )
+    
+    contact_person_prefix   = models.CharField(max_length=20,
+                                    blank=True, default="",
+                                    help_text = "For example, Mr., Ms., Mrs., Dr.")
+    
+    
+    contact_person_suffix   = models.CharField(max_length=150,
+                                    blank=True, default="",
+                                    help_text = "For example, M.D., R.N., PhD")
+
+    contact_person_credential    = models.CharField(max_length=20, blank=True,
+                                                    default="")
     
     contact_person_title_or_position   = models.CharField(max_length=150,
-                                                  blank=True, default="",
-                                                  help_text = "For example, Jr., Sr., II, III."
-                                                  )
+                                            blank=True, default="",
+                                            help_text = "For example, Jr., Sr., II, III.")
     
     contact_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX."
-                                           )
+                                           help_text="Format: XXX-XXX-XXXX.")
     contact_person_telephone_extension   = models.CharField(max_length=10,
                                                   blank=True, default="")
     contact_person_title_or_position       = models.CharField(max_length=150,
@@ -262,39 +311,45 @@ class Enumeration(models.Model):
     contact_person_title       = models.CharField(max_length=150,
                                                   blank=True, default="")
     
-    authorized_person_email = models.EmailField(blank=True, default="",
+    authorized_official_email = models.EmailField(blank=True, default="",
                                help_text = "Required if authorized person has an email.",
                                db_index=True)
       
     
     # End PII -----------------------------------------------------------------
-
-    authorized_person_first_name    = models.CharField(max_length=150,
+    authorized_official_prefix        = models.CharField(max_length=20,
+                                            blank=True, default="",
+                                            help_text = "For example, Mr., Ms., Mrs., Dr.")
+    authorized_official_first_name    = models.CharField(max_length=150,
                                             blank=True, default="")
-    authorized_person_middle_name   = models.CharField(max_length=150,
+    authorized_official_middle_name   = models.CharField(max_length=150,
                                             blank=True, default="")
-    authorized_person_last_name     = models.CharField(max_length=150,
+    authorized_official_last_name     = models.CharField(max_length=150,
                                             blank=True, default="")
-    authorized_person_suffix        = models.CharField(max_length=150,
+    authorized_official_suffix        = models.CharField(max_length=150,
                                             blank=True, default="",
                                             help_text = "For example, Jr., Sr., II, III.")
     
-    authorized_person_title_or_position  = models.CharField(max_length=150,
+    authorized_official_credential    = models.CharField(max_length=20,
+                                            blank=True, default="")
+    
+    authorized_official_title_or_position  = models.CharField(max_length=150,
                                                   blank=True, default="",)
     
-    authorized_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
+    authorized_official_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
                                             help_text="Format: XXX-XXX-XXXX.")
     
-    authorized_person_telephone_extension  = models.CharField(max_length=10,
+    authorized_official_telephone_extension  = models.CharField(max_length=10,
                                                   blank=True, default="")
     
-    authorized_person_title_or_position     = models.CharField(max_length=150,
+    authorized_official_title_or_position     = models.CharField(max_length=150,
                                                   blank=True, default="")
     
-    authorized_person_title      = models.CharField(max_length=150,
-                                                    blank=True, default="")
+    authorized_official_title      = models.CharField(max_length=150,blank=True,
+                                                      default="")
 
     #Record management
+    last_updated        = models.DateField(blank=True, null=True)
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
 
@@ -424,6 +479,13 @@ class Enumeration(models.Model):
 
 
     def save(self, **kwargs):
+        
+        #Set the DBA
+        if self.organization_other_name and self.organization_other_name_code=="3" and \
+           not self.doing_business_as:
+            self.doing_business_as = self.organization_other_name
+        
+        
         #If the status is active but no enumeration number is assigned then create one.
         if self.status == "A" and self.number == "":
             if self.enumeration_type in ("NPI-1", "NPI-2"):
