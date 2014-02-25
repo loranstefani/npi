@@ -49,7 +49,7 @@ class SurrogateRequestEnumeration(models.Model):
         
         #send an email with reset url
         if settings.SEND_EMAIL:
-            x=send_email_to_authorized_offical_to_manage_enumeration(self)
+            x=send_email_to_contact_person_to_manage_enumeration(self)
         super(SurrogateRequestEnumeration, self).save(**kwargs)
         
       
@@ -81,12 +81,12 @@ class SurrogateRequestEIN(models.Model):
         if settings.SEND_EMAIL:
             enumerations =Enumeration.objects.filter(ein=self.ein)
             for e in enumerations:
-                x=send_email_to_authorized_offical_to_manage_ein(self, e)
+                x=send_email_to_contact_person_to_manage_ein(self, e)
         super(SurrogateRequestEIN, self).save(**kwargs)  
         
 
 
-def send_email_to_authorized_offical_to_manage_enumeration(surrogate_request_enumeration):
+def send_email_to_contact_person_to_manage_enumeration(surrogate_request_enumeration):
         
     grant_url = "%s/surrogates/grant-management-enumeration/%s" % (settings.HOSTNAME_URL,
                                                        surrogate_request_enumeration.key)
@@ -106,8 +106,8 @@ def send_email_to_authorized_offical_to_manage_enumeration(surrogate_request_enu
 
         </body>
         </html>
-        """ % (surrogate_request_enumeration.enumeration.authorized_person_first_name,
-               surrogate_request_enumeration.enumeration.authorized_person_last_name,
+        """ % (surrogate_request_enumeration.enumeration.contact_person_first_name,
+               surrogate_request_enumeration.enumeration.contact_person_last_name,
                surrogate_request_enumeration.user.first_name,
                surrogate_request_enumeration.user.last_name,
                surrogate_request_enumeration.user.email,
@@ -121,8 +121,8 @@ def send_email_to_authorized_offical_to_manage_enumeration(surrogate_request_enu
         you may grant this request by clicking on the following link. 
         
         %s
-        """ % (surrogate_request_enumeration.enumeration.authorized_person_first_name,
-               surrogate_request_enumeration.enumeration.authorized_person_last_name,
+        """ % (surrogate_request_enumeration.enumeration.contact_person_first_name,
+               surrogate_request_enumeration.enumeration.contact_person_last_name,
                surrogate_request_enumeration.user.first_name,
                surrogate_request_enumeration.user.last_name,
                surrogate_request_enumeration.user.email,
@@ -133,7 +133,7 @@ def send_email_to_authorized_offical_to_manage_enumeration(surrogate_request_enu
 
     if settings.SEND_EMAIL:
             subj = "[NPPES] Request to Manage %s" % (surrogate_request_enumeration.enumeration)
-            to = surrogate_request_enumeration.enumeration.authorized_person_email
+            to = surrogate_request_enumeration.enumeration.contact_person_email
             #print "SENTO", to
             
             
@@ -146,7 +146,7 @@ def send_email_to_authorized_offical_to_manage_enumeration(surrogate_request_enu
             
             
 
-def send_email_to_authorized_offical_to_manage_ein(surrogate_request_ein, enumeration):
+def send_email_to_contact_person_to_manage_ein(surrogate_request_ein, enumeration):
         
     grant_url = "%s/surrogates/grant-management-ein/%s" % (settings.HOSTNAME_URL,
                                                        surrogate_request_ein.key)
@@ -167,8 +167,8 @@ def send_email_to_authorized_offical_to_manage_ein(surrogate_request_ein, enumer
 
         </body>
         </html>
-        """ % (enumeration.authorized_person_first_name,
-               enumeration.authorized_person_last_name,
+        """ % (enumeration.contact_person_first_name,
+               enumeration.contact_person_last_name,
                surrogate_request_ein.user.first_name,
                surrogate_request_ein.user.last_name,
                surrogate_request_ein.user.email,
@@ -184,8 +184,8 @@ def send_email_to_authorized_offical_to_manage_ein(surrogate_request_ein, enumer
         you may grant this request by clicking on the following link. 
         
         %s
-        """ % (enumeration.authorized_person_first_name,
-               enumeration.authorized_person_last_name,
+        """ % (enumeration.contact_person_first_name,
+               enumeration.contact_person_last_name,
                surrogate_request_ein.user.first_name,
                surrogate_request_ein.user.last_name,
                surrogate_request_ein.user.email,
@@ -197,7 +197,7 @@ def send_email_to_authorized_offical_to_manage_ein(surrogate_request_ein, enumer
 
     if settings.SEND_EMAIL:
         subj = "[NPPES] Request to Manage %s" % (enumeration)
-        to = enumeration.authorized_person_email
+        to = enumeration.contact_person_email
         print "SENTO", to, "FOR", enumeration.number
             
             

@@ -19,9 +19,9 @@ def send_email_to_newly_authorized_manager(surrogate_request):
         </html>
         """ % (surrogate_request.user.first_name,
                surrogate_request.user.last_name,
-               surrogate_request.enumeration.authorized_person_first_name,
-               surrogate_request.enumeration.authorized_person_last_name,
-               surrogate_request.enumeration.authorized_person_email,
+               surrogate_request.enumeration.contact_person_first_name,
+               surrogate_request.enumeration.contact_person_last_name,
+               surrogate_request.enumeration.contact_person_email,
                surrogate_request.enumeration)
         
 
@@ -31,9 +31,9 @@ def send_email_to_newly_authorized_manager(surrogate_request):
         and make updates and changes as necessary.
         """ % (surrogate_request.user.first_name,
                surrogate_request.user.last_name,
-               surrogate_request.enumeration.authorized_person_first_name,
-               surrogate_request.enumeration.authorized_person_last_name,
-               surrogate_request.enumeration.authorized_person_email,
+               surrogate_request.enumeration.contact_person_first_name,
+               surrogate_request.enumeration.contact_person_last_name,
+               surrogate_request.enumeration.contact_person_email,
                surrogate_request.enumeration)
         
 
