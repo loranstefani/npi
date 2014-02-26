@@ -41,13 +41,12 @@ class Enumeration(models.Model):
     status                = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
-    enumeration_type            = models.CharField(max_length=10,
+    enumeration_type            = models.CharField(max_length=5,
                                     choices=ENUMERATION_TYPE_CHOICES,)
         
     number              = models.CharField(max_length=10, blank=True, default="",
                                                    #editable=False,
-                                                   db_index=True
-                                                   )
+                                                   db_index=True)
     enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
     name_prefix         = models.CharField(max_length=10, blank=True,
@@ -64,7 +63,7 @@ class Enumeration(models.Model):
     
     sole_proprietor         = models.BooleanField(default=False)
     organizational_subpart  = models.BooleanField(default=False)
-    credential              = models.CharField(max_length=15, blank=True,
+    credential              = models.CharField(max_length=50, blank=True,
                                     default="", help_text ="e.g. MD, PA, OBGYN, DO")
     
     organization_name     = models.CharField(max_length=300, blank=True,
