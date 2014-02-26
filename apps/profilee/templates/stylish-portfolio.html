@@ -65,8 +65,8 @@
     <!-- Full Page Image Header Area -->
     <div id="top" class="header">
       <div class="vert-text">
-        <h1>{{enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}</h1>
-        <h3>{{enumeration.credential }}</h3>
+        <h1>{{ enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}, {{enumeration.credential }}</h1>
+        <h3>Last Updated: {{ enumeration.last_updated }}</h3>
         <a href="#details" class="btn btn-default btn-lg btn-primary">Details</a>
         
         {% if enumeration.bio_headline != "" %}
