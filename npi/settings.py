@@ -168,6 +168,9 @@ AJAX_LOOKUP_CHANNELS = {
                  },
     'license' : {'model':'licenses.License', 'search_field':'number',
                  'min_length': '4'},
+        
+    'identifier' : {'model':'identifiers.Identifier', 'search_field':'identifier',
+                 'min_length': '4'},    
     'manager' : {'model':'auth.User', 'search_field': 'email',
                  'min_length': '4'},   
     'direct' : {'model':'direct.DirectAddress', 'search_field': 'email',

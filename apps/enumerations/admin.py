@@ -21,6 +21,7 @@ class EnumerationAdmin(AjaxSelectAdmin):
                                         'revalidation_address': 'address', 
                                         'managers': 'manager',
                                         'direct_addresses': 'direct',
+                                        'identifiers': 'identifier',
                                         'licenses': 'license',
                                         'parent_organization': 'enumeration',
                                         

@@ -17,7 +17,8 @@ class Identifier(models.Model):
     updated      = models.DateField(auto_now=True)
     
     def __unicode__(self):
-        return self.identifier
+        s = "%s/%s/%s/%s" % (self.identifier, self.issuer, self.state, self.get_code_display())
+        return s
 
     class Meta:
         get_latest_by = "id"
