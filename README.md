@@ -2,8 +2,8 @@ NPPES Redux
 ===========
 
 This is a redesign of the National Plan and Provider Enumeration System (NPPES).
-NPPES is a system managed by the Cevters for Medicare and Medicaid Services
-(CMS).See http://cms.hhs.gov for more information. NPPES is designed to
+NPPES is a system managed by the Ceters for Medicare and Medicaid Services
+(CMS). See http://cms.hhs.gov for more information. NPPES is designed to
 enumerate all providers in the United States.
 
 The Google Group for this project is here: https://groups.google.com/d/forum/nppes
@@ -68,6 +68,4 @@ Other Important Notes:
 Currently, user creation occurs in the Django admin.  It is envisioned that
 accounts will be created using CMS's current Identity and Access (I&A) system.
 PECOS and EHRIncentives also use I&A for access.  A user is not the same thing
-as an Enumeration.  
-
-
+as an Enumeration.
