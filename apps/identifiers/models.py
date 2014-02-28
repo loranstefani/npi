@@ -13,6 +13,8 @@ class Identifier(models.Model):
     state        = models.CharField(max_length=2, blank=True, default="",
                                     choices=US_STATE_CHOICES)
     issuer       = models.CharField(max_length=150, blank=True, default="" )
+    added        = models.DateField(auto_now_add=True)
+    updated      = models.DateField(auto_now=True)
     
     def __unicode__(self):
         return self.identifier
