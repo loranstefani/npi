@@ -15,6 +15,7 @@ from ..enumerations.models import Enumeration
 from ..enumerations.utils import get_enumeration_user_manages_or_404
 # Create your views here.
 
+@login_required
 def add_direct_address(request, enumeration_id):
     name = _("Add Direct Addresses")
     if request.method == 'POST':
