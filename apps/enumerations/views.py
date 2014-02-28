@@ -414,7 +414,7 @@ def domestic_address(request,  address_id, enumeration_id):
             #based on address_purpose, 
             
             return HttpResponseRedirect(reverse('edit_enumeration',
-                                    args=(enumeration_id )))
+                                    args=(enumeration_id, )))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -443,7 +443,7 @@ def foreign_address(request, address_id, enumeration_id):
         if form.is_valid():
             a = form.save()
             return HttpResponseRedirect(reverse('edit_enumeration',
-                                    args=(enumeration_id )))
+                                    args=(enumeration_id, )))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -471,7 +471,7 @@ def military_address(request, address_id, enumeration_id):
         if form.is_valid():
             a = form.save()
             return HttpResponseRedirect(reverse('edit_enumeration',
-                                    args=(enumeration_id )))
+                                    args=(enumeration_id, )))
 
         else:
             #The form is invalid

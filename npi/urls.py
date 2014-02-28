@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^direct/',        include('apps.direct.urls')),
     url(r'^profile/',       include('apps.profilee.urls')),
     url(r'^surrogates/',    include('apps.surrogates.urls')),
+    url(r'^identifiers/',    include('apps.identifiers.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
     
