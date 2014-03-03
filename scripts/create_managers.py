@@ -16,7 +16,7 @@ def create_managers():
     users = User.objects.all()
     
     for u in users:
-        s = Surrogate.objects.get(user=u)
+        s = Surrogate.objects.get_or_create(user=u)
         enums = Enumeration.objects.all()[:10]
         for e in enums:
             s.enumerations.add(e)
