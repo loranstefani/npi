@@ -38,6 +38,7 @@ def import_public_corrected_addresses(filename):
             if True:    
                 if i % 1000 == 0:
                     print i
+                    print 'Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
                     
                 
                 #Set the enumeration type
