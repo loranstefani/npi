@@ -14,12 +14,15 @@ from django.contrib.auth.models import User
 def create_managers():
     
     users = User.objects.all()
-    
+    enums = Enumeration.objects.all()[:10]
     for u in users:
         s = Surrogate.objects.get_or_create(user=u)
-        enums = Enumeration.objects.all()[:10]
+        surrogate = s[0]
+        
+        
+        
         for e in enums:
-            s.enumerations.add(e)
+            surrogate.enumerations.add(e)
             e.managers.add(u)
    
     print "Done."
