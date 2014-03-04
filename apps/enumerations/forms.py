@@ -58,14 +58,14 @@ class SearchForm(forms.ModelForm):
             
         if state and not city:
             
-            qs = Enumeration.objects.filter(location_address__state=state, **q)
+            qs = Enumeration.objects.filter(location_address__state=state, **q)[:10]
         
         elif state and city:
             qs = Enumeration.objects.filter(location_address__state=state,
                                             location_address__city=city,
-                                            **q)
+                                            **q)[:10]
         else:
-            qs = Enumeration.objects.filter(**q)
+            qs = Enumeration.objects.filter(**q)[:10]
         
         return qs
     
@@ -91,7 +91,7 @@ class SearchEINForm(forms.ModelForm):
         if ein:
             q['ein']=ein
             
-        qs = Enumeration.objects.filter(**q)
+        qs = Enumeration.objects.filter(**q)[:10]
         return qs
 
 
