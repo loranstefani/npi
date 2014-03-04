@@ -91,7 +91,7 @@ class SearchEINForm(forms.ModelForm):
         if ein:
             q['ein']=ein
             
-        qs = Enumeration.objects.filter(**q)[:10]
+        qs = Enumeration.objects.filter(**q)[:1000]
         return qs
 
 
