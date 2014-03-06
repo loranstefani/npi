@@ -108,7 +108,7 @@ class SignupForm(forms.Form):
                         password=self.cleaned_data['password1'],
                         email=self.cleaned_data['email'])
         
-        new_user.is_active = False
+        #new_user.is_active = False
         new_user.save()
         #v=ValidSignupKey(user=new_user)
         #v.save()

@@ -47,7 +47,8 @@ class Invitation(models.Model):
         </html>
         """ % (self.code,)
         if settings.SEND_EMAIL:
-            subj = "[NPPES] Invitation Code: %s" % (self.code)
+            subj = "[%s] Invitation Code: %s" % (settings.ORGANIZATION_NAME,
+                                                    self.code)
             
             msg = EmailMessage(subj, msg, settings.EMAIL_HOST_USER,
                            [self.email, ])            
