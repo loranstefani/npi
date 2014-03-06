@@ -1,14 +1,13 @@
 from django.contrib import admin
-from models import UserProfile, ValidPasswordResetKey, Invitation, ValidSignupKey
+from models import ValidPasswordResetKey, Invitation
 
 
-admin.site.register(UserProfile)
+
 admin.site.register(ValidPasswordResetKey)
-admin.site.register(ValidSignupKey)
 
 class InvitationAdmin(admin.ModelAdmin):
     
-    list_display =  ('code', 'valid', 'email')
+    list_display =  ('email', 'code', 'valid')
     search_fields = ('code', 'valid', 'email')
     
 admin.site.register(Invitation, InvitationAdmin)

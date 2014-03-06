@@ -116,20 +116,21 @@ def password_reset_request(request):
 
 
 
-def signup(request):
+def create(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
           new_user = form.save()
-          messages.success(request, _("Please check your email to verify your account before logging in."))
+          messages.success(request, _("Account created.  What are you waiting for? Log in!"))
           return HttpResponseRedirect(reverse('login'))
         else:
             #return the bound form with errors
-            return render_to_response('accounts/signup.html',
+            return render_to_response('generic/bootstrapform.html',
                                       RequestContext(request, {'form': form}))      
     else:  
        #this is an HTTP  GET
-       return render_to_response('accounts/signup.html',
+       messages.info(request, _("Please check your email to verify your account before logging in."))
+       return render_to_response('generic/bootstrapform.html',
                                  RequestContext(request,
                                 {'form': SignupForm()}))     
 

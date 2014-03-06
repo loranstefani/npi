@@ -237,6 +237,9 @@ EMAIL_BACKEND = 'django_ses.SESBackend'
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 SEND_EMAIL = False
+MIN_PASSWORD_LEN =8
+ORGANIZATION_NAME = "NPPES"
+
 
 AUTH_PROFILE_MODULE = 'accounts.userprofile'
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)

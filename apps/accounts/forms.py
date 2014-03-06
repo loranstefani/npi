@@ -46,24 +46,14 @@ class LoginForm(forms.Form):
 
 class SignupForm(forms.Form):
     
-    invitation_code         = forms.CharField(max_length=30, label=_("Invitation Code"))
-    username                = forms.CharField(max_length=30, label=_("User"))
-    email                   = forms.EmailField(max_length=75, label=_("Email"))
-    first_name              = forms.CharField(max_length=100, label=_("First Name"))
-    last_name               = forms.CharField(max_length=100, label=_("Last Name"))
-    organization_name       = forms.CharField(max_length=100, label=_("Organization Name"))
-    state                   = forms.TypedChoiceField(choices=US_STATES, label=_("State"),)
-    city                    = forms.CharField(max_length=100, label=_("City"))
-    mobile_phone_number     = USPhoneNumberField(max_length=15,
-                                             label=_("Mobile Phone Number"),
-                                             required=False)
-    npi                     = forms.CharField(max_length=20, label=_("National Provider Identifier (NPI)"), required=False)
-
-
-
-    password1 = forms.CharField(widget=forms.PasswordInput, max_length=30,
+    invitation_code = forms.CharField(max_length=30, label=_("Invitation Code"))
+    username        = forms.CharField(max_length=30, label=_("User"))
+    email           = forms.EmailField(max_length=75, label=_("Email"))
+    first_name      = forms.CharField(max_length=100, label=_("First Name"))
+    last_name       = forms.CharField(max_length=100, label=_("Last Name"))
+    password1       = forms.CharField(widget=forms.PasswordInput, max_length=30,
                                 label=_("Password"))
-    password2 = forms.CharField(widget=forms.PasswordInput, max_length=30,
+    password2       = forms.CharField(widget=forms.PasswordInput, max_length=30,
                                 label=_("Password (again)"))
     
     required_css_class = 'required'
@@ -120,40 +110,19 @@ class SignupForm(forms.Form):
         
         new_user.is_active = False
         new_user.save()
-        
-        up=UserProfile.objects.create(
-            user=new_user,
-            invitation_code = self.cleaned_data['invitation_code'],
-            mobile_phone_number=self.cleaned_data.get('mobile_phone_number', ""),
-            city=self.cleaned_data.get('city', ""),
-            state=self.cleaned_data.get('state', ""),
-            organization_name=self.cleaned_data.get('organization_name', ""),
-            npi=self.cleaned_data.get('npi', ""),
-            )
-        
-        v=ValidSignupKey(user=new_user)
-        v.save()
+        #v=ValidSignupKey(user=new_user)
+        #v.save()
         
         return new_user
     
 class AccountSettingsForm(forms.Form):
 
-    
     username                = forms.CharField(max_length=30, label=_("User Name"))
     email                   = forms.CharField(max_length=30, label=_("Email"))
     first_name              = forms.CharField(max_length=100, label=_("First Name"))
     last_name               = forms.CharField(max_length=100, label=_("Last Name"))
     
-    organization_name       = forms.CharField(max_length=100,
-                                                    label=_("Organization Name"))
-    state                   = forms.TypedChoiceField(choices=US_STATES,
-                                                        label=_("State"))
-    city                    = forms.CharField(max_length=100, label=_("City"))
-    mobile_phone_number     = USPhoneNumberField(max_length=12,
-                                            label=_("Mobile Phone Number"),)
-    npi                     = forms.CharField(max_length=20, label=_("NPI"), required=False)
-    
-    required_css_class = 'required'
+    required_css_class      = 'required'
     
 
     
