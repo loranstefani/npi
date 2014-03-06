@@ -239,9 +239,8 @@ AWS_SECRET_ACCESS_KEY = ''
 SEND_EMAIL = False
 
 AUTH_PROFILE_MODULE = 'accounts.userprofile'
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
-                           'apps.accounts.auth.HTTPAuthBackend',
-                           )
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+
 
 try:
     from settings_local import *

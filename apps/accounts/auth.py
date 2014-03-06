@@ -1,111 +1,111 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4
-
-# A collection of handy authentication Backends. Copyright Videntity 2012.
-# License: BSD
-
-from django.contrib.auth.models import User
-import binascii
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.models import User, AnonymousUser
-from django.contrib.auth.decorators import login_required
-from django.template import loader
-from django.contrib.auth import authenticate
+import json, sys
 from django.conf import settings
-from django.core.urlresolvers import get_callable
-from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from models import UserProfile
+from django.contrib.auth.models import User
+import urllib,  urllib2, socket, base64, httplib
 
-
-class BasicBackend:
+class IABackend(object):
     supports_anonymous_user=False
-    supports_object_permissions=False    
+    supports_object_permissions=False
+    
     def get_user(self, user_id):
+
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-
-
         
-class MobilePhoneBackend(BasicBackend):
-    supports_anonymous_user=False
-    supports_object_permissions=False
     def authenticate(self, username=None, password=None):
-        try:
-            up = UserProfile.objects.get(mobile_phone_number=username)
-        except UserProfile.DoesNotExist:
+        
+        #A header for HTTP POST
+        http_header = {"Content-type": "application/x-www-form-urlencoded",}
+        
+        #POST parameters.
+        params = {  "username":   username,
+                    "password":    password,
+                 }
+        
+        #set default timeout for HTTP connection.
+        timeout = 15
+        socket.setdefaulttimeout(timeout)
+        
+        # create your HTTP request
+        req = urllib2.Request(settings.IA_AUTH_URL,
+                              urllib.urlencode(params),
+                              http_header)
+
+        #build opener
+        opener = urllib2.build_opener()
+    
+        try: 
+            # submit your request
+            res = opener.open(req)
+            j = res.read()
+            try:
+                user = User.objects.get(username=username)
+                #convert our happy response from JSON into a dict
+                json_dict = json.loads(j)
+                #Set additional info from response.
+                user.first_name=json_dict["first_name"]
+                user.last_name=json_dict["last_name"]
+                user.email=json_dict["email"]
+                #Save it
+                user.save()
+                #return the user
+                return user
+            except User.DoesNotExist:                
+                #User does not exist but the user/pass is valid, so create the user.
+                user = User(username=username, password=password)
+                #set salted hashed password.
+                user.set_password(password)
+                #convert our happy response from JSON into a dict
+                json_dict = json.loads(j)
+                #Set additional info from response.
+                user.first_name=json_dict["first_name"]
+                user.last_name=json_dict["last_name"]
+                user.email=json_dict["email"]
+                #Save it
+                user.save()
+                #return the user
+                return user            
+    
+        except urllib2.HTTPError, e:
+            #print e.code
+            #print e.read()
+            #j = e.read()
             return None
-        
-        if up.user.check_password(password):
-            return up.user
-    
-        
-class HTTPAuthBackend(BasicBackend):
-    supports_anonymous_user=False
-    supports_object_permissions=False
-    def __init__(self, auth_func=authenticate, realm='API'):
-        self.auth_func = auth_func
-        self.realm = realm
-
-    def is_authenticated(self, request):
-        auth_string = request.META.get('HTTP_AUTHORIZATION', None)
-        if not auth_string:
-            return False
             
-        try:
-            (authmeth, auth) = auth_string.split(" ", 1)
-
-            if not authmeth.lower() == 'basic':
-                return False
-
-            auth = auth.strip().decode('base64')
-            (username, password) = auth.split(':', 1)
-        except (ValueError, binascii.Error):
-            return False
-        
-        request.user = self.auth_func(username=username, password=password) \
-            or AnonymousUser()
-                
-        return not request.user in (False, None, AnonymousUser())
-        
-        
-    def authenticate(self, request):
-        auth_string = request.META.get('HTTP_AUTHORIZATION', None)
-
-        if not auth_string:
-            return AnonymousUser
+           
+        except urllib2.URLError, e:
+            error = 'URLError = ' + str(e.reason)            
+            r = {
+                "code": 500,
+                "errors":[ {"description":  error }, ]
+                }
+            #print r
+            return None
             
-        try:
-            (authmeth, auth) = auth_string.split(" ", 1)
-
-            if not authmeth.lower() == 'basic':
-                return AnonymousUser
-
-            auth = auth.strip().decode('base64')
-            (username, password) = auth.split(':', 1)
-        except (ValueError, binascii.Error):
-            return AnonymousUser
-        
-        request.user = self.auth_func(username=username, password=password) \
-            or AnonymousUser()
-                
-        return not request.user in (False, None, AnonymousUser())
-        
-    def challenge(self):
-        resp = HttpResponse("Authorization Required")
-        resp['WWW-Authenticate'] = 'Basic realm="%s"' % self.realm
-        resp.status_code = 401
-        return resp
-
-    def __repr__(self):
-        return u'<HTTPBasic: realm=%s>' % self.realm
-    
-
-
-
-    
-    
+        except httplib.HTTPException, e:
+            error = "HTTPException = %s"  % (str(e))
+            r = {
+                "code": 500,
+                "errors":
+                      [
+                        {"description":  error },
+                        ]
+                }
+            #print r
+            return None
+            
+        except Exception:
+            
+            r = {
+                "code": 500,
+                "errors": [
+                        {"description":  str(sys.exc_info()[1]) },
+                        ]
+                }            
+            #print r
+            return None

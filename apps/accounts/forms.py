@@ -12,6 +12,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 from django.utils.translation import ugettext_lazy as _
 from models import Invitation
+
 class PasswordResetRequestForm(forms.Form):
     email= forms.CharField(max_length=75, label=_("Email"))
     required_css_class = 'required'
