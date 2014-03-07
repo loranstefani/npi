@@ -17,10 +17,23 @@ from django.core.mail import send_mail, EmailMessage
 from django.utils.translation import ugettext_lazy as _
 
 
+
+class RequestInvite(models.Model):
+    first_name     = models.CharField(max_length = 150)
+    last_name      = models.CharField(max_length = 150)
+    organization   = models.CharField(max_length = 150)
+    email          = models.EmailField(max_length = 150)
+    added          = models.DateField(auto_now_add=True)
+    def __unicode__(self):
+        r = "%s %s" % (self.first_name, self.last_name)
+        return r
+
 class Invitation(models.Model):
     code   = models.CharField(max_length = 10, unique=True)
     email  = models.EmailField(blank=True)
     valid = models.BooleanField(default=True)
+    added          = models.DateField(auto_now_add=True)
+    
     
     def __unicode__(self):
         return self.code

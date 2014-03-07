@@ -21,6 +21,26 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
 
+
+
+def request_invite(request):
+    name='Request an Invite'
+    if request.method == 'POST':
+        form = RequestInviteForm(request.POST)
+        if form.is_valid():
+          new_user = form.save()
+          messages.success(request, _("Your invite request has been received.  You will be contacted by email when your invitation is ready."))
+          return HttpResponseRedirect(reverse('login'))
+        else:
+            return render_to_response('generic/bootstrapform.html',
+                                      RequestContext(request, {'name': name,'form': form}))      
+    else:  
+       #this is an HTTP  GET
+       return render_to_response('generic/bootstrapform.html',
+                                 RequestContext(request, {'name': name, 'form': RequestInviteForm()}))   
+
+
+
 def mylogout(request):
     logout(request)
     messages.success(request, _("You have been logged out."))
@@ -117,6 +137,7 @@ def password_reset_request(request):
 
 
 def create(request):
+    name = "Create an NPPES Account without I&A"
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
@@ -126,13 +147,15 @@ def create(request):
         else:
             #return the bound form with errors
             return render_to_response('generic/bootstrapform.html',
-                                      RequestContext(request, {'form': form}))      
+                                      RequestContext(request, {'name': name,
+                                                               'form': form}))      
     else:  
        #this is an HTTP  GET
        messages.info(request, _("Please check your email to verify your account before logging in."))
        return render_to_response('generic/bootstrapform.html',
                                  RequestContext(request,
-                                {'form': SignupForm()}))     
+                                {'name': name,
+                                 'form': SignupForm()}))     
 
 
 def verify_email(request, verification_key,

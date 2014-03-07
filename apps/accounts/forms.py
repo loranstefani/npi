@@ -11,7 +11,27 @@ from localflavor.us.us_states import US_STATES
 from django.conf import settings
 from django.core.mail import mail_admins
 from django.utils.translation import ugettext_lazy as _
-from models import Invitation
+from models import Invitation, RequestInvite
+
+
+
+
+class RequestInviteForm(forms.ModelForm):
+    class Meta:
+        model = RequestInvite
+        fields = ('first_name', 'last_name', 'organization', 'email')
+    human = forms.CharField(max_length=30, label=_("What is 5 + 2?"),
+            help_text = "We are asking this to make sure you are human. Hint: the answer is 7.")
+    required_css_class = 'required'
+    def clean_human(self):
+        human = self.cleaned_data.get("human", "")
+        if str(human) != "7":
+            raise forms.ValidationError(_("You do not appear to be human. Maybe you're just really bad at math?"))
+        return human
+  
+    
+    
+    
 
 class PasswordResetRequestForm(forms.Form):
     email= forms.CharField(max_length=75, label=_("Email"))
