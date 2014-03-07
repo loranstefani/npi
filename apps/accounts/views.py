@@ -19,7 +19,7 @@ from datetime import datetime
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-
+from emails import send_invite_request_notices
 
 
 
@@ -28,7 +28,10 @@ def request_invite(request):
     if request.method == 'POST':
         form = RequestInviteForm(request.POST)
         if form.is_valid():
-          new_user = form.save()
+          invite_request = form.save()
+          
+          send_invite_request_notices(invite_request)
+          
           messages.success(request, _("Your invite request has been received.  You will be contacted by email when your invitation is ready."))
           return HttpResponseRedirect(reverse('login'))
         else:

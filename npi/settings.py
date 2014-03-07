@@ -231,14 +231,18 @@ TWILIO_AUTH_TOKEN = ""
 TWILIO_API_VERSION = '2010-04-01'
 SMS_LOGIN_TIMEOUT_MIN = 10
 
-EMAIL_HOST_USER = 'change_me@example.com'
+EMAIL_HOST_USER = 'email_from@example.com'
 HOSTNAME_URL = 'http://127.0.0.1:8000'
 EMAIL_BACKEND = 'django_ses.SESBackend'
+
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 SEND_EMAIL = False
 MIN_PASSWORD_LEN =8
 ORGANIZATION_NAME = "NPPES"
+INVITE_REQUEST_ADMIN = "someone@example.com"
+
+
 
 
 AUTH_PROFILE_MODULE = 'accounts.userprofile'

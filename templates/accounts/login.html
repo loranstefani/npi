@@ -26,17 +26,15 @@
 	{{ form|bootstrap }}
         </table>
 	<input type="submit" class="btn btn-primary btn-large"  value="{% trans 'Continue' %}" /><br>
-	<a href="javascript:history.go(-1)">{% trans "Login" %}</a>
-      
+	<a href="javascript:history.go(-1)">{% trans "Cancel" %}</a>
       </form>
     </div>
   </div>
 
 <div class="row">
  <small><a href="/accounts/create">
- {% trans "Register here" %}</a> with an invitation code.
- For the time being, invitation codes are reserved for federal employees.
- We hope to give everyone a sneak peak soon.
+ {% trans "Register here" %}</a> with an invitation code. To request an invitation code
+<a href="/accouts/request-invite"> fill out this form </a>.
  </small>
 
     </div> 

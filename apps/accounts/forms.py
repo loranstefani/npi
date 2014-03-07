@@ -26,7 +26,7 @@ class RequestInviteForm(forms.ModelForm):
     def clean_human(self):
         human = self.cleaned_data.get("human", "")
         if str(human) != "7":
-            raise forms.ValidationError(_("You do not appear to be human. Maybe you're just really bad at math?"))
+            raise forms.ValidationError(_("You are either not human or just just really bad at math."))
         return human
   
     
