@@ -154,7 +154,7 @@ def create(request):
                                                                'form': form}))      
     else:  
        #this is an HTTP  GET
-       messages.info(request, _("Please check your email to verify your account before logging in."))
+       messages.info(request, _("An invitation code is required to register."))
        return render_to_response('generic/bootstrapform.html',
                                  RequestContext(request,
                                 {'name': name,
