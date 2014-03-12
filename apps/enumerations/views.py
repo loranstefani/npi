@@ -147,22 +147,18 @@ def create_enumeration(request):
     name = _("Create New Entity for Enumeration")
     if request.method == 'POST':
         
-        
-        form = CreateEnumeration1Form(request.POST, mymanager=request.user.email)
+        form = CreateEnumeration2Form(request.POST)
         
         if form.is_valid():
-            e = form.save(commit=False)
-            e.contact_person_first_name     = request.user.first_name
-            e.contact_person_last_name      = request.user.last_name
-            e.contact_person_email          = request.user.email
+            e = Enumeration(enumeration_type = form.cleaned_data['enumeration_type'])
             e.save()
-            form.save_m2m()
-
+            e.managers.add(request.user)
+            e.save()
            
             #make sure this user is also the surrogate
 
             s = Surrogate.objects.get(user=request.user)
-            
+            s.save()
             s.enumerations.add(e)
             s.save()
            
@@ -176,6 +172,8 @@ def create_enumeration(request):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
+             print form.errors
+             
              return render_to_response('generic/bootstrapform.html',
                                             {'form': form,
                                              'name':name,},
@@ -183,9 +181,7 @@ def create_enumeration(request):
             
     #this is a GET
     context= {'name':name,
-              'form': CreateEnumeration1Form(initial={"manager":request.user.email,},
-                                             mymanager=request.user.email, 
-                                             )}
+              'form': CreateEnumeration2Form()}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 

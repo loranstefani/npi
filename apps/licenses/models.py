@@ -1,29 +1,47 @@
 from django.db import models
 from localflavor.us.us_states import US_STATES
+from django.conf import settings
 
-
-
-
-
-LICENSE_STATUS_CHOICES =(("UNKNOWN", "Unknown"),
+LICENSE_STATUS_CHOICES =( ("", "Unknown"),
                           ("ACTIVE","Active"),
                           ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
                           ("EXPIRED","Expired"),
                           ("REVOKED","Revoked"),
                           ("DECEASED","Deceased"), )
 
-LICENSE_TYPE_CHOICES =(   ("MD", "Medical Doctor (MD)"),
-                          ("DO","Doctor of Osteopathy (DO)"),
-                          ("PA","Physician Assistant"),
-                          ("OTHER","Other"), )
+
+class LicenseType(models.Model):
+    state          = models.CharField(max_length=2,
+                                    choices = US_STATES)
+    license_type   = models.CharField(max_length=3)
+    
+    mac            =  models.IntegerField(max_length=2,
+                        verbose_name = "Medicare Administrative Contractor")
+    
+    provider_type  = models.IntegerField(max_length=2)
+    
+    credential     = models.CharField(max_length=150)
+    
+    class Meta:
+        
+        unique_together =  (('state', 'license_type'), )
+        ordering = ('state', 'license_type')
+
+    def __unicode__(self):
+        lt ="%s-%s (%s)" % (self.state, self.license_type, self.credential)
+        return lt
+    
+    def code(self):
+        lt ="%s-%s" % (self.state, self.license_type)
+        return lt
+
+
 
 class License(models.Model):
+    
+    license_type   = models.ForeignKey(LicenseType)
     number         = models.CharField(max_length=20, verbose_name="License Number",
                                                     db_index=True)
-    state          = models.CharField(max_length=2,  blank=True, default="",
-                                    choices = US_STATES, db_index=True)
-    license_type   = models.CharField(max_length=5,  blank=True, default="",
-                                    choices = LICENSE_TYPE_CHOICES, db_index=True)
     status         = models.CharField(max_length=10, choices=LICENSE_STATUS_CHOICES,
                                          default ="UNKNOWN")
     verified_by_issuing_board   = models.BooleanField(default=False)
@@ -45,24 +63,20 @@ class License(models.Model):
     
     
     def __unicode__(self):
-        r ="%s issued by %s is %s." % (self.number, self.state, self.status)
+        r ="%s-%s" % (self.license_type.code(), self.number)
         return r
 
-    def license_number(self):
-        return self.number
-
+    class Meta:
         
+        unique_together =  (('license_type', 'number'), )   
 
 class LicenseValidator(models.Model):
 
-    state         = models.CharField(max_length=2, choices = US_STATES,
-                                     unique=True)
-    
-    #license_type  = models.CharField(max_length=5,  blank=True, default="",
-    #                                choices = LICENSE_TYPE_CHOICES)
-    # the url will get following appended. No trailing slash. [/license/[state]/[number]
+    license_type  = models.ForeignKey(LicenseType)
+    # the url will get following appended.
+    # /license/[state]/[License_type]/[number].json
     url   = models.CharField(max_length=200, default ="")
     
     def __unicode__(self):
-        return self.state
+        return str(self.license_type)
    

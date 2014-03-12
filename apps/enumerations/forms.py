@@ -15,6 +15,8 @@ MY_US_STATES = [("", "No State"), ]
 
 MY_US_STATES = MY_US_STATES + list(US_STATES)
 
+from models import ENUMERATION_TYPE_CHOICES
+
 
 class SearchForm(forms.ModelForm):
     class Meta:
@@ -95,6 +97,8 @@ class SearchEINForm(forms.ModelForm):
         return qs
 
 
+
+
 class CreateEnumeration1Form(forms.ModelForm):
     
     def __init__(self, *args,**kwargs):
@@ -110,12 +114,20 @@ class CreateEnumeration1Form(forms.ModelForm):
             self.fields['managers'].required = True
             self.fields['enumeration_type'].required = True
             
+            
     class Meta:
         model = Enumeration
         fields = ('enumeration_type', 'managers')
     manager = forms.CharField(widget= forms.HiddenInput, required=False,
                                    initial="")
     required_css_class = 'required'
+    
+    
+class CreateEnumeration2Form(forms.Form):
+    enumeration_type = forms.ChoiceField(choices=ENUMERATION_TYPE_CHOICES)
+
+    required_css_class = 'required'    
+    
 
 class CreateEnumerationOrganizationForm(forms.ModelForm):
     def __init__(self, *args,**kwargs):

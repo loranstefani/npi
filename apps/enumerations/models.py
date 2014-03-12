@@ -355,7 +355,7 @@ class Enumeration(models.Model):
 
     class Meta:
         get_latest_by = "id"
-        ordering = ('-id',)
+        ordering = ('-enumeration_date',)
 
 
 

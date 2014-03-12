@@ -24,8 +24,8 @@ def get_dict_from_mlvs(mlvsjson):
     return d
 
 
-def build_mlvs_url(base_server_url, state, number):
-    url = "%s/license/%s/%s.json" % (base_server_url, state, number)
+def build_mlvs_url(base_server_url,  number):
+    url = "%s/%s.json" % (base_server_url, number)
     return url
 
 

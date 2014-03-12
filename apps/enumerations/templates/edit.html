@@ -74,19 +74,6 @@
       </td>
   </tr>
   
-  <tr>
-    <td>Primary Taxonomy</td>
-    <td>Yes</td>
-    <td>
-    {{enumeration.taxonomy}}
-    </td>
-    
-    <td>
-      <a href="/enumerations/edit-primary-taxonomy/{{enumeration.id}}">Edit</a>
-      </td>
-  </tr>
-  
-  
   
  
   {% if enumeration.enumeration_type == "NPI-2" %}
@@ -217,8 +204,8 @@
   <thead>
   <tr>
     <th>State</th>
-    <th>Type</th>
-    <th>Number</th>
+    <th>Credential</th>
+    <th>Code</th>
     <th>Status</th>
     <th>Verified</th>
     <th>Actions</th>
@@ -228,9 +215,9 @@
   
   {% for l in enumeration.licenses.all %}
   <tr>
-    <td>{{l.get_state_display}} </td>
-    <td>{{l.get_license_type_display}} </td>
-    <td>{{l.license_number}} </td>
+    <td>{{l.license_type.get_state_display}} </td>
+    <td>{{l.license_type.credential}} </td> 
+    <td>{{l}} </td>  
     <td>{{l.get_status_display}} </td>
     <td>{{l.verified}} </td>
     <td> <a href=/licenses/view/{{l.id}}> View</a> |
@@ -368,7 +355,7 @@
     <td>{{m.first_name}} {{m.last_name}}</td>
     <td>{{m.email}}</td>
     <td>
-      <a href="/enumeration/revoke-management/{{e.id}}">Revoke</a>
+      <a href="/enumeration/revoke-management/{{e.id}}">Remove Authority to Manage</a>
     </td>
   </tr>
   
