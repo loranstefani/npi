@@ -9,12 +9,14 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from ..surrogates.models import Surrogate
 from ..enumerations.models import Enumeration
+from ..accounts.forms import LoginForm
 
 def home(request):
     if request.user.is_authenticated():
-        return authenticated_home(request)
+        return authenticated_home(request) 
     else:
-       context ={}
+       
+       context ={'form': LoginForm()}
        return render_to_response('home/index.html',
                               RequestContext(request, context,)) 
 
