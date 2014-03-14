@@ -8,7 +8,7 @@ from ..addresses.models import Address, US_STATE_CHOICES
 from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
 from ..specialties.models import Specialty
-from ..direct.models import DirectAddress
+from ..direct.models import DirectAddress, DirectCertificate
 from ..identifiers.models import Identifier
 from localflavor.us.models import PhoneNumberField
 
@@ -23,7 +23,6 @@ ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactiv
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandment"),
                                 ("FR", "Fraud"), ("OT", "Other"), )
 
-
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
 
 
@@ -35,6 +34,10 @@ INDIVIDUAL_OTHER_NAME_CHOICES = (("","Blank"), ("1","Former Name"),
 ORGANIZATION_OTHER_NAME_CHOICES = (("","Blank"), ("3","Doing Business As"),
                 ("4","Former Legal Business Name"), ("5","Other Name"))
 
+
+
+def generateUUID():
+    return str(uuid.uuid4())
 
 class Enumeration(models.Model):
     
@@ -219,6 +222,13 @@ class Enumeration(models.Model):
                                         db_index=True)
 
     
+    
+    direct_certificates         = models.ManyToManyField(DirectCertificate, null=True, blank=True,
+                                        related_name = "enumerations_direct_certificates",
+                                        db_index=True)
+    
+    
+    
     managers    = models.ManyToManyField(User, null=True, blank=True, db_index=True)
     
 
@@ -255,7 +265,7 @@ class Enumeration(models.Model):
                     verbose_name= "EIN Image",
                     help_text ="A PDF or PNG of your EIN assigned by the IRS",)
     
-    modify_token  = models.CharField(max_length=36, blank=True, default=uuid.uuid4)
+    modify_token  = models.CharField(max_length=36, blank=True, default=generateUUID)
    
     
     national_agency_check = models.BooleanField(default=False)
