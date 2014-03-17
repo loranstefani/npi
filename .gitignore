@@ -7,3 +7,4 @@ db/*
 settings_local.py
 uploads/*
 build/*
+migrations/*
