@@ -4,7 +4,7 @@ from localflavor.us.us_states import US_STATES
 from countries import COUNTRIES
 
 US_STATE_CHOICES = list(US_STATES)
-US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
+#US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
 US_STATE_CHOICES.extend(
     [('AS', 'American Samoa'),
     ('FM', 'Micronesia, Federated states of'),
@@ -15,6 +15,7 @@ US_STATE_CHOICES.extend(
     ('PW', 'Palau'),
     ('VI', 'Virgin Islands')])
 
+
 MILITARY_STATE_CHOICES = [('AE', 'AE - (ZIPs 09xxx) Armed Forces Europe which includes Canada, Middle East, and Africa'),
     ('AP', 'AP - (ZIPs 962xx) Armed Forces Pacific'),
     ('AA', 'AA - (ZIPs 340xx) Armed Forces (Central and South) Americas'),
@@ -23,7 +24,7 @@ MILITARY_STATE_CHOICES = [('AE', 'AE - (ZIPs 09xxx) Armed Forces Europe which in
 
 FOREIGN_COUTRY_STATE_CHOICES = [('ZZ', 'Foreign Country')]
 
-
+US_STATE_W_FC_CHOICES = US_STATE_CHOICES + FOREIGN_COUTRY_STATE_CHOICES
 
 US_STATE_CHOICES_ALL = US_STATE_CHOICES + MILITARY_STATE_CHOICES + FOREIGN_COUTRY_STATE_CHOICES
 

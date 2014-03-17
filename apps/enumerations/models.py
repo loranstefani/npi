@@ -4,7 +4,7 @@ from datetime import date
 from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 import uuid, random
-from ..addresses.models import Address, US_STATE_CHOICES
+from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
 from ..specialties.models import Specialty
@@ -233,7 +233,8 @@ class Enumeration(models.Model):
 
     #PII --------------------------------------------------------------------
     state_of_birth      = models.CharField(max_length=2,  blank=True, default="",
-                                    choices = US_STATE_CHOICES)
+                                    choices = US_STATE_W_FC_CHOICES,
+                        help_text="Choose Foriegn Country if the individual was not born in the US.")
     
     country_of_birth    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRIES)

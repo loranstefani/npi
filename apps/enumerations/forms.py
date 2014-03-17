@@ -7,15 +7,17 @@ from django import forms
 from localflavor.us.us_states import US_STATES
 from models import  Enumeration, License
 import datetime
-
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
-MY_US_STATES = [("", "No State"), ]
-
-MY_US_STATES = MY_US_STATES + list(US_STATES)
+SEARCH_US_STATES_CHOICES = [("", "No State"), ] + list(US_STATES)
 
 from models import ENUMERATION_TYPE_CHOICES
+
+def dob_range():
+    this_year = datetime.date.today().year
+    years = range(this_year-80, this_year-10)
+    return years
 
 
 class SearchForm(forms.ModelForm):
@@ -27,7 +29,7 @@ class SearchForm(forms.ModelForm):
                   )
     
     city  = forms.CharField(required=False)
-    state = forms.ChoiceField(choices=MY_US_STATES, required=False)
+    state = forms.ChoiceField(choices=SEARCH_US_STATES_CHOICES, required=False)
     required_css_class = 'required'
     
     def save(self, force_insert=False, force_update=False, commit=True):
@@ -148,7 +150,8 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
     class Meta:
         model = Enumeration
         fields = ('organization_name', 'ein', 'ein_image', 'doing_business_as',
-                    'contact_person_email', 'contact_person_first_name',
+                    'contact_person_email', 'contact_person_prefix',
+                    'contact_person_first_name',
                     'contact_person_middle_name', 'contact_person_last_name',
                     'contact_person_suffix', 'contact_person_title_or_position',
                     'contact_person_title_or_position',
@@ -183,12 +186,14 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
         
     class Meta:
         model = Enumeration
-        fields = ('first_name', 'last_name', 'ssn', 'itin',
+        fields = ('name_prefix','first_name', 'last_name', 'name_suffix','ssn', 'itin',
                 'state_of_birth','country_of_birth',
                   'birth_date', 'gender',
                   'sole_proprietor',
                   'doing_business_as',
-                    'contact_person_email', 'contact_person_first_name',
+                    'contact_person_email',
+                    'contact_person_prefix',
+                    'contact_person_first_name',
                     'contact_person_middle_name',
                     'contact_person_last_name',
                     'contact_person_suffix', 'contact_person_title_or_position',
@@ -207,7 +212,8 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
                     'other_name_code_2',
                     'other_first_name_2', 'other_middle_name_1', 'other_last_name_2',
                     )
-        
+
+    
     required_css_class = 'required'
 
 
