@@ -43,16 +43,16 @@ class SearchForm(forms.ModelForm):
         
         
         if number:
-            q['number']=number
+            q['number']=number.upper()
         
         if first_name:
-            q['first_name']=first_name
+            q['first_name']=first_name.upper()
         
         if last_name:
-            q['last_name']=last_name
+            q['last_name']=last_name.upper()
         
         if organization_name:
-            q['organization_name']=organization_name
+            q['organization_name']=organization_name.upper()
             
             
         if ein:
@@ -60,11 +60,11 @@ class SearchForm(forms.ModelForm):
             
         if state and not city:
             
-            qs = Enumeration.objects.filter(location_address__state=state, **q)[:10]
+            qs = Enumeration.objects.filter(location_address__state=state.upper(), **q)[:10]
         
         elif state and city:
-            qs = Enumeration.objects.filter(location_address__state=state,
-                                            location_address__city=city,
+            qs = Enumeration.objects.filter(location_address__state=state.upper(),
+                                            location_address__city=city.upper(),
                                             **q)[:10]
         else:
             qs = Enumeration.objects.filter(**q)[:10]

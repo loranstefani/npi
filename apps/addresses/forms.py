@@ -4,9 +4,8 @@
 
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
-from models import Address
+from models import Address, US_STATE_CHOICES, MILITARY_STATE_CHOICES
 import datetime
-from localflavor.us.us_states import US_STATES
 from django.utils.translation import ugettext_lazy as _
 from countries import NO_US_COUNTRIES, US_COUNTRY_CHOICES
 
@@ -32,7 +31,7 @@ class SelectAddressPurposeForm(forms.ModelForm):
                 self.fields['address_purpose'].choices = ((address_purpose,'Location Address (Phyiscal)'),)
             
             if address_purpose == "MAILING":
-                self.fields['address_purpose'].choices = ((address_purpose,'Mailing Address (Physical)'),)
+                self.fields['address_purpose'].choices = ((address_purpose,'Mailing Address (Correspondence)'),)
  
             if address_purpose == "MEDREC-STORAGE":
                 self.fields['address_purpose'].choices = ((address_purpose,'Medical Records Storage Address'),)
@@ -63,7 +62,7 @@ class DomesticAddressForm(forms.ModelForm):
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
         super(DomesticAddressForm,self).__init__(*args,**kwargs)
-        self.fields['state'].choices=US_STATES
+        self.fields['state'].choices=US_STATE_CHOICES
         self.fields['country_code'].choices=US_COUNTRY_CHOICES
         self.fields['country_code'].initial="US"
         self.fields['country_code'].required = True
@@ -113,12 +112,8 @@ class MilitaryAddressForm(forms.ModelForm):
     
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
-        super(MilitaryAddressForm,self).__init__(*args,**kwargs)
-        MIL_CHOICES = (('AE', 'AE - (ZIPs 09xxx) Armed Forces Europe which includes Canada, Middle East, and Africa'),
-                       ('AP', 'AP - (ZIPs 962xx) Armed Forces Pacific'),
-                       ('AA', 'AA - (ZIPs 340xx) Armed Forces (Central and South) Americas'))
-                      
-        self.fields['state'].choices=MIL_CHOICES
+        super(MilitaryAddressForm,self).__init__(*args,**kwargs)                      
+        self.fields['state'].choices=MILITARY_STATE_CHOICES
         self.fields['mpo'].required = True
         self.fields['zip'].required = True
         

@@ -26,15 +26,21 @@ DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandmen
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
 
 
-COUNTRY_CHOICES = (("US", "United States"), ("CA", "Canada"), ("MX", "Mexico"))
-
 INDIVIDUAL_OTHER_NAME_CHOICES = (("","Blank"), ("1","Former Name"),
-        ("2","Professional Name"), ("5","Other Name"))
+                                ("2","Professional Name"),
+                                ("5","Other Name"))
 
 ORGANIZATION_OTHER_NAME_CHOICES = (("","Blank"), ("3","Doing Business As"),
                 ("4","Former Legal Business Name"), ("5","Other Name"))
 
 
+PREFIX_CHOICES = (('Ms.', 'Ms.'),('Mr.', 'Mr.'),('Miss','Miss'),
+                  ('Mrs.','Mrs.'),('Dr.','Dr.'),('Prof.','Prof.'))
+
+
+SUFFIX_CHOICES = (('Jr.','Jr.'),('Sr.','Sr.'),('I','I'),('II','II'),
+                  ('III','III'),('IV','IV'),('V','V'),('VI','VI'),
+                  ('VII','VII'),('VIII','VIII'),('IX','IX'),('X','X'),)
 
 def generateUUID():
     return str(uuid.uuid4())
@@ -52,16 +58,16 @@ class Enumeration(models.Model):
                                                    db_index=True)
     enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
-    name_prefix         = models.CharField(max_length=10, blank=True,
+    name_prefix         = models.CharField(choices=PREFIX_CHOICES, max_length=5, blank=True,
                                                    default="")
-    first_name          = models.CharField(max_length=100, blank=True,
+    first_name          = models.CharField(max_length=150, blank=True,
                                                    default="", db_index=True)
-    middle_name          = models.CharField(max_length=100, blank=True,
+    middle_name          = models.CharField(max_length=150, blank=True,
                                                    default="")
     
-    last_name           = models.CharField(max_length=100, blank=True,
+    last_name           = models.CharField(max_length=150, blank=True,
                                                    default="", db_index=True)
-    name_suffix           = models.CharField(max_length=15, blank=True,
+    name_suffix           = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
                                                    default="")
     
     sole_proprietor         = models.BooleanField(default=False)
@@ -70,7 +76,8 @@ class Enumeration(models.Model):
                                     default="", help_text ="e.g. MD, PA, OBGYN, DO")
     
     organization_name     = models.CharField(max_length=300, blank=True,
-                                                   default="", db_index=True)
+                                    default="", db_index=True,
+                                    verbose_name="Legal Business Name")
     
     doing_business_as     = models.CharField(max_length=300, blank=True, default="")
      
@@ -92,10 +99,10 @@ class Enumeration(models.Model):
                                                    default="",
                                                    help_text="Previous or Maiden Last Name") 
 
-    other_name_prefix_1     = models.CharField(max_length=20, blank=True,
+    other_name_prefix_1     = models.CharField(choices=PREFIX_CHOICES, max_length=5, blank=True,
                                                    default="")
     
-    other_name_suffix_1     = models.CharField(max_length=20, blank=True,
+    other_name_suffix_1     = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
                                                    default="")
 
     other_name_credential_1     = models.CharField(max_length=20, blank=True,
@@ -117,10 +124,10 @@ class Enumeration(models.Model):
                                 default="",
                                 help_text="Another previous or maiden last name")
     
-    other_name_prefix_2     = models.CharField(max_length=20, blank=True,
+    other_name_prefix_2     = models.CharField(choices=PREFIX_CHOICES, max_length=5, blank=True,
                                                    default="")
     
-    other_name_suffix_2     = models.CharField(max_length=20, blank=True,
+    other_name_suffix_2     = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
                                                    default="")
 
     other_name_credential_2     = models.CharField(max_length=20, blank=True,
@@ -131,7 +138,6 @@ class Enumeration(models.Model):
 
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
                                         related_name = "enumeration_parent_organization")
-    
     
     parent_organization_legal_business_name  = models.CharField(max_length=300, default="", blank=True)
     parent_organization_ein     = models.CharField(max_length=10, default="", blank=True)
@@ -205,28 +211,21 @@ class Enumeration(models.Model):
     other_taxonomies           = models.ManyToManyField(TaxonomyCode, null=True,
                                         blank=True, related_name ="enumeration_other_taxonomies")
     
-    
     licenses                    = models.ManyToManyField(License, null=True, blank=True,
                                         related_name = "enumerations_licenses",
                                         db_index=True)
-    
-
     
     specialties                 = models.ManyToManyField(Specialty, null=True, blank=True,
                                         related_name = "enumerations_specialties",
                                         db_index=True)
     
-    
     direct_addresses            = models.ManyToManyField(DirectAddress, null=True, blank=True,
                                         related_name = "enumerations_direct_addresses",
                                         db_index=True)
-
-    
     
     direct_certificates         = models.ManyToManyField(DirectCertificate, null=True, blank=True,
                                         related_name = "enumerations_direct_certificates",
                                         db_index=True)
-    
     
     
     managers    = models.ManyToManyField(User, null=True, blank=True, db_index=True)
@@ -239,7 +238,8 @@ class Enumeration(models.Model):
     country_of_birth    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRIES)
     
-    birth_date          = models.DateField(blank=True, null=True)
+    birth_date          = models.DateField(blank=True, null=True,
+                                           help_text="Format: YYYY-MM-DD")
     
     gender              = models.CharField(max_length=2,  blank=True, default="",
                                     choices = (("F","Female"), ("M","Male"),
@@ -294,23 +294,21 @@ class Enumeration(models.Model):
     contact_person_last_name   = models.CharField(max_length=150,
                                                   blank=True, default="")
     
-    contact_person_prefix   = models.CharField(max_length=20,
-                                    blank=True, default="",
-                                    help_text = "For example, Mr., Ms., Mrs., Dr.")
+    contact_person_prefix   = models.CharField(choices=PREFIX_CHOICES,
+                                    max_length=5, blank=True, default="")
     
-    
-    contact_person_suffix   = models.CharField(max_length=150,
-                                    blank=True, default="",
-                                    help_text = "For example, M.D., R.N., PhD")
+    contact_person_suffix   = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
+                                    blank=True, default="")
 
     contact_person_credential    = models.CharField(max_length=20, blank=True,
-                                                    default="")
+                                        default="",
+                                        help_text="e.g. PhD, RN, MD")
     
     contact_person_title_or_position   = models.CharField(max_length=150,
-                                            blank=True, default="",
-                                            help_text = "For example, Jr., Sr., II, III.")
+                                            blank=True, default="")
     
-    contact_person_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
+    contact_person_telephone_number   = PhoneNumberField(max_length=12,
+                                                         blank=True, default="",
                                            help_text="Format: XXX-XXX-XXXX.")
     contact_person_telephone_extension   = models.CharField(max_length=10,
                                                   blank=True, default="")
@@ -326,7 +324,7 @@ class Enumeration(models.Model):
       
     
     # End PII -----------------------------------------------------------------
-    authorized_official_prefix        = models.CharField(max_length=20,
+    authorized_official_prefix        = models.CharField(choices=PREFIX_CHOICES, max_length=10,
                                             blank=True, default="",
                                             help_text = "For example, Mr., Ms., Mrs., Dr.")
     authorized_official_first_name    = models.CharField(max_length=150,
@@ -335,9 +333,8 @@ class Enumeration(models.Model):
                                             blank=True, default="")
     authorized_official_last_name     = models.CharField(max_length=150,
                                             blank=True, default="")
-    authorized_official_suffix        = models.CharField(max_length=150,
-                                            blank=True, default="",
-                                            help_text = "For example, Jr., Sr., II, III.")
+    authorized_official_suffix  = models.CharField(choices=SUFFIX_CHOICES,
+                                        max_length=4, blank=True, default="")
     
     authorized_official_credential    = models.CharField(max_length=20,
                                             blank=True, default="")
