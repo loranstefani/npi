@@ -3,7 +3,7 @@
 {% get_static_prefix as STATIC_PREFIX %}
 <html lang="en">
   <head>
-    
+
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,18 +18,18 @@
     <!-- Add custom CSS here -->
     <link href="{{ STATIC_URL }}stylish-portfolio/css/stylish-portfolio.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}{{e.background}}stylish-portfolio/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-  
+
     <style>
       .header {
         display: table;
         height: 100%;
         width: 100%;
         position: relative;
-        
+
         {% if not enumeration.background_image %}
-          background: url({{ STATIC_URL }}stylish-portfolio/img/stock-bgs/{{random_bg_image}}) no-repeat center center fixed; 
+          background: url({{ STATIC_URL }}stylish-portfolio/img/stock-bgs/{{random_bg_image}}) no-repeat center center fixed;
         {% else %}
-          background: url({{ MEDIA_URL }} {{ enumeration.background_image }}) no-repeat center center fixed; 
+          background: url({{ MEDIA_URL }} {{ enumeration.background_image }}) no-repeat center center fixed;
         {% endif %}
         -webkit-background-size: cover;
         -moz-background-size: cover;
@@ -55,39 +55,39 @@
         {% endif %}
         <li><a href="#contact">Contact</a></li>
         <li><a href="#directions">Directions</a></li>
-        
+
         <li><a href="/enumerations/edit/{{enumeration.id}}">Edit</a></li>
-        
+
       </ul>
     </div>
     <!-- /Side Menu -->
-  
+
     <!-- Full Page Image Header Area -->
     <div id="top" class="header">
       <div class="vert-text">
         <h1>{{ enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}, {{enumeration.credential }}</h1>
         <h3>Last Updated: {{ enumeration.last_updated }}</h3>
         <a href="#details" class="btn btn-default btn-lg btn-primary">Details</a>
-        
+
         {% if enumeration.bio_headline != "" %}
         <a href="#biography" class="btn btn-default btn-lg btn-primary">Biography</a>
         {% endif %}
-        
+
         <a href="#contact" class="btn btn-default btn-lg btn-primary">Contact</a>
-        
+
         <a href="#directions" class="btn btn-default btn-lg btn-primary ">Directions</a>
-        
+
       </div>
     </div>
     <!-- /Full Page Image Header Area -->
-  
-  
-  
 
-  
-  
-  
-  
+
+
+
+
+
+
+
     <!-- Details -->
     <div id="details" class="intro">
       <div class="container">
@@ -96,14 +96,14 @@
             <h2>Details</h2>
             <p class="lead"> NPI: {{enumeration.number}}</p>
             <p class="lead"> NPI Type: {{enumeration.enumeration_type}}</p>
-            <p class="lead"> Taxonomies, Licenses, and Specalties go here.</p>
-            
+            <p class="lead"> Taxonomies, Licenses, and Specialties go here.</p>
+
           </div>
         </div>
       </div>
     </div>
     <!-- /Details -->
-  
+
 
 
 
@@ -133,11 +133,11 @@
     <!-- /Extended bio -->
 
 {% endif %}
-    
-    
-    
-    
-    
+
+
+
+
+
 
   <!-- contact -->
     <div id="contact" class="call-to-action">
@@ -149,20 +149,20 @@
             Phone: +1 {{ enumeration.location_address.us_telephone_number}}
             Fax: +1 {{ enumeration.location_address.us_fax_number}}
           </h4>
-          
+
           <h5>
             <em>NOTE: This may not be the address you are seeking. Health
             care providers often practice from multiple locations.
             </em>
           </h5>
-          
+
           <h3>Mailing Addresss</h3>
-          
+
           <h4>{{ enumeration.mailing_address }}
                 Phone: +1 {{ enumeration.location_address.us_telephone_number}}
                 Fax: +1 {{ enumeration.location_address.us_fax_number}}
           </h4>
-          
+
           <h5>
             <em>NOTE: This may not be the address you are seeking. Health
             care providers often use third paties to handle mail and billing correspondence.
@@ -180,7 +180,7 @@
       <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q={{enumeration.google_map_q}}&amp;aq=0&amp;ie=UTF8&amp;hq={{enumeration.google_map_q}}&amp;t=m&amp;z=15&amp;iwloc=A&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q={{enumeration.google_map_q}}&amp;aq=0&amp;ie=UTF8&amp;hq={{enumeration.google_map_q}}&amp;t=m&amp;z=15&amp;iwloc=A"></a></small></iframe>
     </div>
     <!-- /Map -->
-    
+
     <!-- Additional Directions -->
     <div class="call-to-action">
       <div class="container">
@@ -189,32 +189,32 @@
             <h3>NOTE: This may not be the address you are seeking. Health
           care providers often practice at multiple locations. CMS may not
           have the latest information on file within NPPES.</h3>
-            
-          
+
+
           </div>
         </div>
       </div>
     </div>
     <!-- /Additional Directions-->
 
-    
-    
+
+
     <!-- Footer -->
     <footer>
       <div class="container">
         <div class="row">
           <div class="col-md-6 col-md-offset-3 text-center">
             <ul class="list-inline">
-              
-              {% if enumeration.website %} 
+
+              {% if enumeration.website %}
               <li><a target="_blank" href="{{enumeration.website}}"><i class="fa fa-dribbble fa-3x"></i></a></li>
                {% endif %}
-              
-              {% if enumeration.facebook_handle %} 
+
+              {% if enumeration.facebook_handle %}
               <li><a href="https://www.facebook.com/{{enumeration.facebook_handle}}"><i class="fa fa-facebook fa-3x"></i></a></li>
               {% endif %}
-              
-              {% if enumeration.twitter_handle %} 
+
+              {% if enumeration.twitter_handle %}
               <li><a target="_blank" href="http://twitter.com/{{enumeration.twitter_handle}}"><i class="fa fa-twitter fa-3x"></i></a></li>
               {% endif %}
             </ul>
@@ -223,9 +223,9 @@
             </div>
             <a href="#" class="btn btn-lg btn-default">Back to Top</a>
             <hr>
-            <p><a href="http://cms.hhs.gov" target="_blank">Centers for Medicare and Medicaid Services </a> | 
+            <p><a href="http://cms.hhs.gov" target="_blank">Centers for Medicare and Medicaid Services </a> |
             <a href="http://hhs.gov" target="_blank">Health and Human Services </a>
-            
+
             </p>
           </div>
         </div>
@@ -253,7 +253,7 @@
     <script>
       $(function() {
         $('a[href*=#]:not([href=#])').click(function() {
-          if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
+          if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
             || location.hostname == this.hostname) {
 
             var target = $(this.hash);

@@ -20,7 +20,7 @@ def add_direct_address(request, enumeration_id):
     name = _("Add Direct Addresses")
     if request.method == 'POST':
         form = CreateDirectAddressForm(request.POST)
-        
+
         if form.is_valid():
             e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
@@ -30,7 +30,7 @@ def add_direct_address(request, enumeration_id):
             messages.success(request,_("A Direct address was added to the enumeration."))
             return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(enumeration_id,)))
-            
+
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -38,7 +38,7 @@ def add_direct_address(request, enumeration_id):
                                             {'form': form,
                                              'name':name,},
                                             RequestContext(request))
-            
+
     #this is a GET
     context= {'name':name,
               'form': CreateDirectAddressForm()}
@@ -48,14 +48,14 @@ def add_direct_address(request, enumeration_id):
 
 @login_required
 def delete_direct_address(request, direct_id, enumeration_id):
-    
+
     name = _("Delete a Direct Address from an Enumeration")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
-    d = DirectAddress.objects.get(id=direct_id)       
+    d = DirectAddress.objects.get(id=direct_id)
     e.direct_addresses.remove(d)
     e.save()
     d.delete()
-    messages.success(request, "Your Direct Addess was deleted from this enumeration.")
+    messages.success(request, "Your Direct Address was deleted from this enumeration.")
     return HttpResponseRedirect(reverse('edit_enumeration',
                                 args=(enumeration_id,)))

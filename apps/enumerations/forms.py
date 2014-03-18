@@ -27,13 +27,13 @@ class SearchForm(forms.ModelForm):
                   'number', 'first_name', 'last_name', 'organization_name',
                   'ein'
                   )
-    
+
     city  = forms.CharField(required=False)
     state = forms.ChoiceField(choices=SEARCH_US_STATES_CHOICES, required=False)
     required_css_class = 'required'
-    
+
     def save(self, force_insert=False, force_update=False, commit=True):
-        
+
         q={}
         number              = self.cleaned_data.get("number", "")
         first_name          = self.cleaned_data.get("first_name", "")
@@ -42,59 +42,59 @@ class SearchForm(forms.ModelForm):
         city                = self.cleaned_data.get("city", "")
         state               = self.cleaned_data.get("state", "")
         ein                 = self.cleaned_data.get("ein", "")
-        
-        
+
+
         if number:
             q['number']=number.upper()
-        
+
         if first_name:
             q['first_name']=first_name.upper()
-        
+
         if last_name:
             q['last_name']=last_name.upper()
-        
+
         if organization_name:
             q['organization_name']=organization_name.upper()
-            
-            
+
+
         if ein:
             q['ein']=ein
-            
+
         if state and not city:
-            
+
             qs = Enumeration.objects.filter(location_address__state=state.upper(), **q)[:10]
-        
+
         elif state and city:
             qs = Enumeration.objects.filter(location_address__state=state.upper(),
                                             location_address__city=city.upper(),
                                             **q)[:10]
         else:
             qs = Enumeration.objects.filter(**q)[:10]
-        
+
         return qs
-    
+
 class SearchEINForm(forms.ModelForm):
-    
+
     def __init__(self, *args,**kwargs):
-        """Override the form's init"""     
+        """Override the form's init"""
         super(SearchEINForm,self).__init__(*args,**kwargs)
-        self.fields['ein'].required = True    
-    
-    
+        self.fields['ein'].required = True
+
+
     class Meta:
         model = Enumeration
         fields = ('ein',)
-        
+
     required_css_class = 'required'
-    
+
     def save(self, force_insert=False, force_update=False, commit=True):
-        
+
         q={}
         ein                 = self.cleaned_data.get("ein", "")
-        
+
         if ein:
             q['ein']=ein
-            
+
         qs = Enumeration.objects.filter(**q)[:1000]
         return qs
 
@@ -102,34 +102,34 @@ class SearchEINForm(forms.ModelForm):
 
 
 class CreateEnumeration1Form(forms.ModelForm):
-    
+
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
-        
-        mymanager = kwargs.pop('mymanager', None)        
+
+        mymanager = kwargs.pop('mymanager', None)
         super(CreateEnumeration1Form,self).__init__(*args,**kwargs)
-        
+
         if mymanager:
             #self.fields['managers'].widget  = forms.CheckboxSelectMultiple
             self.fields['managers'].queryset = User.objects.filter(email=mymanager)
             self.fields['managers'].initial  = User.objects.filter(email=mymanager)
             self.fields['managers'].required = True
             self.fields['enumeration_type'].required = True
-            
-            
+
+
     class Meta:
         model = Enumeration
         fields = ('enumeration_type', 'managers')
     manager = forms.CharField(widget= forms.HiddenInput, required=False,
                                    initial="")
     required_css_class = 'required'
-    
-    
+
+
 class CreateEnumeration2Form(forms.Form):
     enumeration_type = forms.ChoiceField(choices=ENUMERATION_TYPE_CHOICES)
 
-    required_css_class = 'required'    
-    
+    required_css_class = 'required'
+
 
 class CreateEnumerationOrganizationForm(forms.ModelForm):
     def __init__(self, *args,**kwargs):
@@ -146,7 +146,7 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
         #self.fields['authorized_official_telephone_number'].required = True
 
 
-        
+
     class Meta:
         model = Enumeration
         fields = ('organization_name', 'ein', 'ein_image', 'doing_business_as',
@@ -166,11 +166,11 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
                     'authorized_official_telephone_extension',
                   )
     required_css_class = 'required'
-    
+
 
 
 class CreateEnumerationIndividualForm(forms.ModelForm):
-    
+
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
         super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
@@ -183,7 +183,7 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
         #self.fields['authorized_person_last_name'].required = True
         #self.fields['authorized_person_telephone_number'].required = True
         #self.fields['ssn'].required = True
-        
+
     class Meta:
         model = Enumeration
         fields = ('name_prefix','first_name', 'last_name', 'name_suffix','ssn', 'itin',
@@ -207,14 +207,31 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
                     #'authorized_official_title_or_position',
                     #'authorized_official_telephone_number' ,
                     #'authorized_official_telephone_extension',
-                    'other_name_code_1', 'other_first_name_1', 'other_middle_name_1',          
+                    'other_name_code_1', 'other_first_name_1', 'other_middle_name_1',
                     'other_last_name_1',
                     'other_name_code_2',
                     'other_first_name_2', 'other_middle_name_1', 'other_last_name_2',
                     )
 
-    
+
     required_css_class = 'required'
+
+
+class PrimaryTaxonomyForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(PrimaryTaxonomyForm,self).__init__(*args,**kwargs)
+        self.fields['taxonomy'].required = True
+
+
+    class Meta:
+        model = Enumeration
+        fields = ('taxonomy',)
+
+
+    required_css_class = 'required'
+
 
 
 class EnumerationEnhancementForm(forms.ModelForm):

@@ -13,12 +13,14 @@ class TaxonomyCode(models.Model):
     speciality          = models.CharField(max_length=30, null=True, db_index=True)
     url                 = models.CharField(max_length=100, null=True)
     parent_taxonomycode_id  = models.IntegerField(max_length=11, null=True)
-    
-    
-    
+
+
+
     class Meta:
         get_latest_by = "id"
         ordering = ('-id',)
 
     def __unicode__(self):
         return "%s (%s)" % (self.description, self.code)
+
+    class OtherTaxonomies():

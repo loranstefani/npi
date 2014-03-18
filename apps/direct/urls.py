@@ -6,11 +6,11 @@ from views import *
 
 
 urlpatterns = patterns('',
-   
 
 
-    #Address URLs ------------------------------------
-    
+
+    #Direct URLs ------------------------------------
+
     url(r'^add/(?P<enumeration_id>\S+)',
                     add_direct_address, name="add_direct_address"),
 

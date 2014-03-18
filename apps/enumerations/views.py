@@ -17,12 +17,39 @@ from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate, SurrogateRequestEnumeration, SurrogateRequestEIN
 
 
+
+@login_required
+def primary_taxonomy(request, enumeration_id):
+    name = _("Select a Primary Taxonomy")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
+
+
+    if request.method == 'POST':
+        form = PrimaryTaxonomyForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+            messages.success(request,_("The primary taxonomy was updated/created."))
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': PrimaryTaxonomyForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+
+
 def search_enumeration(request):
     name = _("Search")
     if request.method == 'POST':
-    
+
         form = SearchForm(request.POST,)
-        
+
         if form.is_valid():
             qs = form.save()
             context= {'name':name,
@@ -38,7 +65,7 @@ def search_enumeration(request):
                                             {'form': form,
                                              'name':name,},
                                             RequestContext(request))
-            
+
     #this is a GET
     context= {'name':name,
               'form': SearchForm()}
@@ -51,9 +78,9 @@ def search_enumeration(request):
 def surrogate_lookup(request):
     name = _("Search for an Enumeration to Manage")
     if request.method == 'POST':
-    
+
         form = SearchForm(request.POST,)
-        
+
         if form.is_valid():
             qs = form.save()
             context= {'name':name,
@@ -69,23 +96,23 @@ def surrogate_lookup(request):
                                             {'form': form,
                                              'name':name,},
                                             RequestContext(request))
-            
+
     #this is a GET
     context= {'name':name,
               'form': SearchForm()}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
-    
-    
-    
-    
+
+
+
+
 @login_required
 def ein_lookup(request):
     name = _("Search for an EIN to Manage")
     if request.method == 'POST':
-    
+
         form = SearchEINForm(request.POST,)
-        
+
         if form.is_valid():
             qs = form.save()
             context= {'name':name,
@@ -101,43 +128,43 @@ def ein_lookup(request):
                                             {'form': form,
                                              'name':name,},
                                             RequestContext(request))
-            
+
     #this is a GET
     context= {'name':name,
               'form': SearchEINForm()}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
-    
-    
-    
+
+
+
 
 @login_required
 def request_to_manage_enumeration(request, id):
     e = get_object_or_404(Enumeration, id=id)
-    
+
     #Send an email to the authorized contact by creating a Surrogate Request
     sr = SurrogateRequestEnumeration.objects.create(user=request.user, enumeration=e)
     #Add the enumeration to request.user's surrogate list
-    s = Surrogate.objects.get(user=request.user)      
+    s = Surrogate.objects.get(user=request.user)
     s.enumerations.add(e)
     s.save()
-    msg = _("Your request to manage the enumeration was sent to the authorized official") 
+    msg = _("Your request to manage the enumeration was sent to the authorized official")
     messages.success(request, msg)
     return HttpResponseRedirect(reverse('home'))
-    
-    
+
+
 @login_required
 def request_to_manage_ein(request, ein):
     enumerations = Enumeration.objects.filter(ein=ein)
     sr = SurrogateRequestEIN.objects.create(user=request.user, ein=ein)
-        
-    for e in enumerations:   
+
+    for e in enumerations:
         #Add the enumeration to request.user's surrogate list
-        s = Surrogate.objects.get(user=request.user)      
+        s = Surrogate.objects.get(user=request.user)
         s.enumerations.add(e)
         s.save()
-    
-    msg = _("Your request to manage EIN was sent to the authorized officials") 
+
+    msg = _("Your request to manage EIN was sent to the authorized officials")
     messages.success(request, msg)
     return HttpResponseRedirect(reverse('home'))
 
@@ -146,39 +173,39 @@ def request_to_manage_ein(request, ein):
 def create_enumeration(request):
     name = _("Create New Entity for Enumeration")
     if request.method == 'POST':
-        
+
         form = CreateEnumeration2Form(request.POST)
-        
+
         if form.is_valid():
             e = Enumeration(enumeration_type = form.cleaned_data['enumeration_type'])
             e.save()
             e.managers.add(request.user)
             e.save()
-           
+
             #make sure this user is also the surrogate
 
             s = Surrogate.objects.get(user=request.user)
             s.save()
             s.enumerations.add(e)
             s.save()
-           
+
             if e.enumeration_type in ("NPI-1", "OEID-1"):
                return HttpResponseRedirect(reverse('create_individual_enumeration',
                                                    args=(e.id,)))
             else:
                 return HttpResponseRedirect(reverse('create_organization_enumeration',
                                                    args=(e.id,)))
-            
+
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
              print form.errors
-             
+
              return render_to_response('generic/bootstrapform.html',
                                             {'form': form,
                                              'name':name,},
                                             RequestContext(request))
-            
+
     #this is a GET
     context= {'name':name,
               'form': CreateEnumeration2Form()}
@@ -205,13 +232,13 @@ def edit_basic_enumeration(request, id):
 def create_individual_enumeration(request, id):
     name = _("Create a New Individual")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
-    
-    
+
+
     if request.method == 'POST':
         form = CreateEnumerationIndividualForm(request.POST, instance=e)
         if form.is_valid():
             e = form.save()
-            
+
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
             #The form is invalid
@@ -231,8 +258,8 @@ def create_individual_enumeration(request, id):
 def create_organization_enumeration(request, id):
     name = _("Create a New Organization")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
-    
-    
+
+
     if request.method == 'POST':
         form = CreateEnumerationOrganizationForm(request.POST, instance=e)
         if form.is_valid():
@@ -255,8 +282,8 @@ def create_organization_enumeration(request, id):
 @login_required
 def edit_enumeration(request, id):
     name = _("Edit Enumeration")
-    
-    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user) 
+
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     #this is a GET
     context= {'name': name,
               'enumeration': e,
@@ -272,8 +299,8 @@ def edit_enumeration(request, id):
 def edit_enhanced_enumeration(request, id):
     name = _("Edit Enhanced Profile Information")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
-    
-    
+
+
     if request.method == 'POST':
         form = EnumerationEnhancementForm(request.POST, request.FILES, instance=e)
         print "here"
@@ -305,8 +332,8 @@ def stop_managing_enumeration(request, enumeration_id):
     msg = _("You are no longer managing.")
     messages.error(request,msg)
     return HttpResponseRedirect(reverse('home',))
-    
-    
+
+
 
 
 
@@ -319,7 +346,7 @@ def select_address_type(request, address_purpose, enumeration_id):
                                         address_purpose=address_purpose)
         if form.is_valid():
             a = form.save()
-            
+
             #save this address to the enumeration.
             e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                                     request.user)
@@ -327,23 +354,23 @@ def select_address_type(request, address_purpose, enumeration_id):
 
             if str(address_purpose) == "LOCATION":
                 e.location_address = a
-                
+
             if str(address_purpose) == "MAILING":
                 e.mailing_address = a
-                
+
             if str(address_purpose) == "MEDREC-STORAGE":
                 e.medical_record_storage_address = a
-    
+
             if str(address_purpose) == "1099":
                 e.ten_ninety_nine_address = a
-                
+
             if str(address_purpose) == "REVALIDATION":
                 e.revalidation_address = a
-                        
-            
+
+
             if str(address_purpose) in ("OTHER", "ADDITIONAL-LOCATION",):
                 e.other_addresses.add(a)
-            
+
             e.save()
 
 
@@ -362,7 +389,7 @@ def select_address_type(request, address_purpose, enumeration_id):
              return render_to_response('generic/bootstrapform.html',
                                             {'form': form,'name':name,},
                                             RequestContext(request))
-            
+
     #this is a GET
     context= {'name':name,
               'form': SelectAddressPurposeForm(address_purpose=address_purpose)}
@@ -377,7 +404,7 @@ def select_address_type(request, address_purpose, enumeration_id):
 def edit_address(request, address_id, enumeration_id):
     a = Address.objects.get(id=address_id)
     name = _("Edit Address")
-    
+
     if a.address_type == "DOM":
         return HttpResponseRedirect(reverse('domestic_address',
                                             args=(a.id,enumeration_id)))
@@ -387,13 +414,13 @@ def edit_address(request, address_id, enumeration_id):
     elif a.address_type == "MIL":
         return HttpResponseRedirect(reverse('military_address',
                                             args=(a.id,enumeration_id)))
-    
-    
+
+
     context= {'name':name,
               'form': SelectAddressTypeForm(instance=a)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
-   
+
 
 
 
@@ -407,8 +434,8 @@ def domestic_address(request,  address_id, enumeration_id):
         form = DomesticAddressForm(request.POST, instance=address)
         if form.is_valid():
             a = form.save()
-            #based on address_purpose, 
-            
+            #based on address_purpose,
+
             return HttpResponseRedirect(reverse('edit_enumeration',
                                     args=(enumeration_id, )))
         else:
@@ -424,8 +451,8 @@ def domestic_address(request,  address_id, enumeration_id):
               'form': DomesticAddressForm(instance=address)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
-    
-    
+
+
 
 
 @login_required
@@ -448,7 +475,7 @@ def foreign_address(request, address_id, enumeration_id):
                                              'name':name,
                                              },
                                             RequestContext(request))
-    
+
     #this is a GET
     context= {'name':name,
               'form': ForeignAddressForm(instance=address)}
@@ -477,11 +504,23 @@ def military_address(request, address_id, enumeration_id):
                                              'name':name,
                                              },
                                             RequestContext(request))
-    
+
     #this is a GET
     context= {'name':name,
-              'form': MilitaryAddressForm()}
+              'form': MilitaryAddressForm(instance=address)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
+
+@login_required
+def delete_address(request,  address_id, enumeration_id):
+    name = _("Delete Address")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
+    address = get_object_or_404(Address, id=address_id)
+    #address.delete()
+
+    messages.success(request,_("Address deleted."))
+    return HttpResponseRedirect(reverse('edit_enumeration',
+                                    args=(enumeration_id, )))
 
