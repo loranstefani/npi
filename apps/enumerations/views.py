@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from models import Enumeration
 from ..addresses.models import Address
 from ..licenses.models import License
+from ..taxonomy.models import TaxonomyCode
 import sys
 from forms import *
 from ..addresses.forms import *
@@ -42,6 +43,46 @@ def primary_taxonomy(request, enumeration_id):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
+
+
+@login_required
+def add_other_taxonomies(request, enumeration_id):
+    name = _("Add Other Taxonomies")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
+
+
+    if request.method == 'POST':
+        form = OtherTaxonomyForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+            messages.success(request,_("The other taxonomy was created."))
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': OtherTaxonomyForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+
+@login_required
+def delete_other_taxonomy(request, taxonomy_id, enumeration_id):
+    name = _("Delete Other Taxonomies")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
+
+    
+    print "Taxonomy", taxonomy_id
+    t = TaxonomyCode.objects.get(id=taxonomy_id)
+    e.other_taxonomies.remove(t)
+    e.save()
+    messages.success(request,_("The other taxonomy was deleted."))
+    return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
 
 
 def search_enumeration(request):

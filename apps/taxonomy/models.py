@@ -22,5 +22,3 @@ class TaxonomyCode(models.Model):
 
     def __unicode__(self):
         return "%s (%s)" % (self.description, self.code)
-
-    class OtherTaxonomies():

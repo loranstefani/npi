@@ -11,6 +11,13 @@ urlpatterns = patterns('',
     url(r'^taxonomy/(?P<enumeration_id>\S+)',
                     primary_taxonomy, name="primary_taxonomy"),
 
+    url(r'^add-other-taxonomies/(?P<enumeration_id>\S+)',
+                    add_other_taxonomies, name="add_other_taxonomies"),
+
+
+    url(r'^delete-other-taxonomy/(?P<taxonomy_id>\S+)/(?P<enumeration_id>\S+)',
+                    delete_other_taxonomy, name="delete_other_taxonomy"),
+
     #Address URLs ------------------------------------
 
 

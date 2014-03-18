@@ -234,6 +234,33 @@ class PrimaryTaxonomyForm(forms.ModelForm):
 
 
 
+class OtherTaxonomyForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(OtherTaxonomyForm,self).__init__(*args,**kwargs)
+        self.fields['taxonomy'].required = True
+
+
+    class Meta:
+        model = Enumeration
+        fields = ('taxonomy',)
+
+
+    required_css_class = 'required'
+    
+    def save(self, force_insert=False, force_update=False, commit=True):
+        m = super(OtherTaxonomyForm, self).save(commit=False)
+        taxonomy                 = self.cleaned_data.get("taxonomy", "")
+        # do custom stuff
+        m.other_taxonomies.add(taxonomy)
+        if commit:
+            m.save()
+        return m
+    
+
+
+
 class EnumerationEnhancementForm(forms.ModelForm):
     class Meta:
         model = Enumeration
