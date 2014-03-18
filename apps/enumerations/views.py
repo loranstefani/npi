@@ -76,8 +76,6 @@ def delete_other_taxonomy(request, taxonomy_id, enumeration_id):
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
 
-    
-    print "Taxonomy", taxonomy_id
     t = TaxonomyCode.objects.get(id=taxonomy_id)
     e.other_taxonomies.remove(t)
     e.save()
