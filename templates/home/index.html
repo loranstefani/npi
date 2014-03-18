@@ -19,21 +19,21 @@
               <h1>National Plan and Provider Enumeration System</h1>
             </div>
           </div>
-         
+
           <div class="item">
-            <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Doctor Who!');"></div>
+            <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=NPI');"></div>
             <div class="carousel-caption">
-              <h1>Manage, Search, &amp; Share</h1>
+              <h1>Create or Update National Provider Identifiers</h1>
             </div>
           </div>
-	  
+
 	   <div class="item">
-            <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Simple');"></div>
+            <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Search');"></div>
             <div class="carousel-caption">
-              <h1>Now easier to use</h1>
+              <h1>for provider information</h1>
             </div>
           </div>
-	  
+
         </div>
 
         <!-- Controls -->
@@ -52,23 +52,23 @@
         <div class="row">
           <div class="col-lg-4 col-md-4">
             <h3><i class="fa fa-check-circle"></i> Try the ALPHA</h3>
-	    
-	    
+
+
 	      <form  class="well" method="post" action="/accounts/login/">
 		{% csrf_token %}
 		<table>
-		  
+
 		{{form.as_table}}
-		
+
 		</table>
 		<p></p>
 		<input type="submit" class="btn btn-success btn-large center-block"  value="Login" /><br>
-              		
+
 	      </form>
-	      
-	    
-	    
-	    
+
+
+
+
             <p>This site under development and should be considered an alpha. Authentication
 	    will occur through the
 	    <a target="_blank" href="https://nppes.cms.hhs.gov/IAWeb">CMS Identity and Access (I&A) System</a>, but
@@ -77,12 +77,14 @@
 	    With an invitation code, you can <a href="/accounts/create">create an account.</a>
             If you already have and account, then <a href="/accounts/login">login</a>.</p>
           </div>
-         
+
           <div class="col-lg-4 col-md-4">
-            <h3><i class="fa fa-folder-open"></i> Surrogacy</h3>
-            <p>Now you can delegate management of your NPI registration and information to others through surrogacy in I&A.</p>
+            <h3><i class="fa fa-folder-open"></i> NPI</h3>
+            <p>This site is where National Provider Identifiers (NPIs) are created and updated for individuals and organizations.
+            Now you can delegate management of your NPI registration and information to others through surrogacy in I&A
+            </p>
           </div>
-	  
+
 	   <div class="col-lg-4 col-md-4">
             <h3><i class="fa fa-pencil"></i> Be Honest</h3>
             <p>18 U.S.C. 1001 authorizes criminal penalties against an individual who in any matter within the jurisdiction
@@ -93,12 +95,16 @@
 	    organizations are subject to fines of up to $500,000. 18 U.S.C. 3571(d) also authorizes fines of up to twice the gross gain
 	    derived by the offender if it is greater than the amount specifically authorized by the sentencing statute.</p>
           </div>
-	  
+
         </div><!-- /.row -->
 
       </div><!-- /.container -->
 
     </div><!-- /.section -->
+
+
+
+
 
     <div class="section-colored text-center">
 
@@ -116,7 +122,7 @@
 
     </div><!-- /.section-colored -->
 
-   
+
 
 
 {% endblock %}
