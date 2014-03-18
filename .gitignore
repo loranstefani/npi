@@ -8,3 +8,4 @@ settings_local.py
 uploads/*
 build/*
 migrations/*
+db.sqlite3
