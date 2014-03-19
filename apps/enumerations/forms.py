@@ -138,33 +138,10 @@ class CreateEnumerationOrganizationForm(forms.ModelForm):
         self.fields['organization_name'].required = True
         self.fields['ein'].required = True
         self.fields['ein'].help_text = "An EIN is issued by the IRS. This is required for organizations."
-        #self.fields['contact_person_first_name'].required = True
-        #self.fields['contact_person_last_name'].required = True
-        #self.fields['contact_person_telephone_number'].required = True
-        #self.fields['authorized_official_first_name'].required = True
-        #self.fields['authorized_official_last_name'].required = True
-        #self.fields['authorized_official_telephone_number'].required = True
-
-
 
     class Meta:
         model = Enumeration
-        fields = ('organization_name', 'ein', 'ein_image', 'doing_business_as',
-                    'contact_person_email', 'contact_person_prefix',
-                    'contact_person_first_name',
-                    'contact_person_middle_name', 'contact_person_last_name',
-                    'contact_person_suffix', 'contact_person_title_or_position',
-                    'contact_person_title_or_position',
-                    'contact_person_telephone_number' ,
-                    'contact_person_telephone_extension',
-                    'authorized_official_email', 'authorized_official_prefix',
-                    'authorized_official_first_name',
-                    'authorized_official_last_name',
-                    'authorized_official_suffix', 'authorized_official_title_or_position',
-                    'authorized_official_title_or_position',
-                    'authorized_official_telephone_number' ,
-                    'authorized_official_telephone_extension',
-                  )
+        fields = ('organization_name', 'ein', 'ein_image', 'doing_business_as')
     required_css_class = 'required'
 
 
@@ -176,22 +153,72 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
         super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
-        #self.fields['contact_person_first_name'].required = True
-        #self.fields['contact_person_last_name'].required = True
-        #self.fields['contact_person_telephone_number'].required = True
-        #self.fields['authorized_person_first_name'].required = True
-        #self.fields['authorized_person_last_name'].required = True
-        #self.fields['authorized_person_telephone_number'].required = True
-        #self.fields['ssn'].required = True
+        self.fields['state_of_birth'].required = True
+        self.fields['gender'].required = True
+        self.fields['country_of_birth'].required = True
 
     class Meta:
         model = Enumeration
         fields = ('name_prefix','first_name', 'last_name', 'name_suffix','ssn', 'itin',
-                'state_of_birth','country_of_birth',
-                  'birth_date', 'gender',
-                  'sole_proprietor',
-                  'doing_business_as',
-                    'contact_person_email',
+                'state_of_birth','country_of_birth', 'birth_date', 'gender',
+                  'sole_proprietor', 'doing_business_as',)
+
+
+    required_css_class = 'required'
+    
+    def clean(self):
+        cleaned_data = super(CreateEnumerationIndividualForm, self).clean()
+
+        
+        #SSN and ITIN
+        ssn = cleaned_data.get("ssn", "")
+        itin = cleaned_data.get("itin", "")
+        if not ssn and not itin:
+            raise forms.ValidationError("You must provide an SSN or an ITIN.")
+        if ssn and itin:
+            raise forms.ValidationError("You cannot proide both an SSN and an ITIN.")
+        
+        #Country and state sanity check
+        country_of_birth = cleaned_data.get("country_of_birth", "")
+        state_of_birth   = cleaned_data.get("state_of_birth", "")
+        if country_of_birth != "US" and state_of_birth != "ZZ":
+            raise forms.ValidationError("You cannot be born in the United States and in a foriegn country at the same time.")
+        return cleaned_data
+
+
+class OtherNamesForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(OtherNamesForm,self).__init__(*args,**kwargs)
+
+
+    class Meta:
+        model = Enumeration
+        fields = ('other_name_code_1', 'other_first_name_1', 'other_middle_name_1',
+                    'other_last_name_1',
+                    'other_name_code_2',
+                    'other_first_name_2', 'other_middle_name_1', 'other_last_name_2',
+                    )
+
+
+    required_css_class = 'required'
+
+
+
+
+class ContactPersonForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(ContactPersonForm,self).__init__(*args,**kwargs)
+        self.fields['contact_person_first_name'].required = True
+        self.fields['contact_person_last_name'].required = True
+        self.fields['contact_person_telephone_number'].required = True
+
+    class Meta:
+        model = Enumeration
+        fields = ('contact_person_email',
                     'contact_person_prefix',
                     'contact_person_first_name',
                     'contact_person_middle_name',
@@ -200,21 +227,43 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
                     'contact_person_title_or_position',
                     'contact_person_telephone_number' ,
                     'contact_person_telephone_extension',
-                    #'authorized_official_email', 'authorized_official_prefix',
-                    #'authorized_official_first_name',
-                    #'authorized_official_last_name',
-                    #'authorized_official_suffix', 'authorized_official_title_or_position',
-                    #'authorized_official_title_or_position',
-                    #'authorized_official_telephone_number' ,
-                    #'authorized_official_telephone_extension',
-                    'other_name_code_1', 'other_first_name_1', 'other_middle_name_1',
-                    'other_last_name_1',
-                    'other_name_code_2',
-                    'other_first_name_2', 'other_middle_name_1', 'other_last_name_2',
                     )
 
 
     required_css_class = 'required'
+
+
+
+
+
+class AuthorizedOfficialForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(ContactPersonForm,self).__init__(*args,**kwargs)
+        self.fields['authorized_official_first_name'].required = True
+        self.fields['authorized_official_last_name'].required = True
+
+    class Meta:
+        model = Enumeration
+        fields = (  'authorized_official_email', 'authorized_official_prefix',
+                    'authorized_official_first_name',
+                    'authorized_official_last_name',
+                    'authorized_official_suffix', 'authorized_official_title_or_position',
+                    'authorized_official_title_or_position',
+                    'authorized_official_telephone_number' ,
+                    'authorized_official_telephone_extension',
+                    )
+
+
+    required_css_class = 'required'
+
+
+
+
+
+
+
 
 
 class PrimaryTaxonomyForm(forms.ModelForm):

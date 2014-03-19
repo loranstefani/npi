@@ -74,6 +74,13 @@ urlpatterns = patterns('',
     url(r'^edit-basic/(?P<id>\S+)', edit_basic_enumeration,
                     name="edit_basic_enumeration"),
 
+    url(r'^contact-person/(?P<id>\S+)', contact_person, name="contact_person"),
+
+    url(r'^authorized-official/(?P<id>\S+)', authorized_official, name="authorized_official"),
+
+    url(r'^other-names/(?P<id>\S+)', other_names, name="other_names"),
+
+
     url(r'^edit-enhanced/(?P<id>\S+)', edit_enhanced_enumeration,
                     name="edit_enhanced_enumeration"),
 

@@ -266,6 +266,83 @@ def edit_basic_enumeration(request, id):
 
 
 
+@login_required
+def edit_basic_enumeration(request, id):
+    name = _("Edit basic information for an enumeration")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    if e.enumeration_type in ("NPI-1", "OEID-1"):
+        return HttpResponseRedirect(reverse('edit_individual_enumeration',
+                                                   args=(e.id,)))
+    else:
+        return HttpResponseRedirect(reverse('edit_organization_enumeration',
+                                                   args=(e.id,)))
+
+@login_required
+def contact_person(request, id):
+    name = _("Contact Person")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    if request.method == 'POST':
+        form = ContactPersonForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': ContactPersonForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+@login_required
+def authorized_official(request, id):
+    name = _("Authorized Official")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    if request.method == 'POST':
+        form = AuthorizedOfficialForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': AuthorizedOfficialForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
+
+
+@login_required
+def other_names(request, id):
+    name = _("Other Names")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    if request.method == 'POST':
+        form = OtherNamesForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save()
+
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': OtherNamesForm(instance=e)}
+    return render_to_response('generic/bootstrapform.html',
+                              RequestContext(request, context,))
 
 @login_required
 def create_individual_enumeration(request, id):

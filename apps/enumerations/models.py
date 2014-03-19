@@ -243,16 +243,17 @@ class Enumeration(models.Model):
                                            help_text="Format: YYYY-MM-DD")
     
     gender              = models.CharField(max_length=2,  blank=True, default="",
+                                    verbose_name = "Sex",
                                     choices = (("F","Female"), ("M","Male"),
                                                ("T","Transgender")))
     
     itin        = models.CharField(max_length=10, blank=True,
                         default="", verbose_name="IRS Individual Tax Payer Identification Number (ITIN)",
-                        help_text = "An ITIN is required for individuals that are not eligible for a social security number.",
+                        help_text = "An ITIN is required for individuals that are not eligible for a social security number (SSN).",
                         db_index=True)
     
     ssn          = models.CharField(max_length=10, blank=True, default="",
-                        verbose_name = "Social Security Number",
+                        verbose_name = "Social Security Number (SSN)",
                         help_text= "Required for individuals unless an ITIN is provided",
                         db_index=True)
 
@@ -320,9 +321,8 @@ class Enumeration(models.Model):
                                                   blank=True, default="")
     
     authorized_official_email = models.EmailField(blank=True, default="",
-                               help_text = "Required if authorized person has an email.",
+                               help_text = "Required if the authorized official has an email.",
                                db_index=True)
-      
     
     # End PII -----------------------------------------------------------------
     authorized_official_prefix        = models.CharField(choices=PREFIX_CHOICES, max_length=10,
