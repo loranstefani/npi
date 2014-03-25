@@ -84,7 +84,7 @@ def send_invite_request_notices(invite_request):
     Hello: %s %s,
     </p>
     <p>
-    Your request for an invite for NPPES Redux (%s) has been reveived.
+    Your request for an invite for NPPES Redux (%s) has been received.
     </p>
     <p>
     Thank You,
