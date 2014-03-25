@@ -8,3 +8,6 @@ django-localflavor
 Pillow
 twilio
 django-ajax-selects
+django-reversion
+baluhn
+

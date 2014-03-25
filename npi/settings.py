@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'bootstrapform',
     'localflavor',
     'django_extensions',
+    'reversion',
     
     #npi apps
     'apps.accounts',
@@ -181,7 +182,7 @@ AJAX_LOOKUP_CHANNELS = {
 
 
 
-
+LUHN_PREFIX ="80840"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
