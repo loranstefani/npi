@@ -280,11 +280,11 @@
 
   {% for l in enumeration.licenses.all %}
   <tr>
-    <td>{{l.license_type.get_state_display}} </td>
-    <td>{{l.license_type.credential}} </td>
-    <td>{{l}} </td>
-    <td>{{l.get_status_display}} </td>
-    <td>{{l.verified}} </td>
+    <td>{{l.license_type.get_state_display}}</td>
+    <td>{{l.license_type.credential}}</td>
+    <td>{{l}}</td>
+    <td>{{l.get_status_display}}</td>
+    <td>{{l.verified}}</td>
     <td> <a href=/licenses/view/{{l.id}}> View</a> |
          <a href=/licenses/delete/{{l.id}}/{{enumeration.id}}>Delete</a>
     </td>
