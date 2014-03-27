@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from apps.enumerations.views import search_enumeration
+from apps.profilee.views import display_enumeration_profile_handle
 from django.conf.urls.static import static
 from ajax_select import urls as ajax_select_urls
 # Uncomment the next two lines to enable the admin:
@@ -32,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^identifiers/',   include('apps.identifiers.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
+    url(r'(?P<handle>\S+)$', display_enumeration_profile_handle, name="display_enumeration_profile_handle"),
     
     
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

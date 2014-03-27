@@ -18,6 +18,16 @@ def display_enumeration_profile(request, number):
     return render(request,'stylish-portfolio.html', context) 
 
 
+
+def display_enumeration_profile_handle(request, handle):
+    e = get_object_or_404(Enumeration, handle=handle, status="A")
+    random_background = "%s.jpg" % (random.randrange(1,27))
+    context ={"enumeration": e,
+              "random_bg_image": random_background,
+              }
+    
+    return render(request,'stylish-portfolio.html', context) 
+
 def display_random_enumeration_profile(request):
     
     id = random.randrange(1,300000)

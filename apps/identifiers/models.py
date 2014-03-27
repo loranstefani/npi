@@ -15,6 +15,8 @@ class Identifier(models.Model):
     issuer       = models.CharField(max_length=150, blank=True, default="" )
     added        = models.DateField(auto_now_add=True)
     updated      = models.DateField(auto_now=True)
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
     
     def __unicode__(self):
         s = "%s/%s/%s/%s" % (self.identifier, self.issuer, self.state, self.get_code_display())
