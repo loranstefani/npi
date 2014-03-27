@@ -24,8 +24,12 @@ def add_direct_address(request, enumeration_id):
         if form.is_valid():
             e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
-            d = form.save()
+            d = form.save(commit=False)
+            d.last_updated_ip=request.META['REMOTE_ADDR']
+            d.save()
             e.direct_addresses.add(d)
+            e.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
             messages.success(request,_("A Direct address was added to the enumeration."))
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -54,6 +58,8 @@ def delete_direct_address(request, direct_id, enumeration_id):
                                             request.user)
     d = DirectAddress.objects.get(id=direct_id)
     e.direct_addresses.remove(d)
+    e.save(commit=False)
+    e.last_updated_ip=request.META['REMOTE_ADDR']
     e.save()
     d.delete()
     messages.success(request, "Your Direct Address was deleted from this enumeration.")

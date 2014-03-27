@@ -17,6 +17,10 @@ class Surrogate(models.Model):
     """
     user           = models.ForeignKey(User, unique=True,db_index=True)
     enumerations   = models.ManyToManyField(Enumeration, null=True, blank=True, db_index=True)
+    added               = models.DateField(auto_now_add=True)
+    updated             = models.DateTimeField(auto_now=True)
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
   
     
     def __unicode__(self):
@@ -36,6 +40,8 @@ class SurrogateRequestEnumeration(models.Model):
     key                 = models.CharField(max_length=50, blank=True, db_index=True)
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
     
     
     
@@ -66,6 +72,8 @@ class SurrogateRequestEIN(models.Model):
     key                 = models.CharField(max_length=50, blank=True, db_index=True)
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
     
     
     

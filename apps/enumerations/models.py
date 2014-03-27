@@ -3,6 +3,7 @@ from django.conf import settings
 from datetime import date
 from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 import uuid, random
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
@@ -11,6 +12,8 @@ from ..specialties.models import Specialty
 from ..direct.models import DirectAddress, DirectCertificate
 from ..identifiers.models import Identifier
 from localflavor.us.models import PhoneNumberField
+from django.db import transaction
+from slugify import slugify
 
 
 ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (NPI-1)"),
@@ -18,12 +21,16 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (N
                             ("HPID","Health Plan Identifier (HPID)"),
                             ("OEID","Other Entity Individual Atypical Provider (OEID)"),)
 
+
+ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"))
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
 
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandment"),
                                 ("FR", "Fraud"), ("OT", "Other"), )
 
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
+
+
 
 
 INDIVIDUAL_OTHER_NAME_CHOICES = (("","Blank"), ("1","Former Name"),
@@ -42,44 +49,60 @@ SUFFIX_CHOICES = (('Jr.','Jr.'),('Sr.','Sr.'),('I','I'),('II','II'),
                   ('III','III'),('IV','IV'),('V','V'),('VI','VI'),
                   ('VII','VII'),('VIII','VIII'),('IX','IX'),('X','X'),)
 
+SOLE_PROPRIETOR_CHOICES = (("", "No Answer"), ("YES", "Yes"),("NO", "No"))
+
 def generateUUID():
     return str(uuid.uuid4())
 
 class Enumeration(models.Model):
     
-    status                = models.CharField(max_length=1,
+    
+    status              = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
-    enumeration_type            = models.CharField(max_length=5,
+    
+    mode              = models.CharField(max_length=1,
+                                    choices=ENUMERATION_MODE_CHOICES,
+                                    default ="W",
+                                    verbose_name="Mode of Enumeration")
+    
+    enumeration_type    = models.CharField(max_length=5,
                                     choices=ENUMERATION_TYPE_CHOICES,)
         
     number              = models.CharField(max_length=10, blank=True, default="",
-                                                   #editable=False,
-                                                   db_index=True)
+                            #editable=False,
+                            db_index=True)
+    
     enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
-    name_prefix         = models.CharField(choices=PREFIX_CHOICES, max_length=5, blank=True,
-                                                   default="")
+    fraud_alert         = models.BooleanField(default=False)
+    
+    name_prefix         = models.CharField(choices=PREFIX_CHOICES, max_length=5,
+                                blank=True, default="")
+    
     first_name          = models.CharField(max_length=150, blank=True,
-                                                   default="", db_index=True)
-    middle_name          = models.CharField(max_length=150, blank=True,
-                                                   default="")
+                                default="", db_index=True)
+    
+    middle_name         = models.CharField(max_length=150, blank=True, default="")
     
     last_name           = models.CharField(max_length=150, blank=True,
                                                    default="", db_index=True)
-    name_suffix           = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
-                                                   default="")
+    name_suffix         = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
+                                           blank=True, default="")
+    handle              = models.SlugField(blank=True, default="")
     
-    sole_proprietor         = models.BooleanField(default=False)
+    sole_proprietor     = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
+                                               default="", max_length=3)
     organizational_subpart  = models.BooleanField(default=False)
+    
     credential              = models.CharField(max_length=50, blank=True,
                                     default="", help_text ="e.g. MD, PA, OBGYN, DO")
     
-    organization_name     = models.CharField(max_length=300, blank=True,
+    organization_name   = models.CharField(max_length=300, blank=True,
                                     default="", db_index=True,
                                     verbose_name="Legal Business Name")
     
-    doing_business_as     = models.CharField(max_length=300, blank=True, default="")
+    doing_business_as   = models.CharField(max_length=300, blank=True, default="")
      
     organization_other_name   = models.CharField(max_length=300, blank=True, default="")
     
@@ -93,8 +116,7 @@ class Enumeration(models.Model):
     other_middle_name_1     = models.CharField(max_length=100, blank=True,
                                 default="",
                                 help_text="Another previous or maiden last name")
-    
-    
+
     other_last_name_1     = models.CharField(max_length=100, blank=True,
                                                    default="",
                                                    help_text="Previous or Maiden Last Name") 
@@ -228,7 +250,10 @@ class Enumeration(models.Model):
                                         db_index=True)
     
     
-    managers    = models.ManyToManyField(User, null=True, blank=True, db_index=True)
+    managers                    = models.ManyToManyField(User, null=True,
+                                            blank=True, db_index=True,
+                                            related_name ="enumeration_managers"
+                                            )
     
 
     #PII --------------------------------------------------------------------
@@ -356,11 +381,16 @@ class Enumeration(models.Model):
                                                       default="")
 
     #Record management
+    
+    comments            = models.TextField(blank=True, default="", max_length=1024)
     last_updated        = models.DateField(blank=True, null=True)
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
-
-
+    last_updated_ip     = models.CharField(max_length=20, blank=True,
+                                default="", db_index=True)
+    
+    
+    
     class Meta:
         get_latest_by = "id"
         ordering = ('-enumeration_date',)
@@ -485,9 +515,44 @@ class Enumeration(models.Model):
 
 
 
-    def save(self, **kwargs):
+    
+    
+    def save(self, commit=True, **kwargs):
         
-        #Set the DBA
+        """Create a name"""
+        name = "Not Provided"
+        if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
+            name = self.organization_name
+            if self.doing_business_as:
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.organization_name)
+        elif self.enumeration_type in ("NPI-1", ):
+            name = "%s %s" % (self.first_name, self.last_name)
+            if self.doing_business_as:
+                name = "%s %s (%s)" % (self.first_name,
+                                       self.last_name,
+                                       self.doing_business_as,)
+
+        """Set Sole Proprieter to NO if its an organization"""
+        if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
+            self.sole_proprietor="NO"
+        
+        """Create a handle is not already created"""        
+        if not self.handle:
+            slug_handle = slugify(self.name())
+        else:
+            slug_handle = self.handle
+        
+        #If the handle exists (because we are in the admin and not checkin in the form
+        # then set it to something sensible.    
+        if Enumeration.objects.filter(handle=slug_handle).count()!=0:
+            self.handle = "%s%s" % (slug_handle, random.randrange(10000,99999))
+        else:    
+            self.handle = slugify(name)
+        
+        
+        #Set the Doing business AS if organization_other_name_code=="3" and
+        #the field was left blank.
         if self.organization_other_name and self.organization_other_name_code=="3" and \
            not self.doing_business_as:
             self.doing_business_as = self.organization_other_name
@@ -497,12 +562,18 @@ class Enumeration(models.Model):
         if self.status == "A" and self.number == "":
             if self.enumeration_type in ("NPI-1", "NPI-2"):
                 self.number = random.randrange(100000000,199999999)
-            if self.enumeration_type in ("HPID-2"):
+            
+            if self.enumeration_type in ("HPID"):
                 self.number = random.randrange(7000000000,7999999999)
              
-            if self.enumeration_type in ("OEID-1", "OEID-2"):
+            if self.enumeration_type in ("OEID", "OEID"):
                 self.number = random.randrange(6000000000,6999999999)
             self.enumeration_date = date.today()
-            
-        super(Enumeration, self).save(**kwargs)
+        
+        self.last_name =self.last_name.upper()
+        if not self.last_updated_ip:
+            self.last_updated_ip = "127.0.0.1"
+                
+        if commit:
+            super(Enumeration, self).save(**kwargs)
     

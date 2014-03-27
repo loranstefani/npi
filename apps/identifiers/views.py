@@ -24,8 +24,12 @@ def add_identifier(request, enumeration_id):
         if form.is_valid():
             e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
-            i = form.save()
+            i = form.save(commit=False)
+            i.last_updated_ip=request.META['REMOTE_ADDR']
+            i.save()
             e.identifiers.add(i)
+            e.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
             messages.success(request,_("An Identifier was added to the enumeration."))
             return HttpResponseRedirect(reverse('edit_enumeration',

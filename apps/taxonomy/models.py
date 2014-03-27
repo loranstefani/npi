@@ -14,8 +14,6 @@ class TaxonomyCode(models.Model):
     url                 = models.CharField(max_length=100, null=True)
     parent_taxonomycode_id  = models.IntegerField(max_length=11, null=True)
 
-
-
     class Meta:
         get_latest_by = "id"
         ordering = ('-id',)

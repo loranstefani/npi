@@ -16,19 +16,23 @@ from forms import *
 from ..addresses.forms import *
 from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate, SurrogateRequestEnumeration, SurrogateRequestEIN
-
+import reversion
 
 
 @login_required
+@reversion.create_revision()
 def primary_taxonomy(request, enumeration_id):
     name = _("Select a Primary Taxonomy")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
 
-
     if request.method == 'POST':
         form = PrimaryTaxonomyForm(request.POST, instance=e)
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Primary taxonomy created/updated.")
             messages.success(request,_("The primary taxonomy was updated/created."))
             return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
         else:
@@ -46,6 +50,7 @@ def primary_taxonomy(request, enumeration_id):
 
 
 @login_required
+@reversion.create_revision()
 def add_other_taxonomies(request, enumeration_id):
     name = _("Add Other Taxonomies")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
@@ -54,7 +59,11 @@ def add_other_taxonomies(request, enumeration_id):
     if request.method == 'POST':
         form = OtherTaxonomyForm(request.POST, instance=e)
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Added Other Taxonomy")
             messages.success(request,_("The other taxonomy was created."))
             return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
         else:
@@ -71,6 +80,7 @@ def add_other_taxonomies(request, enumeration_id):
 
 
 @login_required
+@reversion.create_revision()
 def delete_other_taxonomy(request, taxonomy_id, enumeration_id):
     name = _("Delete Other Taxonomies")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
@@ -78,7 +88,11 @@ def delete_other_taxonomy(request, taxonomy_id, enumeration_id):
 
     t = TaxonomyCode.objects.get(id=taxonomy_id)
     e.other_taxonomies.remove(t)
+    e.save(commit=False)
+    e.last_updated_ip=request.META['REMOTE_ADDR']
     e.save()
+    reversion.set_user(request.user)
+    reversion.set_comment("Other taxonomy deleted.")
     messages.success(request,_("The other taxonomy was deleted."))
     return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
 
@@ -209,6 +223,7 @@ def request_to_manage_ein(request, ein):
 
 
 @login_required
+@reversion.create_revision()
 def create_enumeration(request):
     name = _("Create New Entity for Enumeration")
     if request.method == 'POST':
@@ -217,9 +232,14 @@ def create_enumeration(request):
 
         if form.is_valid():
             e = Enumeration(enumeration_type = form.cleaned_data['enumeration_type'])
+            e.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Created Enumeration.")
+            
             e.managers.add(request.user)
-            e.save()
+            
 
             #make sure this user is also the surrogate
 
@@ -238,8 +258,6 @@ def create_enumeration(request):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             print form.errors
-
              return render_to_response('generic/bootstrapform.html',
                                             {'form': form,
                                              'name':name,},
@@ -266,7 +284,9 @@ def edit_basic_enumeration(request, id):
 
 
 
+
 @login_required
+@reversion.create_revision()
 def edit_basic_enumeration(request, id):
     name = _("Edit basic information for an enumeration")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
@@ -278,13 +298,18 @@ def edit_basic_enumeration(request, id):
                                                    args=(e.id,)))
 
 @login_required
+@reversion.create_revision()
 def contact_person(request, id):
     name = _("Contact Person")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     if request.method == 'POST':
         form = ContactPersonForm(request.POST, instance=e)
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Edit Contact Person.")
 
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
@@ -300,13 +325,18 @@ def contact_person(request, id):
                               RequestContext(request, context,))
 
 @login_required
+@reversion.create_revision()
 def authorized_official(request, id):
     name = _("Authorized Official")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     if request.method == 'POST':
         form = AuthorizedOfficialForm(request.POST, instance=e)
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Edit Authorized Official.")
 
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
@@ -323,13 +353,18 @@ def authorized_official(request, id):
 
 
 @login_required
+@reversion.create_revision()
 def other_names(request, id):
     name = _("Other Names")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
     if request.method == 'POST':
         form = OtherNamesForm(request.POST, instance=e)
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Edit Other Names.")
 
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
@@ -345,6 +380,7 @@ def other_names(request, id):
                               RequestContext(request, context,))
 
 @login_required
+@reversion.create_revision()
 def create_individual_enumeration(request, id):
     name = _("Create a New Individual")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
@@ -354,7 +390,8 @@ def create_individual_enumeration(request, id):
         form = CreateEnumerationIndividualForm(request.POST, instance=e)
         if form.is_valid():
             e = form.save()
-
+            reversion.set_user(request.user)
+            reversion.set_comment("Create Individual Enumeration.")
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
             #The form is invalid
@@ -371,6 +408,7 @@ def create_individual_enumeration(request, id):
 
 
 @login_required
+@reversion.create_revision()
 def create_organization_enumeration(request, id):
     name = _("Create a New Organization")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
@@ -379,7 +417,11 @@ def create_organization_enumeration(request, id):
     if request.method == 'POST':
         form = CreateEnumerationOrganizationForm(request.POST, instance=e)
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Create/Edit Organization Enumeration.")
             return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(e.id,)))
         else:
@@ -397,13 +439,11 @@ def create_organization_enumeration(request, id):
 
 @login_required
 def edit_enumeration(request, id):
+    #This is a GET
     name = _("Edit Enumeration")
-
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
-    #this is a GET
     context= {'name': name,
               'enumeration': e,
-              #'form': AdditionalInformationForm(instance=e)
               }
     return render_to_response('edit.html',
                               RequestContext(request, context,))
@@ -411,7 +451,10 @@ def edit_enumeration(request, id):
 
 
 
+
+
 @login_required
+@reversion.create_revision()
 def edit_enhanced_enumeration(request, id):
     name = _("Edit Enhanced Profile Information")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
@@ -419,9 +462,14 @@ def edit_enhanced_enumeration(request, id):
 
     if request.method == 'POST':
         form = EnumerationEnhancementForm(request.POST, request.FILES, instance=e)
-        print "here"
         if form.is_valid():
-            e = form.save()
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Edit Enhancements.")
+            
+            
             return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(e.id,)))
         else:
@@ -436,9 +484,6 @@ def edit_enhanced_enumeration(request, id):
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
 
-
-
-
 @login_required
 def stop_managing_enumeration(request, enumeration_id):
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
@@ -450,11 +495,8 @@ def stop_managing_enumeration(request, enumeration_id):
     return HttpResponseRedirect(reverse('home',))
 
 
-
-
-
-
 @login_required
+@reversion.create_revision()
 def select_address_type(request, address_purpose, enumeration_id):
     name = _("Create Address")
     if request.method == 'POST':
@@ -487,6 +529,8 @@ def select_address_type(request, address_purpose, enumeration_id):
             if str(address_purpose) in ("OTHER", "ADDITIONAL-LOCATION",):
                 e.other_addresses.add(a)
 
+            e.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
 
 
@@ -541,6 +585,7 @@ def edit_address(request, address_id, enumeration_id):
 
 
 @login_required
+@reversion.create_revision()
 def domestic_address(request,  address_id, enumeration_id):
     name = _("Domestic Address")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
@@ -549,7 +594,11 @@ def domestic_address(request,  address_id, enumeration_id):
     if request.method == 'POST':
         form = DomesticAddressForm(request.POST, instance=address)
         if form.is_valid():
-            a = form.save()
+            a = form.save(commit=False)
+            a.last_updated_ip=request.META['REMOTE_ADDR']
+            a.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Create/Edit Domestic Address")
             #based on address_purpose,
 
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -572,6 +621,7 @@ def domestic_address(request,  address_id, enumeration_id):
 
 
 @login_required
+@reversion.create_revision()
 def foreign_address(request, address_id, enumeration_id):
     name = _("Foreign Address")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
@@ -580,7 +630,11 @@ def foreign_address(request, address_id, enumeration_id):
     if request.method == 'POST':
         form = ForeignAddressForm(request.POST, instance=address)
         if form.is_valid():
-            a = form.save()
+            a = form.save(commit=False)
+            a.last_updated_ip=request.META['REMOTE_ADDR']
+            a.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Create/Edit Foreign Address")
             return HttpResponseRedirect(reverse('edit_enumeration',
                                     args=(enumeration_id, )))
         else:
@@ -600,6 +654,7 @@ def foreign_address(request, address_id, enumeration_id):
 
 
 @login_required
+@reversion.create_revision()
 def military_address(request, address_id, enumeration_id):
     name = _("Military Address")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
@@ -608,7 +663,11 @@ def military_address(request, address_id, enumeration_id):
     if request.method == 'POST':
         form = MilitaryAddressForm(request.POST, instance=address)
         if form.is_valid():
-            a = form.save()
+            a = form.save(commit=False)
+            a.last_updated_ip=request.META['REMOTE_ADDR']
+            a.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Create/Edit Military Address")
             return HttpResponseRedirect(reverse('edit_enumeration',
                                     args=(enumeration_id, )))
 
@@ -629,6 +688,7 @@ def military_address(request, address_id, enumeration_id):
 
 
 @login_required
+@reversion.create_revision()
 def delete_address(request,  address_id, enumeration_id):
     name = _("Delete Address")
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,

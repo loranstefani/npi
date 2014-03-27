@@ -23,6 +23,8 @@ def manual_add_license(request, enumeration_id):
                                             request.user)
             l = form.save()
             e.licenses.add(l)
+            e.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
             return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(enumeration_id,)))
@@ -55,9 +57,13 @@ def add_license(request, enumeration_id):
             l = form.save(commit=False)
             l.verified_by_issuing_board = True
             l.status = "ACTIVE"
+            l.save(commit=False)
+            l.last_updated_ip=request.META['REMOTE_ADDR']
             l.save()
             
             e.licenses.add(l)
+            e.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
             messages.success(request, "Your license was automatically verified.")
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -87,6 +93,8 @@ def delete_license(request, license_id, enumeration_id):
                                             request.user)
     l = License.objects.get(id=license_id)       
     e.licenses.remove(l)
+    e.save(commit=False)
+    e.last_updated_ip=request.META['REMOTE_ADDR']
     e.save()
     l.delete()
     messages.success(request, "Your license was deleted.")

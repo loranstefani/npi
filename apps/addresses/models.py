@@ -99,7 +99,9 @@ class Address(models.Model):
     record_type             = models.CharField(max_length=2,  blank=True, default="")
     rdi                     = models.CharField(max_length=15,  blank=True, default="")
     lat                     = models.CharField(max_length=20, default="", blank=True)
-    long                    = models.CharField(max_length=20, default="", blank=True)                                             
+    long                    = models.CharField(max_length=20, default="", blank=True)
+    last_updated_ip         = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
                                                   
                                                   
                            

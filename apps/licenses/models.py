@@ -21,6 +21,8 @@ class LicenseType(models.Model):
     provider_type  = models.IntegerField(max_length=2)
     
     credential     = models.CharField(max_length=150)
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
     
     class Meta:
         

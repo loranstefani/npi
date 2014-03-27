@@ -10,4 +10,5 @@ twilio
 django-ajax-selects
 django-reversion
 baluhn
+python-slugify
 

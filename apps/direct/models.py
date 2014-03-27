@@ -3,6 +3,7 @@ from localflavor.us.us_states import US_STATES
 
 
 class DirectAddress(models.Model):
+    
     email         = models.EmailField(max_length=150, db_index=True)
     organization  = models.CharField(max_length=150,  default="")
     dns           = models.CharField(max_length=150,  blank=True, default="",
@@ -11,7 +12,8 @@ class DirectAddress(models.Model):
     verified    = models.BooleanField(default=False, editable=False)
     added       = models.DateField(auto_now_add=True)
     updated     = models.DateTimeField(auto_now=True)
-
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
     
     def __unicode__(self):
         return self.dns
@@ -25,6 +27,8 @@ class DirectAddress(models.Model):
         
         
 class DirectCertificate(models.Model):
+    
+
     dns         = models.CharField(max_length=3000,  blank=True, default="",
                                     #editable=False,
                                     db_index=True)
@@ -34,6 +38,8 @@ class DirectCertificate(models.Model):
                         help_text ="This is an x509 Public Certificate in PEM format.")
     added       = models.DateField(auto_now_add=True)
     updated     = models.DateTimeField(auto_now=True)
+    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+                                default="", db_index=True)
    
 
     

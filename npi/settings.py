@@ -104,11 +104,14 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.middleware.transaction.TransactionMiddleware',
+    #'reversion.middleware.RevisionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'apps.middleware.XForwardedForMiddleware',
     # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'npi.urls'
@@ -176,8 +179,8 @@ AJAX_LOOKUP_CHANNELS = {
                  'min_length': '4'},   
     'direct' : {'model':'direct.DirectAddress', 'search_field': 'email',
                'min_length': '5' },
-    'enumeration' : {'model':'enumerations.Enumeration', 'search_field': 'number',
-                     'min_length': '6'},
+    'enumeration' : {'model':'enumerations.Enumeration', 'search_field': 'handle',
+                     'min_length': '5'},
     }
 
 
