@@ -89,10 +89,12 @@ class Enumeration(models.Model):
                                                    default="", db_index=True)
     name_suffix         = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
                                            blank=True, default="")
-    handle              = models.SlugField(blank=True, default="")
+    handle              = models.SlugField(blank=True, default="",
+                                           unique=True)
     
     sole_proprietor     = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
-                                               default="", max_length=3)
+                                               default="", max_length=3,
+                                               blank=True)
     organizational_subpart  = models.BooleanField(default=False)
     
     credential              = models.CharField(max_length=50, blank=True,
@@ -545,10 +547,11 @@ class Enumeration(models.Model):
         
         #If the handle exists (because we are in the admin and not checkin in the form
         # then set it to something sensible.    
-        if Enumeration.objects.filter(handle=slug_handle).count()!=0:
+        e = Enumeration.objects.filter(handle=slug_handle)
+        if Enumeration.objects.filter(handle=slug_handle).count()==1:
             self.handle = "%s%s" % (slug_handle, random.randrange(10000,99999))
         else:    
-            self.handle = slugify(name)
+            self.handle = slug_handle
         
         
         #Set the Doing business AS if organization_other_name_code=="3" and
@@ -569,8 +572,21 @@ class Enumeration(models.Model):
             if self.enumeration_type in ("OEID", "OEID"):
                 self.number = random.randrange(6000000000,6999999999)
             self.enumeration_date = date.today()
-        
+        """Captialize all names"""
         self.last_name =self.last_name.upper()
+        self.middle_name =self.middle_name.upper()
+        self.last_name =self.last_name.upper()
+        self.authorized_official_first_name  = self.authorized_official_first_name.upper()    
+        self.authorized_official_middle_name = self.authorized_official_middle_name.upper() 
+        self.authorized_official_last_name   = self.authorized_official_last_name.upper()
+        self.contact_person_first_name  = self.contact_person_first_name.upper()   
+        self.contact_person_middle_name = self.contact_person_middle_name.upper()
+        self.contact_person_last_name   = self.contact_person_last_name.upper()
+
+        
+        
+        
+        """Default the IP address if it cannot be determined"""
         if not self.last_updated_ip:
             self.last_updated_ip = "127.0.0.1"
                 
