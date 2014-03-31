@@ -402,16 +402,17 @@ class Enumeration(models.Model):
     def name(self):
         name = "Not Provided"
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
-            name = self.organization_name
+            name = self.organization_name.capitalize()
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as,
-                                    self.organization_name)
+                                    self.organization_name.capitalize())
         elif self.enumeration_type in ("NPI-1", ):
-            name = "%s %s" % (self.first_name, self.last_name)
+            name = "%s %s" % (self.first_name.capitalize(),
+                              self.last_name.capitalize())
             if self.doing_business_as:
-                name = "%s %s (%s)" % (self.first_name,
-                                       self.last_name,
-                                       self.doing_business_as,)
+                name = "%s %s (%s)" % (self.first_name.capitalize(),
+                                       self.last_name.capitalize(),
+                                       self.doing_business_as.capitalize(),)
 
         if not name or name== " ":
             return "Not Provided"
@@ -573,7 +574,7 @@ class Enumeration(models.Model):
                 self.number = random.randrange(6000000000,6999999999)
             self.enumeration_date = date.today()
         """Captialize all names"""
-        self.last_name =self.last_name.upper()
+        self.first_name =self.first_name.upper()
         self.middle_name =self.middle_name.upper()
         self.last_name =self.last_name.upper()
         self.authorized_official_first_name  = self.authorized_official_first_name.upper()    
