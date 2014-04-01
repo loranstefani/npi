@@ -39,7 +39,7 @@
 
  <div class="row">
     <div class="col-lg-10">
- <h2>Enumeration Information <a href=/profile/{{enumeration.number}}><button type="button" class="btn btn-default" target="_blank">View Public Profile</button></a></h2>
+ <h2>Enumeration Information <a href=/{{enumeration.handle}}><button type="button" class="btn btn-default" target="_blank">View Public Profile</button></a></h2>
 
   <table class="table table-striped  table-bordered">
   <thead>
@@ -242,10 +242,10 @@
 
 
      <tr>
-    <td>Website & Social Media Links</td>
+    <td>Hanlde, Avatar, Website, & Social Media Links</td>
    <td><span class="label label-warning">No</span></td>
    <td>
-    {{enumeration.website|default:"No website provided."}}
+    {{enumeration.handle}}
     </td>
     <td>
       <a href="/enumerations/edit-enhanced/{{enumeration.id}}">Edit</a>

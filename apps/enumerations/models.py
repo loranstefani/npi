@@ -14,7 +14,7 @@ from ..identifiers.models import Identifier
 from localflavor.us.models import PhoneNumberField
 from django.db import transaction
 from slugify import slugify
-
+from django_extensions.db.fields import UUIDField
 
 ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (NPI-1)"),
                             ("NPI-2","Organizational National Provider Identifier (NPI-2)"),
@@ -72,6 +72,9 @@ class Enumeration(models.Model):
     number              = models.CharField(max_length=10, blank=True, default="",
                             #editable=False,
                             db_index=True)
+    tracking             = UUIDField(db_index=True)
+    
+    handle              = models.SlugField(default="", unique=True)
     
     enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
@@ -89,8 +92,7 @@ class Enumeration(models.Model):
                                                    default="", db_index=True)
     name_suffix         = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
                                            blank=True, default="")
-    handle              = models.SlugField(blank=True, default="",
-                                           unique=True)
+
     
     sole_proprietor     = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
                                                default="", max_length=3,
@@ -555,19 +557,16 @@ class Enumeration(models.Model):
         
         """Create a handle is not already created"""        
         if not self.handle:
-            slug_handle = slugify(self.name())
+            slug_handle = slugify(name)
         else:
-            slug_handle = self.handle
+            slug_handle = slugify(self.handle)
         
-        #If the handle exists (because we are in the admin and not checkin in the form
-        # then set it to something sensible.    
-        e = Enumeration.objects.filter(handle=slug_handle)
-        if Enumeration.objects.filter(handle=slug_handle).count()==1:
-            self.handle = "%s%s" % (slug_handle, random.randrange(10000,99999))
-        else:    
+        if Enumeration.objects.filter(handle=slug_handle).exclude(handle=self.handle).count()==0:
             self.handle = slug_handle
-        
-        
+        else:    
+            self.handle = "%s%s" % (slug_handle, random.randrange(10000,99999))
+            
+                
         #Set the Doing business AS if organization_other_name_code=="3" and
         #the field was left blank.
         if self.organization_other_name and self.organization_other_name_code=="3" and \
@@ -606,4 +605,4 @@ class Enumeration(models.Model):
                 
         if commit:
             super(Enumeration, self).save(**kwargs)
-    
+        

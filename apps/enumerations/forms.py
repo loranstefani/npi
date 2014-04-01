@@ -317,7 +317,7 @@ class EnumerationEnhancementForm(forms.ModelForm):
                   'facebook_handle','twitter_handle', 'driving_directions', 'bio_headline',
                   'bio_detail', 'avatar_image', 'background_image',)
     required_css_class = 'required'
-
+    
 
 
 class AddParentForm(forms.Form):

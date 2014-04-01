@@ -20,7 +20,7 @@ def display_enumeration_profile(request, number):
 
 
 def display_enumeration_profile_handle(request, handle):
-    e = get_object_or_404(Enumeration, handle=handle, status="A")
+    e = get_object_or_404(Enumeration, handle=handle)
     random_background = "%s.jpg" % (random.randrange(1,27))
     context ={"enumeration": e,
               "random_bg_image": random_background,
