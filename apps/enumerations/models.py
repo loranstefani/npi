@@ -170,9 +170,13 @@ class Enumeration(models.Model):
     custom_profile_url         = models.CharField(max_length=100,   blank=True, default="",
                                                   db_index=True)
     website                    = models.CharField(max_length=200,   blank=True, default="")
+    gravatar_email             = models.EmailField(max_length=200,   blank=True, default="",
+                                    help_text="Add an avatr image to your public profile by provding an email registered with Gravatar.com. This email will not be public.")
     facebook_handle            = models.CharField(max_length=100,   blank=True, default="")
     twitter_handle             = models.CharField(max_length=100,   blank=True, default="")
     public_email               = models.EmailField(blank=True,      default="")
+    
+    
     driving_directions         = models.TextField(max_length=256,   blank=True, default="")
     bio_headline               = models.CharField(max_length=255,   blank=True, default="")
     bio_detail                 = models.TextField(max_length=1024,  blank=True, default="")
@@ -451,6 +455,15 @@ class Enumeration(models.Model):
     
         return pretty_status
     
+    
+    def secure_gravatar_url(self):
+        import urllib, hashlib
+        default = "mm"
+        size   = 140
+        gravatar_url = "https://www.gravatar.com/avatar/" + \
+                       hashlib.md5(self.gravatar_email.lower()).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'d':default, 's':str(size), 'r':'g'})
+        return gravatar_url
     
     def pretty_number(self):
         if not self.number:

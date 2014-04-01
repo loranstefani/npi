@@ -313,8 +313,8 @@ class OtherTaxonomyForm(forms.ModelForm):
 class EnumerationEnhancementForm(forms.ModelForm):
     class Meta:
         model = Enumeration
-        fields = ('handle','custom_profile_url', 'website', 'facebook_handle',
-                  'twitter_handle', 'driving_directions', 'bio_headline',
+        fields = ('handle','custom_profile_url', 'website', 'gravatar_email',
+                  'facebook_handle','twitter_handle', 'driving_directions', 'bio_headline',
                   'bio_detail', 'avatar_image', 'background_image',)
     required_css_class = 'required'
 

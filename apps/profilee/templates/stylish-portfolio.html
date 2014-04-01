@@ -64,46 +64,46 @@
 
     <!-- Full Page Image Header Area -->
     <div id="top" class="header">
-      <div class="vert-text">
-        <h1>{{ enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}, {{enumeration.credential }}</h1>
-        <h3>Last Updated: {{ enumeration.last_updated }}</h3>
-        <a href="#details" class="btn btn-default btn-lg btn-primary">Details</a>
+      
+      
+      
+      
+      
+      
+      <div class="text">
+        
+        <br><br>
+<div class="container well span6">
+	<div class="row-fluid">
+        <div class="span2" >
+		    <img src="{{enumeration.secure_gravatar_url}}" class="img-circle">
+        </div>
+        
+        <div class="span8">
+            <h2>{{ enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}{% if enumeration.credential %},{{enumeration.credential }}{% endif %}
+            
+            </h2>
+            <h4><strong>NPI:</strong> {{enumeration.number}} ({{enumeration.entity_type}})</h4>
+            
+            <h4><strong>Last Updated:</strong>  {{ enumeration.updated }}</h4>
+            <h4><strong>Primary Taxonomy:</strong>  {{ enumeration.taxonomy }}</h4>
+            <h4>
+            <strong>Primary Practice Location Address:</strong>  {{ enumeration.location_address }} (<a href="#directions">Map Below</a>)
+            </h4>
+            <h4><strong>Primary Practice Location Phone:</strong>  +1 {{ enumeration.location_address.us_telephone_number}}</h4>
+            <h4><strong>Primary Practice Location Fax:</strong>  +1 {{ enumeration.location_address.us_fax_number}}</h4>
+          </h4>
+            
 
-        {% if enumeration.bio_headline != "" %}
-        <a href="#biography" class="btn btn-default btn-lg btn-primary">Biography</a>
-        {% endif %}
+        </div>
+        
 
-        <a href="#contact" class="btn btn-default btn-lg btn-primary">Contact</a>
-
-        <a href="#directions" class="btn btn-default btn-lg btn-primary ">Directions</a>
-
+</div>
+</div>
+        
       </div>
     </div>
     <!-- /Full Page Image Header Area -->
-
-
-
-
-
-
-
-
-    <!-- Details -->
-    <div id="details" class="intro">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 col-md-offset-3 text-center">
-            <h2>Details</h2>
-            <p class="lead"> NPI: {{enumeration.number}}</p>
-            <p class="lead"> NPI Type: {{enumeration.enumeration_type}}</p>
-            <p class="lead"> Taxonomies, Licenses, and Specialties go here.</p>
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- /Details -->
-
 
 
 
