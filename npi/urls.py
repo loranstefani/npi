@@ -33,7 +33,7 @@ urlpatterns = patterns('',
     url(r'^identifiers/',   include('apps.identifiers.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
-    url(r'^#/(?P<handle>\S+)', display_enumeration_profile_handle,
+    url(r'^(?P<handle>\S+)$', display_enumeration_profile_handle,
                         name="display_enumeration_profile_handle"),
     
     
