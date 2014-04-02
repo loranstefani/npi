@@ -7,14 +7,14 @@ from views import *
 
 urlpatterns = patterns('',
 
-    url(r'login/', simple_login,  name="login"),
-    url(r'create', create,  name="accounts_create"),
-    url(r'request-invite', request_invite,  name="accounts_request_invite"),
-    url(r'logout/', mylogout, name='mylogout'),
-    url(r'password-reset-request/', password_reset_request,
+    url(r'login$', simple_login,  name="login"),
+    url(r'create$', create,  name="accounts_create"),
+    url(r'request-invite$', request_invite,  name="accounts_request_invite"),
+    url(r'logout$', mylogout, name='mylogout'),
+    url(r'password-reset-request$', password_reset_request,
         name='password_reset_request'),
     
-    url(r'account/', account_settings, name='account_settings'),
+    url(r'account$', account_settings, name='account_settings'),
     url(r'reset-password/(?P<reset_password_key>[^/]+)/$', reset_password,
         name='password_reset_request'),
     
