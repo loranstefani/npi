@@ -17,7 +17,7 @@ def home(request):
     else:
        
        context ={'form': LoginForm()}
-       return render_to_response('home/index.html',
+       return render_to_response('index.html',
                               RequestContext(request, context,)) 
 
 
@@ -33,6 +33,6 @@ def authenticated_home(request):
     context= {'name':name,
               'surrogate': s,
               }
-    return render_to_response('home/authenticated-home.html',
+    return render_to_response('authenticated-home.html',
                               RequestContext(request, context,))
     
