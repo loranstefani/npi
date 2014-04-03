@@ -48,7 +48,7 @@ class Invitation(models.Model):
         <body>
         Congratulations. You have been invited to join the NPPES Alpha.<br>
         
-        You may now <a href="https://nppes.npi.io/accounts/create">register</a>
+        You may now <a href="%s">register</a>
         with the invitation code: 
         
         <h2>
@@ -58,7 +58,7 @@ class Invitation(models.Model):
         - NPPES Modernization Team 
         </body>
         </html>
-        """ % (self.code,)
+        """ % (settings.HOSTNAME_URL, self.code,)
         if settings.SEND_EMAIL:
             subj = "[%s] Invitation Code: %s" % (settings.ORGANIZATION_NAME,
                                                     self.code)
