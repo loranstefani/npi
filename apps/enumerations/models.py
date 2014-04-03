@@ -23,7 +23,8 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (N
 
 
 ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"))
-ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"), ("D", "Deactived"), )
+ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"),
+                               ("D", "Deactived"),("R","Rejected"),)
 
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandment"),
                                 ("FR", "Fraud"), ("OT", "Other"), )
@@ -61,7 +62,7 @@ class Enumeration(models.Model):
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="P", blank=True)
     
-    mode              = models.CharField(max_length=1,
+    mode                = models.CharField(max_length=1,
                                     choices=ENUMERATION_MODE_CHOICES,
                                     default ="W",
                                     verbose_name="Mode of Enumeration")
@@ -72,7 +73,18 @@ class Enumeration(models.Model):
     number              = models.CharField(max_length=10, blank=True, default="",
                             #editable=False,
                             db_index=True)
-    tracking             = UUIDField(db_index=True)
+    
+    old_numbers         = models.CharField(max_length=50, blank=True, default="",
+                            editable=False,
+                            help_text="Old NPIs in case of a replacement number.")
+    
+    is_number_replaced  = models.BooleanField(default=False, editable=True)
+    
+    is_reactivated      = models.BooleanField(default=False, editable=True)
+    
+    has_ever_been_active = models.BooleanField(default=False, editable=True)
+    
+    tracking            = UUIDField(db_index=True)
     
     handle              = models.SlugField(default="", unique=True)
     
