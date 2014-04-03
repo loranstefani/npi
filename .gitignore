@@ -10,3 +10,4 @@ build/*
 *migrations/*
 db.sqlite3
 apps/accounts/backends
+scripts/
