@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -435,6 +435,66 @@ def create_organization_enumeration(request, id):
               'form': CreateEnumerationOrganizationForm(instance=e)}
     return render_to_response('generic/bootstrapform.html',
                               RequestContext(request, context,))
+
+
+
+@login_required
+@reversion.create_revision()
+def flag_for_fraud(request, id):
+    name = _("Flag for Fraud")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    if request.method == 'POST':
+        form = FraudAlertForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Flag for Fraud.")
+            messages.success(request, "This record has been flagged for fraud.")
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': FraudAlertForm(instance=e)}
+    return render(request, 'generic/bootstrapform.html', context)
+
+
+@login_required
+@reversion.create_revision()
+def flag_for_deactivation(request, id):
+    name = _("Flag for Deactivation")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    if request.method == 'POST':
+        form = DeactivateEnumerationForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Flag for Deactivation.")
+            messages.success(request, "This record has been flagged for deactivation.")
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             return render_to_response('generic/bootstrapform.html',
+                                            {'form': form,'name':name,},
+                                            RequestContext(request))
+    #this is a GET
+    context= {'name':name,
+              'form': DeactivateEnumerationForm(instance=e)}
+    return render(request, 'generic/bootstrapform.html', context)
+
+
+
+
+
 
 
 @login_required

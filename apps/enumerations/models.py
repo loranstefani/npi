@@ -15,6 +15,7 @@ from localflavor.us.models import PhoneNumberField
 from django.db import transaction
 from slugify import slugify
 from django_extensions.db.fields import UUIDField
+from baluhn import generate, verify
 
 ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (NPI-1)"),
                             ("NPI-2","Organizational National Provider Identifier (NPI-2)"),
@@ -22,16 +23,15 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (N
                             ("OEID","Other Entity Individual Atypical Provider (OEID)"),)
 
 
-ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"))
+ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"), ("E","EFI"), ("C","CSV"))
+
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"),
-                               ("D", "Deactived"),("R","Rejected"),)
+                               ("D", "Deactived"), ("R","Rejected"),)
 
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandment"),
                                 ("FR", "Fraud"), ("OT", "Other"), )
 
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
-
-
 
 
 INDIVIDUAL_OTHER_NAME_CHOICES = (("","Blank"), ("1","Former Name"),
@@ -41,6 +41,8 @@ INDIVIDUAL_OTHER_NAME_CHOICES = (("","Blank"), ("1","Former Name"),
 ORGANIZATION_OTHER_NAME_CHOICES = (("","Blank"), ("3","Doing Business As"),
                 ("4","Former Legal Business Name"), ("5","Other Name"))
 
+
+GENDER_CHOICES = (("F","Female"), ("M","Male"), ("T","Transgender"))
 
 PREFIX_CHOICES = (('Ms.', 'Ms.'),('Mr.', 'Mr.'),('Miss','Miss'),
                   ('Mrs.','Mrs.'),('Dr.','Dr.'),('Prof.','Prof.'))
@@ -82,15 +84,27 @@ class Enumeration(models.Model):
     
     is_reactivated      = models.BooleanField(default=False, editable=True)
     
-    has_ever_been_active = models.BooleanField(default=False, editable=True)
-    
+    has_ever_been_active   = models.BooleanField(default=False, editable=True)
+    has_ever_been_deactive = models.BooleanField(default=False, editable=True)
+    flag_for_deactivation  = models.BooleanField(default=False,
+                            help_text="Check this box to flag this record for enumeration. Final deactivation processed by CMS.")
+    decativation_note       = models.TextField(max_length=1024, blank=True,
+                                default="",
+                                help_text="Why do you wish to deactive this record")
+
     tracking            = UUIDField(db_index=True)
     
     handle              = models.SlugField(default="", unique=True)
     
     enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
-    fraud_alert         = models.BooleanField(default=False)
+    flag_for_fraud      = models.BooleanField(default=False)
+    fraud_alert_note    = models.TextField(max_length=1024, blank=True,
+                                default="",
+                                help_text="Please explain the alleged or suspected fraud associaed with this record.")
+    
+    
+    has_ever_been_fraud_alert  = models.BooleanField(default=False)
     
     name_prefix         = models.CharField(choices=PREFIX_CHOICES, max_length=5,
                                 blank=True, default="")
@@ -98,36 +112,41 @@ class Enumeration(models.Model):
     first_name          = models.CharField(max_length=150, blank=True,
                                 default="", db_index=True)
     
-    middle_name         = models.CharField(max_length=150, blank=True, default="")
+    middle_name               = models.CharField(max_length=150, blank=True,
+                                                 default="")
     
-    last_name           = models.CharField(max_length=150, blank=True,
+    last_name                 = models.CharField(max_length=150, blank=True,
                                                    default="", db_index=True)
-    name_suffix         = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
+    
+    name_suffix               = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
                                            blank=True, default="")
 
     
-    sole_proprietor     = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
+    sole_proprietor           = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
                                                default="", max_length=3,
                                                blank=True)
-    organizational_subpart  = models.BooleanField(default=False)
+    organizational_subpart    = models.BooleanField(default=False)
     
-    credential              = models.CharField(max_length=50, blank=True,
+    credential                = models.CharField(max_length=50, blank=True,
                                     default="", help_text ="e.g. MD, PA, OBGYN, DO")
     
-    organization_name   = models.CharField(max_length=300, blank=True,
+    organization_name         = models.CharField(max_length=300, blank=True,
                                     default="", db_index=True,
                                     verbose_name="Legal Business Name")
     
-    doing_business_as   = models.CharField(max_length=300, blank=True, default="")
+    doing_business_as         = models.CharField(max_length=300, blank=True,
+                                                 default="")
      
-    organization_other_name   = models.CharField(max_length=300, blank=True, default="")
+    organization_other_name   = models.CharField(max_length=300, blank=True,
+                                                 default="")
     
-    organization_other_name_code  = models.CharField(max_length=1, blank=True, default="",
+    organization_other_name_code  = models.CharField(max_length=1, blank=True,
+                                                     default="",
                                     choices=ORGANIZATION_OTHER_NAME_CHOICES)
     
-    other_first_name_1    = models.CharField(max_length=100, blank=True,
-                                                   default="",
-                                                   help_text="Previous First name")
+    other_first_name_1      = models.CharField(max_length=100, blank=True,
+                                        default="",
+                                        help_text="Previous First name")
     
     other_middle_name_1     = models.CharField(max_length=100, blank=True,
                                 default="",
@@ -287,10 +306,8 @@ class Enumeration(models.Model):
     birth_date          = models.DateField(blank=True, null=True,
                                            help_text="Format: YYYY-MM-DD")
     
-    gender              = models.CharField(max_length=2,  blank=True, default="",
-                                    verbose_name = "Sex",
-                                    choices = (("F","Female"), ("M","Male"),
-                                               ("T","Transgender")))
+    gender      = models.CharField(max_length=2,  blank=True, default="",
+                        verbose_name = "Sex", choices = GENDER_CHOICES )
     
     itin        = models.CharField(max_length=10, blank=True,
                         default="", verbose_name="IRS Individual Tax Payer Identification Number (ITIN)",
@@ -547,6 +564,7 @@ class Enumeration(models.Model):
 
     
     
+    
     def save(self, commit=True, **kwargs):
         
         """Create a name"""
@@ -567,7 +585,25 @@ class Enumeration(models.Model):
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
             self.sole_proprietor="NO"
         
-        """Create a handle is not already created"""        
+        
+        """Mark the has ever been marked for fraud flag if fraud_alert==True"""
+        if self.flag_for_fraud:
+            self.has_ever_been_fraud_alert=True
+        
+        """Mark the has ever been active flag if the record is active"""        
+        if self.status=="A":
+            self.deactivation_date=None
+            self.has_ever_been_active=True
+            
+        """Mark the has ever been de active flag if the record is deactive"""     
+        if self.status=="D":
+            self.has_ever_been_deactive=True
+            if not self.deactivation_date:
+                self.deactivation_date = date.today()
+            
+            
+        
+        """Create a handle if not already created"""        
         if not self.handle:
             slug_handle = slugify(name)
         else:
@@ -579,17 +615,20 @@ class Enumeration(models.Model):
             self.handle = "%s%s" % (slug_handle, random.randrange(10000,99999))
             
                 
-        #Set the Doing business AS if organization_other_name_code=="3" and
-        #the field was left blank.
+        """Set the Doing business AS if organization_other_name_code=="3" and
+        the field was left blank."""
         if self.organization_other_name and self.organization_other_name_code=="3" and \
            not self.doing_business_as:
             self.doing_business_as = self.organization_other_name
         
         
-        #If the status is active but no enumeration number is assigned then create one.
+        """If the status is active but no enumeration number is assigned then create one."""
         if self.status == "A" and self.number == "":
             if self.enumeration_type in ("NPI-1", "NPI-2"):
-                self.number = random.randrange(100000000,199999999)
+                
+                
+                self.number = random.randrange(10000000,19999999)
+                
             
             if self.enumeration_type in ("HPID"):
                 self.number = random.randrange(7000000000,7999999999)
@@ -597,6 +636,7 @@ class Enumeration(models.Model):
             if self.enumeration_type in ("OEID", "OEID"):
                 self.number = random.randrange(6000000000,6999999999)
             self.enumeration_date = date.today()
+        
         """Captialize all names"""
         self.first_name =self.first_name.upper()
         self.middle_name =self.middle_name.upper()

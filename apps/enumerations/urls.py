@@ -49,7 +49,8 @@ urlpatterns = patterns('',
     url(r'^ein-lookup$', ein_lookup, name="ein_lookup"),
 
 
-    url(r'^request-to-manage-enumeration/(?P<id>\S+)$',request_to_manage_enumeration,
+    url(r'^request-to-manage-enumeration/(?P<id>\S+)$',
+                            request_to_manage_enumeration,
                             name="request_to_manage_enumeration"),
 
 
@@ -76,7 +77,8 @@ urlpatterns = patterns('',
 
     url(r'^contact-person/(?P<id>\S+)', contact_person, name="contact_person"),
 
-    url(r'^authorized-official/(?P<id>\S+)', authorized_official, name="authorized_official"),
+    url(r'^authorized-official/(?P<id>\S+)', authorized_official,
+                    name="authorized_official"),
 
     url(r'^other-names/(?P<id>\S+)', other_names, name="other_names"),
 
@@ -87,10 +89,12 @@ urlpatterns = patterns('',
     url(r'^stop-managing/(?P<enumeration_id>\S+)', stop_managing_enumeration,
                     name="stop_managing_enumeration"),
 
-    url(r'^edit/(?P<id>\S+)', edit_enumeration,
-                    name="edit_enumeration"),
-
-
+    url(r'^edit/(?P<id>\S+)', edit_enumeration, name="edit_enumeration"),
+    
+    url(r'^flag-for-deactivation/(?P<id>\S+)', flag_for_deactivation,
+                    name="flag_for_deactivation"),
+    
+    url(r'^flag-for-fraud/(?P<id>\S+)', flag_for_fraud, name=" flag_for_fraud"),
 
 
 

@@ -100,12 +100,34 @@ class SearchEINForm(forms.ModelForm):
 
 
 
+class DeactivateEnumerationForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(DeactivateEnumerationForm,self).__init__(*args,**kwargs)
+        self.fields['flag_for_deactivation'].required = True
+    class Meta:
+        model = Enumeration
+        fields = ('flag_for_deactivation', 'decativation_note',)
+    required_css_class = 'required'
+
+
+
+class FraudAlertForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(FraudAlertForm,self).__init__(*args,**kwargs)
+        self.fields['flag_for_fraud'].required = True
+    class Meta:
+        model = Enumeration
+        fields = ('flag_for_fraud', 'fraud_alert_note',)
+    required_css_class = 'required'
+
+
 
 class CreateEnumeration1Form(forms.ModelForm):
 
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
-
         mymanager = kwargs.pop('mymanager', None)
         super(CreateEnumeration1Form,self).__init__(*args,**kwargs)
 
