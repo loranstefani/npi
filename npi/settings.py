@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'apps.surrogates',
     'apps.downloads',
     'apps.statistics',
+    'apps.reports',
     
 )
 
