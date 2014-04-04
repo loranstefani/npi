@@ -38,14 +38,12 @@ def primary_taxonomy(request, enumeration_id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
     #this is a GET
     context= {'name':name,
               'form': PrimaryTaxonomyForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -69,14 +67,12 @@ def add_other_taxonomies(request, enumeration_id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
     #this is a GET
     context= {'name':name,
               'form': OtherTaxonomyForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 @login_required
@@ -108,22 +104,18 @@ def search_enumeration(request):
             context= {'name':name,
                       'search_results': qs,
               'form': SearchForm()}
-            return render_to_response('search.html',
-                              RequestContext(request, context,))
+            return render(request, 'search.html', context)
 
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
 
     #this is a GET
     context= {'name':name,
               'form': SearchForm()}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -145,16 +137,13 @@ def surrogate_lookup(request):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
 
     #this is a GET
     context= {'name':name,
               'form': SearchForm()}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -177,10 +166,8 @@ def ein_lookup(request):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
 
     #this is a GET
     context= {'name':name,
@@ -258,16 +245,13 @@ def create_enumeration(request):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
 
     #this is a GET
     context= {'name':name,
               'form': CreateEnumeration2Form()}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -310,19 +294,17 @@ def contact_person(request, id):
             e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Edit Contact Person.")
-
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
     #this is a GET
     context= {'name':name,
               'form': ContactPersonForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 @login_required
 @reversion.create_revision()
@@ -337,19 +319,17 @@ def authorized_official(request, id):
             e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Edit Authorized Official.")
-
             return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
     #this is a GET
     context= {'name':name,
               'form': AuthorizedOfficialForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 @login_required
@@ -370,14 +350,12 @@ def other_names(request, id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
     #this is a GET
     context= {'name':name,
               'form': OtherNamesForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 @login_required
 @reversion.create_revision()
@@ -396,14 +374,12 @@ def create_individual_enumeration(request, id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
     #this is a GET
     context= {'name':name,
               'form': CreateEnumerationIndividualForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -427,14 +403,12 @@ def create_organization_enumeration(request, id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
     #this is a GET
     context= {'name':name,
               'form': CreateEnumerationOrganizationForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -483,9 +457,9 @@ def flag_for_deactivation(request, id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
     #this is a GET
     context= {'name':name,
               'form': DeactivateEnumerationForm(instance=e)}
@@ -505,8 +479,7 @@ def edit_enumeration(request, id):
     context= {'name': name,
               'enumeration': e,
               }
-    return render_to_response('edit.html',
-                              RequestContext(request, context,))
+    return render(request, 'edit.html', context)
 
 
 
@@ -535,14 +508,12 @@ def edit_enhanced_enumeration(request, id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
     #this is a GET
     context= {'name':name,
               'form': EnumerationEnhancementForm(instance=e)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 @login_required
 def stop_managing_enumeration(request, enumeration_id):
@@ -606,15 +577,15 @@ def select_address_type(request, address_purpose, enumeration_id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,'name':name,},
-                                            RequestContext(request))
+             
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
 
     #this is a GET
     context= {'name':name,
               'form': SelectAddressPurposeForm(address_purpose=address_purpose)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -638,8 +609,7 @@ def edit_address(request, address_id, enumeration_id):
 
     context= {'name':name,
               'form': SelectAddressTypeForm(instance=a)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -666,16 +636,12 @@ def domestic_address(request,  address_id, enumeration_id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,
-                                             },
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
     #this is a GET
-    context= {'name':name,
-              'form': DomesticAddressForm(instance=address)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    context= {'name':name, 'form': DomesticAddressForm(instance=address)}
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 
@@ -700,17 +666,13 @@ def foreign_address(request, address_id, enumeration_id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,
-                                             },
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
 
     #this is a GET
     context= {'name':name,
               'form': ForeignAddressForm(instance=address)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 @login_required
@@ -734,17 +696,13 @@ def military_address(request, address_id, enumeration_id):
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
-             return render_to_response('generic/bootstrapform.html',
-                                            {'form': form,
-                                             'name':name,
-                                             },
-                                            RequestContext(request))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
 
     #this is a GET
     context= {'name':name,
               'form': MilitaryAddressForm(instance=address)}
-    return render_to_response('generic/bootstrapform.html',
-                              RequestContext(request, context,))
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 @login_required
