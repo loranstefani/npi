@@ -89,6 +89,7 @@ class Enumeration(models.Model):
     has_ever_been_deactive = models.BooleanField(default=False, editable=True)
     flag_for_deactivation  = models.BooleanField(default=False,
                             help_text="Check this box to flag this record for enumeration. Final deactivation processed by CMS.")
+    
     decativation_note       = models.TextField(max_length=1024, blank=True,
                                 default="",
                                 help_text="Why do you wish to deactive this record")
@@ -517,7 +518,7 @@ class Enumeration(models.Model):
 
 
     def detail(self):
-        name = "UNK"
+        name = "Not Provided"
         if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
             name = self.organization_name
             if self.doing_business_as:
@@ -535,16 +536,18 @@ class Enumeration(models.Model):
         managers = ", ".join([manager.username for manager in self.managers.all()])
         if not managers:
             managers = "no one"
-        if not name:
-            name = "Name, No"
         
+        if not name:
+            name = "Not Provided"
         
         e = "%s %s is an %s managed by %s." % (number, name,
-                                               self.enumeration_type,
-                                              managers)
+                                               self.enumeration_type, managers)
         return e
 
-
+    def verify_luhn(self):
+        prefixed_number = "%s%s" % (settings.LUHN_PREFIX, self.number)
+        return verify(prefixed_number)            
+        
 
     def __unicode__(self):
         name = "No Name"
@@ -619,7 +622,7 @@ class Enumeration(models.Model):
             slug_handle = slugify(name)
         else:
             slug_handle = slugify(self.handle)
-        #make sure this handle isn't already taken.
+        #If the handle is taken, set it to something else.
         if Enumeration.objects.filter(handle=slug_handle).exclude(handle=self.handle).count()==0:
             self.handle = slug_handle
         else:    
@@ -637,8 +640,22 @@ class Enumeration(models.Model):
         if self.status == "A" and self.number == "":
             if self.enumeration_type in ("NPI-1", "NPI-2"):
                 
-                
-                self.number = random.randrange(10000000,19999999)
+                if settings.VERIFY_LUHN_AND_UNIQUE_ENUMERATION:
+                    #create a candidate eumeration
+                    eight_digits = random.randrange(10000000,19999999)
+                    
+                    prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+                    
+                    checkdigit = generate(prefixed_eight_digits)
+                    
+                    self.number = "%s%s" % (eight_digits, checkdigit)
+                    while Enumeration.objects.filter(number=self.number).count()>0:
+                        eight_digits = random.randrange(10000000,19999999)
+                        prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+                        checkdigit = generate(prefixed_eight_digits)
+                        self.number = "%s%s" % (eight_digits, checkdigit)
+                else:
+                    self.number = random.randrange(100000000,199999999)
                 
             
             if self.enumeration_type in ("HPID"):
