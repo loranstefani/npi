@@ -1,7 +1,7 @@
 [
 {
     "pk": 1, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BG0000Y", 
         "code": "1", 
@@ -10,7 +10,7 @@
 },
 {
     "pk": 2, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0100Y", 
         "code": "2", 
@@ -19,7 +19,7 @@
 },
 {
     "pk": 3, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BA0201Y", 
         "code": "3", 
@@ -28,7 +28,7 @@
 },
 {
     "pk": 4, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX0500Y", 
         "code": "4", 
@@ -37,7 +37,7 @@
 },
 {
     "pk": 5, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BA0300Y", 
         "code": "5", 
@@ -46,7 +46,7 @@
 },
 {
     "pk": 6, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BC0100Y", 
         "code": "6", 
@@ -55,7 +55,7 @@
 },
 {
     "pk": 7, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BD0100Y", 
         "code": "7", 
@@ -64,7 +64,7 @@
 },
 {
     "pk": 8, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BF0100Y", 
         "code": "8", 
@@ -73,7 +73,7 @@
 },
 {
     "pk": 9, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "unknown", 
         "code": "9", 
@@ -82,7 +82,7 @@
 },
 {
     "pk": 10, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BG0100Y", 
         "code": "10", 
@@ -91,7 +91,7 @@
 },
 {
     "pk": 11, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BI0300Y", 
         "code": "11", 
@@ -100,7 +100,7 @@
 },
 {
     "pk": 12, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX2100Y", 
         "code": "12", 
@@ -109,7 +109,7 @@
 },
 {
     "pk": 13, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BN0400Y", 
         "code": "13", 
@@ -118,7 +118,7 @@
 },
 {
     "pk": 14, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0110Y", 
         "code": "14", 
@@ -127,7 +127,7 @@
 },
 {
     "pk": 15, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX0001Y", 
         "code": "16", 
@@ -136,7 +136,7 @@
 },
 {
     "pk": 16, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX0300Y", 
         "code": "18", 
@@ -145,7 +145,7 @@
 },
 {
     "pk": 17, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "1223S0112Y", 
         "code": "19", 
@@ -154,7 +154,7 @@
 },
 {
     "pk": 18, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0113Y", 
         "code": "20", 
@@ -163,7 +163,7 @@
 },
 {
     "pk": 19, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP0100Y", 
         "code": "22", 
@@ -172,7 +172,7 @@
 },
 {
     "pk": 20, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0122Y", 
         "code": "24", 
@@ -181,7 +181,7 @@
 },
 {
     "pk": 21, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP0400Y", 
         "code": "25", 
@@ -190,7 +190,7 @@
 },
 {
     "pk": 22, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP0800Y", 
         "code": "26", 
@@ -199,7 +199,7 @@
 },
 {
     "pk": 23, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0101Y", 
         "code": "28", 
@@ -208,7 +208,7 @@
 },
 {
     "pk": 24, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP1001Y", 
         "code": "29", 
@@ -217,7 +217,7 @@
 },
 {
     "pk": 25, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BR0202Y", 
         "code": "30", 
@@ -226,7 +226,7 @@
 },
 {
     "pk": 26, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "unknown", 
         "code": "32", 
@@ -235,7 +235,7 @@
 },
 {
     "pk": 27, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0125Y", 
         "code": "33", 
@@ -244,7 +244,7 @@
 },
 {
     "pk": 28, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BU0100Y", 
         "code": "34", 
@@ -253,7 +253,7 @@
 },
 {
     "pk": 29, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "111N00000N", 
         "code": "35", 
@@ -262,7 +262,7 @@
 },
 {
     "pk": 30, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BN0900Y", 
         "code": "36", 
@@ -271,7 +271,7 @@
 },
 {
     "pk": 31, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP0200Y", 
         "code": "37", 
@@ -280,7 +280,7 @@
 },
 {
     "pk": 32, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BG0300N", 
         "code": "38", 
@@ -289,7 +289,7 @@
 },
 {
     "pk": 33, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BN0300Y", 
         "code": "39", 
@@ -298,7 +298,7 @@
 },
 {
     "pk": 34, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0105Y", 
         "code": "40", 
@@ -307,7 +307,7 @@
 },
 {
     "pk": 35, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "152W00000N", 
         "code": "41", 
@@ -316,7 +316,7 @@
 },
 {
     "pk": 36, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "366B00000N", 
         "code": "42", 
@@ -325,7 +325,7 @@
 },
 {
     "pk": 37, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "367500000N", 
         "code": "43", 
@@ -334,7 +334,7 @@
 },
 {
     "pk": 38, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BI0200Y", 
         "code": "44", 
@@ -343,7 +343,7 @@
 },
 {
     "pk": 39, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "261QR0206N*", 
         "code": "45", 
@@ -352,7 +352,7 @@
 },
 {
     "pk": 40, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BE0100Y", 
         "code": "46", 
@@ -361,7 +361,7 @@
 },
 {
     "pk": 41, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "293D00000N", 
         "code": "47", 
@@ -370,7 +370,7 @@
 },
 {
     "pk": 42, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "213E00000N", 
         "code": "48", 
@@ -379,7 +379,7 @@
 },
 {
     "pk": 43, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "261QA1903N*", 
         "code": "49", 
@@ -388,7 +388,7 @@
 },
 {
     "pk": 44, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "363L00000N", 
         "code": "50", 
@@ -397,7 +397,7 @@
 },
 {
     "pk": 45, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "335E00000N*", 
         "code": "51", 
@@ -406,7 +406,7 @@
 },
 {
     "pk": 46, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "335E00000N*", 
         "code": "52", 
@@ -415,7 +415,7 @@
 },
 {
     "pk": 47, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "335E00000N*", 
         "code": "53", 
@@ -424,7 +424,7 @@
 },
 {
     "pk": 48, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "54", 
@@ -433,7 +433,7 @@
 },
 {
     "pk": 49, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "222Z00000N", 
         "code": "55", 
@@ -442,7 +442,7 @@
 },
 {
     "pk": 50, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "224P00000N", 
         "code": "56", 
@@ -451,7 +451,7 @@
 },
 {
     "pk": 51, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "225000000N", 
         "code": "57", 
@@ -460,7 +460,7 @@
 },
 {
     "pk": 52, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "58", 
@@ -469,7 +469,7 @@
 },
 {
     "pk": 53, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BR0500Y", 
         "code": "66", 
@@ -478,7 +478,7 @@
 },
 {
     "pk": 54, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "3416L0300N*", 
         "code": "59", 
@@ -487,7 +487,7 @@
 },
 {
     "pk": 55, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "2514P0906N*", 
         "code": "60", 
@@ -496,7 +496,7 @@
 },
 {
     "pk": 56, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "2514V0001N*", 
         "code": "61", 
@@ -505,7 +505,7 @@
 },
 {
     "pk": 57, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "103T00000N", 
         "code": "62", 
@@ -514,7 +514,7 @@
 },
 {
     "pk": 58, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "335V00000N*", 
         "code": "63", 
@@ -523,7 +523,7 @@
 },
 {
     "pk": 59, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "231H00000N", 
         "code": "64", 
@@ -532,7 +532,7 @@
 },
 {
     "pk": 60, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "225100000N", 
         "code": "65", 
@@ -541,7 +541,7 @@
 },
 {
     "pk": 61, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "225X00000N", 
         "code": "67", 
@@ -550,7 +550,7 @@
 },
 {
     "pk": 62, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "103TC0700N", 
         "code": "68", 
@@ -559,7 +559,7 @@
 },
 {
     "pk": 63, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "291U00000N*", 
         "code": "69", 
@@ -568,7 +568,7 @@
 },
 {
     "pk": 64, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "261QM1300N*", 
         "code": "70", 
@@ -577,7 +577,7 @@
 },
 {
     "pk": 65, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "133V00000N*", 
         "code": "71", 
@@ -586,7 +586,7 @@
 },
 {
     "pk": 66, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP2900N*", 
         "code": "72", 
@@ -595,7 +595,7 @@
 },
 {
     "pk": 67, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "Unknown", 
         "code": "73", 
@@ -604,7 +604,7 @@
 },
 {
     "pk": 68, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "Unknown", 
         "code": "74", 
@@ -613,7 +613,7 @@
 },
 {
     "pk": 69, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "unknown", 
         "code": "75", 
@@ -622,7 +622,7 @@
 },
 {
     "pk": 70, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0129Y", 
         "code": "76", 
@@ -631,7 +631,7 @@
 },
 {
     "pk": 71, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0129Y", 
         "code": "77", 
@@ -640,7 +640,7 @@
 },
 {
     "pk": 72, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0133N", 
         "code": "78", 
@@ -649,7 +649,7 @@
 },
 {
     "pk": 73, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BA0401N", 
         "code": "79", 
@@ -658,7 +658,7 @@
 },
 {
     "pk": 74, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "1041C0700N", 
         "code": "80", 
@@ -667,7 +667,7 @@
 },
 {
     "pk": 75, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BC0200Y", 
         "code": "81", 
@@ -676,7 +676,7 @@
 },
 {
     "pk": 76, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BH0000Y", 
         "code": "82", 
@@ -685,7 +685,7 @@
 },
 {
     "pk": 77, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BH0003Y", 
         "code": "83", 
@@ -694,7 +694,7 @@
 },
 {
     "pk": 78, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP0500Y", 
         "code": "84", 
@@ -703,7 +703,7 @@
 },
 {
     "pk": 79, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BS0123Y", 
         "code": "85", 
@@ -712,7 +712,7 @@
 },
 {
     "pk": 80, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BP0801Y", 
         "code": "86", 
@@ -721,7 +721,7 @@
 },
 {
     "pk": 81, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "87", 
@@ -730,7 +730,7 @@
 },
 {
     "pk": 82, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "88", 
@@ -739,7 +739,7 @@
 },
 {
     "pk": 83, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "364S00000N", 
         "code": "89", 
@@ -748,7 +748,7 @@
 },
 {
     "pk": 84, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX0202Y", 
         "code": "90", 
@@ -757,7 +757,7 @@
 },
 {
     "pk": 85, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX0200Y", 
         "code": "91", 
@@ -766,7 +766,7 @@
 },
 {
     "pk": 86, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BR0001Y", 
         "code": "92", 
@@ -775,7 +775,7 @@
 },
 {
     "pk": 87, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BE0004Y", 
         "code": "93", 
@@ -784,7 +784,7 @@
 },
 {
     "pk": 88, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BR0201Y", 
         "code": "94", 
@@ -793,7 +793,7 @@
 },
 {
     "pk": 89, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "156FX1800N", 
         "code": "96", 
@@ -802,7 +802,7 @@
 },
 {
     "pk": 90, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "363A00000N", 
         "code": "97", 
@@ -811,7 +811,7 @@
 },
 {
     "pk": 91, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203BX0201Y", 
         "code": "98", 
@@ -820,7 +820,7 @@
 },
 {
     "pk": 92, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "203B00000N", 
         "code": "99", 
@@ -829,7 +829,7 @@
 },
 {
     "pk": 93, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "282N00000N*", 
         "code": "A0", 
@@ -838,7 +838,7 @@
 },
 {
     "pk": 94, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "314000000N*", 
         "code": "A1", 
@@ -847,7 +847,7 @@
 },
 {
     "pk": 95, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "313M00000N*", 
         "code": "A2", 
@@ -856,7 +856,7 @@
 },
 {
     "pk": 96, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "313M00000N*", 
         "code": "A3", 
@@ -865,7 +865,7 @@
 },
 {
     "pk": 97, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "2514H0200N*", 
         "code": "A4", 
@@ -874,7 +874,7 @@
 },
 {
     "pk": 98, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "333600000N*", 
         "code": "A5", 
@@ -883,7 +883,7 @@
 },
 {
     "pk": 99, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "A6", 
@@ -892,7 +892,7 @@
 },
 {
     "pk": 100, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "A7", 
@@ -901,7 +901,7 @@
 },
 {
     "pk": 101, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "332B00000N*", 
         "code": "A8", 
@@ -910,7 +910,7 @@
 },
 {
     "pk": 102, 
-    "model": "specialties.specialty", 
+    "model": "specialties.specialtycode", 
     "fields": {
         "taxonomy": "207RS0012X", 
         "code": "C0", 

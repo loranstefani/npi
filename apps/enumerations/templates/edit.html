@@ -139,6 +139,24 @@
   {% endif%}
 
 
+
+ <tr>
+    <td>Primary Specialty</td>
+    <td><span class="label label-success">Recommended</span></td>
+    <td>{{ enumeration.specialty }}</td>
+    {% if enumeration.specialty  %}
+    <td>
+      <a href="/enumerations/specialty/{{enumeration.id}}">Edit</a>
+      </td>
+    {% else %}
+    <td>
+      <a href="/enumerations/specialty/{{enumeration.id}}">Create</a>
+      </td>
+    {% endif %}
+
+     </tr>
+
+
  <tr>
     <td>Primary Taxonomy</td>
     <td><span class="label label-success">Yes</span></td>

@@ -8,7 +8,7 @@ import uuid, random
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
-from ..specialties.models import Specialty
+from ..specialties.models import SpecialtyCode
 from ..direct.models import DirectAddress, DirectCertificate
 from ..identifiers.models import Identifier
 from localflavor.us.models import PhoneNumberField
@@ -276,7 +276,13 @@ class Enumeration(models.Model):
                                         related_name = "enumerations_licenses",
                                         db_index=True)
     
-    specialties                 = models.ManyToManyField(Specialty, null=True, blank=True,
+    specialty                   = models.ForeignKey(SpecialtyCode, null=True, blank=True,
+                                        related_name ="enumeration_primary_specialty",
+                                        verbose_name="Primary Taxonomy",
+                                        db_index=True)
+    
+    
+    specialties                 = models.ManyToManyField(SpecialtyCode, null=True, blank=True,
                                         related_name = "enumerations_specialties",
                                         db_index=True)
     
