@@ -18,7 +18,7 @@ class EnumerationVersionAdmin(reversion.VersionAdmin):
     
 
 class EnumerationAJAXAdmin(AjaxSelectAdmin):
-    list_display = ('name', 'handle','tracking', 'enumeration_type', 'number', 'status', )
+    list_display = ('name', 'handle','id', 'enumeration_type', 'number', 'status', )
     search_fields = ('number', 'status',)
     form = make_ajax_form(Enumeration, {'mailing_address': 'address',
                                         'location_address': 'address',
