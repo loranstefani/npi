@@ -5,6 +5,7 @@ from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 import uuid, random
+from utils import valid_uuid
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
@@ -94,7 +95,7 @@ class Enumeration(models.Model):
 
     tracking            = UUIDField(db_index=True)
     
-    handle              = models.SlugField(default="", unique=True)
+    handle              = models.SlugField(unique=True, default=generateUUID)
     
     enumeration_date    = models.DateField(blank=True, null=True, db_index=True)
     
@@ -573,19 +574,7 @@ class Enumeration(models.Model):
     
     def save(self, commit=True, **kwargs):
         
-        """Create a name"""
-        name = "Not Provided"
-        if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
-            name = self.organization_name
-            if self.doing_business_as:
-                name = "%s (%s)" % (self.doing_business_as,
-                                    self.organization_name)
-        elif self.enumeration_type in ("NPI-1", ):
-            name = "%s %s" % (self.first_name, self.last_name)
-            if self.doing_business_as:
-                name = "%s %s (%s)" % (self.first_name,
-                                       self.last_name,
-                                       self.doing_business_as,)
+
 
         """Set Sole Proprieter to NO if its an organization"""
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
@@ -608,13 +597,29 @@ class Enumeration(models.Model):
                 self.deactivation_date = date.today()
             
             
+        """Create a name for the handle """
+        name = self.handle #Make it a UUID for starters to ensure unique
+    
+        #Now try and set it something more sensible
+        if self.enumeration_type in ("HPID", "OEID", "NPI-2") and self.organization_name:
+            name = self.organization_name
+            if self.doing_business_as:
+                name = "%s (%s)" % (self.doing_business_as,
+                                    self.organization_name)
+        elif self.enumeration_type in ("NPI-1", ) and self.first_name and self.last_name:
+            name = "%s %s" % (self.first_name, self.last_name)
+            if self.doing_business_as:
+                name = "%s %s (%s)" % (self.first_name,
+                                       self.last_name,
+                                       self.doing_business_as,)
         
-        """Create a handle if not already created"""        
-        if not self.handle:
+        
+        """Slugify the handle if not already created"""        
+        if valid_uuid(self.handle) and not valid_uuid(name):
             slug_handle = slugify(name)
         else:
             slug_handle = slugify(self.handle)
-        
+        #make sure this handle isn't already taken.
         if Enumeration.objects.filter(handle=slug_handle).exclude(handle=self.handle).count()==0:
             self.handle = slug_handle
         else:    

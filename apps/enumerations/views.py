@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
@@ -466,7 +467,23 @@ def flag_for_deactivation(request, id):
     return render(request, 'generic/bootstrapform.html', context)
 
 
-
+@login_required
+@staff_member_required
+@reversion.create_revision()
+def reactivate(request, id):
+    name = _("Reactivate a Deactivated Enumeration")
+    e = get_object_or_404(Enumeration, id=id)
+    if e.status != "A":
+        e.status = "A"
+        e.last_updated_ip=request.META['REMOTE_ADDR']
+        e.save()
+        reversion.set_user(request.user)
+        reversion.set_comment("Reactivated a Deactivated Enumeration.")
+        messages.success(request, "This record has been reactivated.")
+    else:
+        messages.success(request, "This record was already active. Nothing was done.")
+    return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+    
 
 
 

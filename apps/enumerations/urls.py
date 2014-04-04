@@ -94,9 +94,9 @@ urlpatterns = patterns('',
     url(r'^flag-for-deactivation/(?P<id>\S+)', flag_for_deactivation,
                     name="flag_for_deactivation"),
     
-    url(r'^flag-for-fraud/(?P<id>\S+)', flag_for_fraud, name=" flag_for_fraud"),
+    url(r'^flag-for-fraud/(?P<id>\S+)', flag_for_fraud, name="flag_for_fraud"),
 
-
-
+    url(r'^reactivate/(?P<id>\S+)', reactivate, name="enumeration_reactivate"),
+    
 
     )

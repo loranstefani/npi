@@ -56,7 +56,11 @@
     <td>
        <a href="/enumerations/flag-for-deactivation/{{enumeration.id}}">Flag for Deactivation</a> |
        <a href="/enumerations/flag-for-fraud/{{enumeration.id}}">Flag for Fraud</a>
-      </td>
+    {% if request.user.is_staff %}
+    |<a href="/enumerations/reactivate/{{enumeration.id}}">Reactivate</a>
+    {% endif %}
+    
+    </td>
   </tr>
 
 
@@ -142,7 +146,7 @@
 
  <tr>
     <td>Primary Specialty</td>
-    <td><span class="label label-success">Recommended</span></td>
+    <td><span class="label label-warning">No</span></td>
     <td>{{ enumeration.specialty }}</td>
     {% if enumeration.specialty  %}
     <td>
