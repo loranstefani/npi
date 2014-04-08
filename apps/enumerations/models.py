@@ -280,7 +280,7 @@ class Enumeration(models.Model):
     
     specialty                   = models.ForeignKey(SpecialtyCode, null=True, blank=True,
                                         related_name ="enumeration_primary_specialty",
-                                        verbose_name="Primary Taxonomy",
+                                        verbose_name="Primary Specialty",
                                         db_index=True)
     
     

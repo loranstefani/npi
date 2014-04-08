@@ -305,6 +305,23 @@ class PrimaryTaxonomyForm(forms.ModelForm):
 
 
 
+class PrimarySpecialtyForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(PrimarySpecialtyForm,self).__init__(*args,**kwargs)
+        self.fields['specialty'].required = True
+
+
+    class Meta:
+        model = Enumeration
+        fields = ('specialty',)
+
+
+    required_css_class = 'required'
+
+
+
 class OtherTaxonomyForm(forms.ModelForm):
 
     def __init__(self, *args,**kwargs):

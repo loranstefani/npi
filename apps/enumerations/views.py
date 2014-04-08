@@ -13,6 +13,7 @@ from models import Enumeration
 from ..addresses.models import Address
 from ..licenses.models import License
 from ..taxonomy.models import TaxonomyCode
+from ..specialties.models import SpecialtyCode
 import sys
 from forms import *
 from ..addresses.forms import *
@@ -48,6 +49,49 @@ def primary_taxonomy(request, enumeration_id):
               'form': PrimaryTaxonomyForm(instance=e)}
     return render(request, 'generic/bootstrapform.html', context)
 
+
+
+@login_required
+@reversion.create_revision()
+def primary_specialty(request, enumeration_id):
+    name = _("Select a Primary Specialty")
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
+
+    if request.method == 'POST':
+        form = PrimarySpecialtyForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            if not e.taxonomy:
+                try:
+                    print e.specialty.taxonomy
+                    t = TaxonomyCode.objects.get(code=e.specialty.taxonomy)
+                    
+                    print 
+                    e.taxonomy = t
+                    msg = "Your taxonomy code was set automatcially to %s based on your specialty. You can change it if need be." % (t)
+                    messages.info(request,_(msg))
+                except TaxonomyCode.DoesNotExist:
+                    pass            
+            else:
+                msg = "Based on your specialty we suggest the Taxonomy code %s" % (e.specialty.taxonomy)
+                messages.info(request,_(msg))    
+            
+            
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Primary specialty created/updated.")
+            messages.success(request,_("The primary specialty was updated/created."))
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+    #this is a GET
+    context= {'name':name,
+              'form': PrimarySpecialtyForm(instance=e)}
+    return render(request, 'generic/bootstrapform.html', context)
 
 
 @login_required

@@ -18,6 +18,10 @@ urlpatterns = patterns('',
     url(r'^delete-other-taxonomy/(?P<taxonomy_id>\S+)/(?P<enumeration_id>\S+)',
                     delete_other_taxonomy, name="delete_other_taxonomy"),
 
+    #Specialty URLs
+    url(r'^specialty/(?P<enumeration_id>\S+)',
+                    primary_specialty, name="primary_specialty"),
+
     #Address URLs ------------------------------------
 
 
