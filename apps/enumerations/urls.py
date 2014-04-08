@@ -98,5 +98,7 @@ urlpatterns = patterns('',
 
     url(r'^reactivate/(?P<id>\S+)', reactivate, name="enumeration_reactivate"),
     
+    url(r'^replace/(?P<id>\S+)', replace, name="enumeration_replace"),
+    
 
     )

@@ -57,7 +57,8 @@
        <a href="/enumerations/flag-for-deactivation/{{enumeration.id}}">Flag for Deactivation</a> |
        <a href="/enumerations/flag-for-fraud/{{enumeration.id}}">Flag for Fraud</a>
     {% if user.is_staff %}
-    |<a href="/enumerations/reactivate/{{enumeration.id}}">Reactivate</a>
+    |<a href="/enumerations/reactivate/{{enumeration.id}}">Reactivate</a>|
+    <a href="/enumerations/replace/{{enumeration.id}}">Replace Enumeration with a New Number</a>
     {% endif %}
     
     </td>

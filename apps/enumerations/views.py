@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+import uuid, random
 from models import Enumeration
 from ..addresses.models import Address
 from ..licenses.models import License
@@ -18,6 +19,7 @@ from ..addresses.forms import *
 from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate, SurrogateRequestEnumeration, SurrogateRequestEIN
 import reversion
+from baluhn import generate
 
 
 @login_required
@@ -484,6 +486,53 @@ def reactivate(request, id):
         messages.success(request, "This record was already active. Nothing was done.")
     return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
     
+
+
+
+@login_required
+@staff_member_required
+@reversion.create_revision()
+def replace(request, id):
+    name = _("Replace an issued Enumeration number with a new number.")
+    e = get_object_or_404(Enumeration, id=id)
+    
+    #create a candidate eumeration
+    eight_digits = random.randrange(10000000,19999999)                
+    prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+    checkdigit = generate(prefixed_eight_digits)            
+    new_number = "%s%s" % (eight_digits, checkdigit)
+    while Enumeration.objects.filter(number=new_number).count()>0:
+        eight_digits          = random.randrange(10000000,19999999)
+        prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+        checkdigit            = generate(prefixed_eight_digits)
+        new_number            = "%s%s" % (eight_digits, checkdigit)
+    
+    #create a message
+    msg = "The number %s has been replaced with %s" % (e.number, new_number)
+    
+    #Append the old number to the old_numbers field.
+    e.old_numbers = "%s, %s" % (e.old_numbers, e.number)
+    
+    #Remove any command or whitespace from the begining
+    if e.old_numbers.startswith(","):
+        e.old_numbers = e.old_numbers[1:]
+        
+    if e.old_numbers.startswith(" "):
+        e.old_numbers = e.old_numbers[1:]
+    
+    #Set the new number
+    e.number = new_number
+    #flag this recors as having been replaced
+    e.is_number_replaced = True
+    
+    e.last_updated_ip=request.META['REMOTE_ADDR']
+    e.save()
+    reversion.set_user(request.user)
+    rmsg = "Replacement: %s", (msg)
+    reversion.set_comment(rmsg)
+    messages.success(request, msg)
+
+    return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
 
 
 

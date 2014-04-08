@@ -78,7 +78,7 @@ class Enumeration(models.Model):
                             db_index=True)
     
     old_numbers         = models.CharField(max_length=50, blank=True, default="",
-                            editable=False,
+                            #editable=False,
                             help_text="Old NPIs in case of a replacement number.")
     
     is_number_replaced  = models.BooleanField(default=False, editable=True)
@@ -593,12 +593,16 @@ class Enumeration(models.Model):
             self.deactivation_date=None
             self.has_ever_been_active=True
             
-        """Mark the has ever been de active flag if the record is deactive"""     
+        """Mark the has ever been deactive flag if the record is deactive"""     
         if self.status=="D":
             self.has_ever_been_deactive=True
             if not self.deactivation_date:
                 self.deactivation_date = date.today()
             
+        """Mark the is_number_replaced flag if old numbers exist."""        
+        if self.old_numbers:
+            self.is_number_replaced=True
+        
             
         """Create a name for the handle """
         name = self.handle #Make it a UUID for starters to ensure unique
