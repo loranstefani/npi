@@ -12,7 +12,7 @@ class DirectAddress(models.Model):
     verified    = models.BooleanField(default=False, editable=False)
     added       = models.DateField(auto_now_add=True)
     updated     = models.DateTimeField(auto_now=True)
-    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
+    last_updated_ip     = models.CharField(max_length=20, blank=True,
                                 default="", db_index=True)
     
     def __unicode__(self):
