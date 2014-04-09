@@ -98,8 +98,8 @@ def primary_specialty(request, enumeration_id):
 @reversion.create_revision()
 def add_other_taxonomies(request, enumeration_id):
     name = _("Add Other Taxonomies")
-    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
-
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
+                                            request.user)
 
     if request.method == 'POST':
         form = OtherTaxonomyForm(request.POST, instance=e)
@@ -107,10 +107,13 @@ def add_other_taxonomies(request, enumeration_id):
             e = form.save(commit=False)
             e.last_updated_ip=request.META['REMOTE_ADDR']
             e.save()
+            form.save()
+            form.save_m2m()
             reversion.set_user(request.user)
-            reversion.set_comment("Added Other Taxonomy")
-            messages.success(request,_("The other taxonomy was created."))
-            return HttpResponseRedirect(reverse('edit_enumeration', args=(enumeration_id,)))
+            reversion.set_comment("Added/Changed other taxonomies.")
+            messages.success(request,_("Other taxonomies were added/changed."))
+            return HttpResponseRedirect(reverse('edit_enumeration',
+                                                args=(enumeration_id,)))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))

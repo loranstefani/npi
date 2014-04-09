@@ -9,6 +9,7 @@ from models import  Enumeration, License
 import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from ..taxonomy.models import TaxonomyCode
 
 SEARCH_US_STATES_CHOICES = [("", "No State"), ] + list(US_STATES)
 
@@ -324,27 +325,32 @@ class PrimarySpecialtyForm(forms.ModelForm):
 
 class OtherTaxonomyForm(forms.ModelForm):
 
-    def __init__(self, *args,**kwargs):
-        """Override the form's init"""
-        super(OtherTaxonomyForm,self).__init__(*args,**kwargs)
-        self.fields['taxonomy'].required = True
+    #def __init__(self, *args,**kwargs):
+    #    """Override the form's init"""
+    #    super(OtherTaxonomyForm,self).__init__(*args,**kwargs)
+    #    #self.fields['taxonomy'].required = True
 
 
     class Meta:
         model = Enumeration
-        fields = ('taxonomy',)
+        fields = ('other_taxonomies',)
 
-
+    other_taxonomies = forms.ModelMultipleChoiceField(
+                            queryset=TaxonomyCode.objects.all(),
+                            widget=forms.CheckboxSelectMultiple(),
+                            required=True)
     required_css_class = 'required'
     
-    def save(self, force_insert=False, force_update=False, commit=True):
-        m = super(OtherTaxonomyForm, self).save(commit=False)
-        taxonomy                 = self.cleaned_data.get("taxonomy", "")
-        # do custom stuff
-        m.other_taxonomies.add(taxonomy)
-        if commit:
-            m.save()
-        return m
+    #def save(self, force_insert=False, force_update=False, commit=True):
+    #    m = super(OtherTaxonomyForm, self).save(commit=False)
+    #    #print m.taxonomy
+    #    #taxonomy                 = self.cleaned_data.get("taxonomy", "")
+    #    # do custom stuff
+    #    #m.other_taxonomies.add(taxonomy)
+    #    #m.taxonomy = m.taxonomy
+    #    if commit:
+    #        m.save()
+    #    return m
     
 
 
