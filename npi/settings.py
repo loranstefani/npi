@@ -249,7 +249,7 @@ ORGANIZATION_NAME = "NPPES"
 INVITE_REQUEST_ADMIN = "someone@example.com"
 
 
-
+UPDATE_LAST_UPDATE_DATE = True #Set this to False in settings_local when importing legacy data.
 
 AUTH_PROFILE_MODULE = 'accounts.userprofile'
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)

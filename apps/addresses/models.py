@@ -123,8 +123,25 @@ class Address(models.Model):
                                                    self.mpo, self.state, self.zip,)
         return address      
        
-
+    def telephone_number(self):
+        if self.us_telephone_number:
+           tn = "+1 %s" % (self.us_telephone_number)
+        elif self.foreign_telephone_number:
+            tn = "%s (Foreign Number)" % self.foreign_telephone_number
+        else:
+            tn = "None"
+        return tn
     
+    def fax_number(self):
+        if self.us_fax_number:
+           fn = "+1 %s" % (self.us_fax_number)
+        elif self.foreign_fax_number:
+            fn = "%s (Foreign Number)" % self.foreign_fax_number
+        else:
+            fn = "None"
+        return fn
+
+
     class Meta:
         get_latest_by = "id"
         ordering = ('-id',)

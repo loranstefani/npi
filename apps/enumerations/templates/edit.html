@@ -52,7 +52,7 @@
    <tr>
     <td>Enumeration Type / Number / Status</td>
     <td><span class="label label-default">N/A</span></td>
-    <td>{{enumeration.enumeration_type}} / {{enumeration.number|default:"Unassigned"}} / {{enumeration.pretty_status}}</td>
+    <td>{{enumeration.enumeration_type}} / {{enumeration.number|default:"Unassigned"}} / {{enumeration.get_status_display}}</td>
     <td>
        <a href="/enumerations/flag-for-deactivation/{{enumeration.id}}">Flag for Deactivation</a> |
        <a href="/enumerations/flag-for-fraud/{{enumeration.id}}">Flag for Fraud</a>
@@ -263,10 +263,10 @@
 
 
      <tr>
-    <td>Hanlde, Avatar, Website, & Social Media Links</td>
+    <td>Hanlde, Website, Social Media Links, and More</td>
    <td><span class="label label-warning">No</span></td>
    <td>
-    {{enumeration.handle}}
+    Handle is: {{enumeration.handle}}
     </td>
     <td>
       <a href="/enumerations/edit-enhanced/{{enumeration.id}}">Edit</a>

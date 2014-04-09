@@ -461,7 +461,19 @@ class Enumeration(models.Model):
             return "Not Provided"
         return name
 
-
+    def pretty_status(self):
+        ps = "Could generate pretty status"
+        
+        if self.status=="A":
+            ps = "%s. Enumerated on %s. Updated on %s" % (self.get_status_display(),
+                                            self.enumeration_date, self.last_updated)
+        if self.status=="D":
+            ps = "%s. Deactivated on %s." % (self.get_status_display(),
+                                            self.deactivation_date)
+        if self.status in ("P", "R"):
+            ps = "%s. Updated on %s." % (self.get_status_display(),
+                                            self.last_updated)
+        return ps
 
     def entity_type(self):
         entity_type = None
@@ -480,20 +492,6 @@ class Enumeration(models.Model):
             entity_type = "1"
         return entity_type
 
- 
-    def pretty_status(self):
-        pretty_status = None
-        if str(self.status) == "A":
-            pretty_status = "Active"
-        
-        if str(self.status) == "P":
-            pretty_status = "Pending"   
-    
-        if str(self.status) == "D":
-            pretty_status = "Decactivated"   
-    
-        return pretty_status
-    
     
     def secure_gravatar_url(self):
         import urllib, hashlib
@@ -660,6 +658,8 @@ class Enumeration(models.Model):
                         self.number = "%s%s" % (eight_digits, checkdigit)
                 else:
                     self.number = random.randrange(100000000,199999999)
+                    
+            
                 
             
             if self.enumeration_type in ("HPID"):
@@ -686,7 +686,12 @@ class Enumeration(models.Model):
         """Default the IP address if it cannot be determined"""
         if not self.last_updated_ip:
             self.last_updated_ip = "127.0.0.1"
+        
+        """Set last updated date unless exlicitly suppressed."""
+        if settings.UPDATE_LAST_UPDATE_DATE:
+            self.last_updated = date.today()
                 
         if commit:
+            
             super(Enumeration, self).save(**kwargs)
         

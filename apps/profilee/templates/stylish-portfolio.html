@@ -49,15 +49,7 @@
         <a id="menu-close" href="#" class="btn btn-default btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
         <li class="sidebar-brand"><a href="http://startbootstrap.com">NPPES</a></li>
         <li><a href="#top">Home</a></li>
-        <li><a href="#details">Details</a></li>
-        {% if enumeration.bio_headline != "" %}
-            <li><a href="#biography">Biography</a></li>
-        {% endif %}
-        <li><a href="#contact">Contact</a></li>
         <li><a href="#directions">Directions</a></li>
-
-        <li><a href="/enumerations/edit/{{enumeration.id}}">Edit</a></li>
-
       </ul>
     </div>
     <!-- /Side Menu -->
@@ -65,113 +57,151 @@
     <!-- Full Page Image Header Area -->
     <div id="top" class="header">
       
-      
-      
-      
-      
-      
       <div class="text">
         
+        
+        
+        
+        
+        
         <br><br>
-<div class="container well span6">
-	<div class="row-fluid">
-        <div class="span2" >
-		    <img src="{{enumeration.secure_gravatar_url}}" class="img-circle">
-        </div>
+        <div class="container well span6">
+          <div class="row-fluid">
+            
+            
+            <div class="col-sm-2 col-md-2">
+              <img src="{{enumeration.secure_gravatar_url}}" class="img-circle"
+              alt="" class="img-rounded img-responsive" />
+            </div>
         
-        <div class="span8">
-            <h2>{{ enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}}{% if enumeration.credential %},{{enumeration.credential }}{% endif %}
-            
-            </h2>
-            <h4><strong>NPI:</strong> {{enumeration.number}} ({{enumeration.entity_type}})</h4>
-            
-            <h4><strong>Last Updated:</strong>  {{ enumeration.updated }}</h4>
-            <h4><strong>Primary Taxonomy:</strong>  {{ enumeration.taxonomy }}</h4>
-            <h4>
-            <strong>Primary Practice Location Address:</strong>  {{ enumeration.location_address }} (<a href="#directions">Map Below</a>)
-            </h4>
-            <h4><strong>Primary Practice Location Phone:</strong>  +1 {{ enumeration.location_address.us_telephone_number}}</h4>
-            <h4><strong>Primary Practice Location Fax:</strong>  +1 {{ enumeration.location_address.us_fax_number}}</h4>
-          </h4>
-            
+            <div class="col-sm-4 col-md-4">
+              <blockquote>
+                  <p>{{ enumeration.name_prefix}} {{enumeration.name}} {{enumeration.name_suffix}} {% if enumeration.credential %} {{enumeration.credential }}{% endif %}</p>
+                  {% if enumeration.bio_headline %}<small><cite title="Source Title">{{enumeration.bio_headline}}</cite></small>{% endif %} 
+              </blockquote>
+              <p>
+                <i class="glyphicon glyphicon-user"></i> {{enumeration.enumeration_type}}: {{enumeration.number}}
+                  <br/>
+                {%if enumeration.website %}
+                <i class="glyphicon glyphicon-globe"></i> <a target=_blank href="{{enumeration.website}}">{{enumeration.website}}</a>
+                  <br />
+                  {% endif %}
+                  <i class="glyphicon glyphicon-calendar"></i> Last Upddate: {{enumeration.last_updated}}</p>
+            </div>
+     
+         </div>
 
+
+         <div class="row"></div>
+
+
+         <div class="row">
+            
+            <h1>Details</h1>  
+            <table class="table table-striped table-bordered">
+            
+            
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            
+            <tr>
+              <td>{{enumeration.get_enumeration_type_display}}</td>
+              <td>{{enumeration.number}} ({{enumeration.entity_type}})</td>
+            </tr>
+            
+            <tr>
+              <td>Status</td>
+              <td>{{enumeration.pretty_status}}
+              </td>
+            </tr>
+            
+            
+            {% if enumeration.specialty %}
+            <tr>
+              <td>Specialty</td>
+              <td>{{enumeration.specialty}}
+              </td>
+            </tr>
+            
+            {% endif %}
+            
+            
+            <tr>
+              <td>Licenses</td>
+              <td>{% for l in enumeration.licenses.all %}
+              {{l}} ({{l.license_type.credential}} issued in {{l.license_type.get_state_display}}). Status is {{l.get_status_display}} as of {{l.updated}}<br></br>
+              {% endfor %}
+              </td>
+            </tr>
+            
+            
+             <tr>
+              <td>Mailing Address</td>
+              <td>{{enumeration.mailing_address}}<br></br>
+              Phone: {{enumeration.mailing_address.telephone_number}} | 
+              Fax: {{enumeration.mailing_address.fax_number}}
+              
+              </td>
+            </tr>
+            
+            <tr>
+              <td>Primary Practice Address</td>
+              <td>{{enumeration.location_address}} (<a href="#directions">Map</a>)<br></br>
+              Phone: {{enumeration.location_address.telephone_number}} | 
+              Fax: {{enumeration.location_address.fax_number}}
+              
+              </td>
+            </tr>
+             <tr>
+              <td>Taxonomy</td>
+              <td>{{enumeration.taxonomy}} <strong>(Primary)</strong><br></br>
+              {% for t in enumeration.other_taxonomies.all %}
+              {{t}}<br></br>
+              {% endfor %}
+              
+              </td>
+            </tr>
+            
+            <tr>
+              <td>Identifiers</td>
+              <td>{% for i in enumeration.identifiers.all %}
+              {{i.pretty_identifier}} <br></br>
+              {% endfor %}
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td>Direct Addresses</td>
+              <td>{% for d in enumeration.direct_addresses.all %}
+              {{d.email}} ({{d.organization}})<br></br>
+              {% endfor %}
+              </td>
+            </tr>
+            
+            
+            
+          
+            
+            </table>
+          
+          </div>
         </div>
-        
 
-</div>
-</div>
+
+
+
+
+      </div>
+      </div>
         
       </div>
     </div>
     <!-- /Full Page Image Header Area -->
-
-
-
-
-
-{% if enumeration.bio_headline != "" %}
-
-   <!-- Callout -->
-    <div id="biography" class="callout">
-      <div class="vert-text">
-        <h1>{{enumeration.bio_headline}}</h1>
-      </div>
-    </div>
-    <!-- /Callout -->
-
-
-    <!-- extended_bio -->
-    <div class="intro">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 col-md-offset-3 text-center">
-            <p class="lead"> {{enumeration.bio_detail}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- /Extended bio -->
-
-{% endif %}
-
-
-
-
-
-
-  <!-- contact -->
-    <div id="contact" class="call-to-action">
-      <div class="container">
-        <div class="row">
-          <h3>Practice Address:</h3>
-          <h4>
-            {{ enumeration.location_address }} (<a href="#directions">Map Below</a>)
-            Phone: +1 {{ enumeration.location_address.us_telephone_number}}
-            Fax: +1 {{ enumeration.location_address.us_fax_number}}
-          </h4>
-
-          <h5>
-            <em>NOTE: This may not be the address you are seeking. Health
-            care providers often practice from multiple locations.
-            </em>
-          </h5>
-
-          <h3>Mailing Addresss</h3>
-
-          <h4>{{ enumeration.mailing_address }}
-                Phone: +1 {{ enumeration.location_address.us_telephone_number}}
-                Fax: +1 {{ enumeration.location_address.us_fax_number}}
-          </h4>
-
-          <h5>
-            <em>NOTE: This may not be the address you are seeking. Health
-            care providers often use third paties to handle mail and billing correspondence.
-            </em>
-        </h5>
-        </div>
-      </div>
-    </div>
-    <!-- /contact-->
 
 
 

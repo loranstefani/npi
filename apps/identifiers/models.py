@@ -19,9 +19,15 @@ class Identifier(models.Model):
                                 default="", db_index=True)
     
     def __unicode__(self):
-        s = "%s/%s/%s/%s" % (self.identifier, self.issuer, self.state,
-                             self.get_code_display())
-        return s
+        i = "%s/%s/%s/%s/" % (self.identifier, self.issuer, self.state,
+                             self.get_code_display(), self.updated)
+        return i
+    
+    def pretty_identifier(self):
+        i = """%s is a "%s" issued by %s in %s was last updated on %s.""" % \
+                            (self.identifier, self.get_code_display(), self.issuer,
+                             self.get_state_display(), self.updated)
+        return i
 
     class Meta:
         get_latest_by = "id"

@@ -45,17 +45,27 @@ class License(models.Model):
     number         = models.CharField(max_length=20, verbose_name="License Number",
                                                     db_index=True)
     status         = models.CharField(max_length=10, choices=LICENSE_STATUS_CHOICES,
-                                         default ="UNKNOWN")
+                                         default ="")
     verified_by_issuing_board   = models.BooleanField(default=False)
     verified_by_ther_means      = models.BooleanField(default=False)
     verified                    = models.BooleanField(default=False, editable=False)
-    note                        = models.TextField(max_length=255,  blank=True, default="")
-    internal_note               = models.TextField(max_length=255,  blank=True, default="")
-    note_restictions            = models.TextField(max_length=1024,  blank=True, default="")
-    license_image               = models.ImageField(blank = True, null=False, default="",
+    note                        = models.TextField(max_length=255,
+                                                   blank=True, default="")
+    internal_note               = models.TextField(max_length=255,
+                                                   blank=True, default="")
+    note_restictions            = models.TextField(max_length=1024,
+                                                   blank=True, default="")
+    license_image               = models.ImageField(blank = True,
+                                    null=False, default="",
                                     max_length=255L, upload_to="licenses-",
                                     verbose_name= "License Image",
                                     help_text= "PNG, JPG, or PDF formats accepted. 3MB max.")
+    added                       = models.DateField(auto_now_add=True)
+    updated                     = models.DateField(auto_now=True)
+    last_updated_ip             = models.CharField(max_length=20, blank=True,
+                                                    default="", db_index=True)
+    
+    
     def save(self, **kwargs):
         if self.verified_by_issuing_board or self.verified_by_ther_means:
             self.verified=True
