@@ -19,7 +19,7 @@ class Identifier(models.Model):
                                 default="", db_index=True)
     
     def __unicode__(self):
-        i = "%s/%s/%s/%s/" % (self.identifier, self.issuer, self.state,
+        i = "%s/%s/%s/%s/%s" % (self.identifier, self.issuer, self.state,
                              self.get_code_display(), self.updated)
         return i
     
