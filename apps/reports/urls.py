@@ -7,6 +7,11 @@ from views import *
 
 urlpatterns = patterns('',
    
-    url(r'', report_index, name="report_index"),
+    
+    url(r'pending-applications$',
+                pending_applications,
+                name = "pending_applications"),
+    
+    url(r'$', report_index, name="report_index"),
     
     )
