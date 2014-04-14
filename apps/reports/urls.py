@@ -6,7 +6,10 @@ from views import *
 
 
 urlpatterns = patterns('',
-   
+    
+    url(r'provider-enumeration-stats-by-state$',
+                enumerations_stats_by_state,
+                name = "enumeration_stats_by_state"),
     
     url(r'pending-applications$',
                 pending_applications,

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
-from forms import DateRangeForm, PendingEnumerationForm
+from forms import PendingEnumerationForm, EnumerationsStatisByStateForm
 
 @login_required
 @staff_member_required
@@ -39,6 +39,29 @@ def pending_applications(request):
               'form': PendingEnumerationForm()}
     return render(request, 'daterange.html', context)
     
+@login_required
+@staff_member_required   
+def enumerations_stats_by_state(request):
+    name = "Enumeration Statistics By State"
+    if request.method == 'POST':
+        form = EnumerationsStatisByStateForm(request.POST)
     
+        if form.is_valid():
+            
+            search_results = form.save()
+            
+        
+            
+            context= {'name':name, 'search_results': search_results}
+            return render(request, 'enumeration-stats-by-state.html', context)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'daterange.html', context)
     
+    #this is a GET
+    context= {'name':name,
+              'form': EnumerationsStatisByStateForm()}
+    return render(request, 'daterange.html', context)    
     
