@@ -183,8 +183,9 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
     class Meta:
         model = Enumeration
         fields = ('name_prefix','first_name', 'last_name', 'name_suffix',
-                  'credential','ssn', 'itin', 'state_of_birth','country_of_birth',
-                  'birth_date', 'gender', 'sole_proprietor', 'doing_business_as',)
+                  'sole_proprietor', 'doing_business_as', 'credential','ssn',
+                  'itin', 'state_of_birth','country_of_birth', 'birth_date',
+                  'gender', )
 
 
     required_css_class = 'required'

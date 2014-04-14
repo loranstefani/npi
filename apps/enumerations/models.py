@@ -29,7 +29,7 @@ ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"), ("E","EFI"), ("C","CSV"
 ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"),
                                ("D", "Deactived"), ("R","Rejected"),)
 
-DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Disbandment"),
+DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Business Dissolved"),
                                 ("FR", "Fraud"), ("OT", "Other"), )
 
 ENTITY_CHOICES = (("INDIVIDUAL", "Individual"), ("ORGANIZATION", "Organization"))
