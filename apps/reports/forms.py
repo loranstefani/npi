@@ -78,17 +78,22 @@ class EnumeratedApplicationsForm(forms.Form):
         date_stop =  self.cleaned_data.get("date_stop")
         staff_user = self.cleaned_data.get("staff_user", None)
         
-        print staff_user, type(staff_user)
-        
         if not staff_user:
             """Display Everything"""    
-            qs = Enumeration.objects.filter(status="A").exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).values('enumerated_by__username').annotate(Count('id'))
-        
+            activations = Enumeration.objects.filter(status="A").exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).values('enumerated_by__username').annotate(Count('id'))
+            total_activations = Enumeration.objects.filter(status="A").exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
+            total_enumerations = Enumeration.objects.filter().exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
+            total_rejections = Enumeration.objects.filter(status="R").exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
         else:
-            qs = Enumeration.objects.filter(status="A", enumerated_by=staff_user).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).values('enumerated_by__username').annotate(Count('id'))
+            activations = Enumeration.objects.filter(status="A", enumerated_by=staff_user).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).values('enumerated_by__username').annotate(Count('id'))
+            total_activations = Enumeration.objects.filter(status="A", enumerated_by=staff_user).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
+            total_enumerations = Enumeration.objects.filter(enumerated_by=staff_user).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
+            total_rejections = Enumeration.objects.filter(status="R", enumerated_by=staff_user).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
         
-        
-        return qs        
+        return {'activations': activations,
+                'total_activations':total_activations,
+                'total_enumerations':total_enumerations,
+                'total_rejections': total_rejections}        
         
         
         

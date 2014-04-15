@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 from forms import ( PendingEnumerationForm, EnumerationsStatisByStateForm,
                    EnumeratedApplicationsForm)
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 from ..enumerations.models import Enumeration
 
 @login_required
@@ -50,10 +50,8 @@ def enumerations_stats_by_state(request):
         form = EnumerationsStatisByStateForm(request.POST)
     
         if form.is_valid():
-            
             search_results = form.save()
-            
-            context= {'name':name, 'search_results': search_results}
+            context= {'name':name, 'search_results': search_results, }
             return render(request, 'enumeration-stats-by-state.html', context)
         else:
             #The form is invalid
@@ -76,11 +74,12 @@ def enumerated_applications(request):
         form = EnumeratedApplicationsForm(request.POST)
     
         if form.is_valid():
+            search_results = form.save()            
+            context= {'name':name, 
+                      'date_start': form.cleaned_data.get("date_start"),
+                       'date_stop': form.cleaned_data.get("date_stop") }
             
-            search_results = form.save()
-            print search_results
-            
-            context= {'name':name, 'search_results': search_results}
+            context.update(search_results)
             return render(request, 'enumerated-applications.html', context)
         else:
             #The form is invalid
@@ -97,16 +96,16 @@ def enumerated_applications(request):
     
 @login_required
 @staff_member_required   
-def staff_member_summary(request, username):
-    
-    print username
-    u = User.objects.get(username=username)
+def staff_member_summary(request, username, date_start, date_stop):
     name = "Staff Member Summary"
-    total_user_enumerations = Enumeration.objects.filter(enumerated_by=u).count()
-    total_user_activations = Enumeration.objects.filter(status= "A", enumerated_by=u).count()
-    total_user_rejections = Enumeration.objects.filter(status= "R", enumerated_by=u).count()
+    u = User.objects.get(username=username)
+    date_start = datetime.strptime(date_start, '%Y-%m-%d').date()
+    date_stop = datetime.strptime(date_stop, '%Y-%m-%d').date()
+    total_user_enumerations = Enumeration.objects.filter(enumerated_by=u).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
+    total_user_activations = Enumeration.objects.filter(status= "A", enumerated_by=u).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
+    total_user_rejections = Enumeration.objects.filter(status= "R", enumerated_by=u).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).count()
     
-    enumerations = Enumeration.objects.filter(status= "A", enumerated_by=u).only('enumeration_date', 'added')
+    enumerations = Enumeration.objects.filter(status= "A", enumerated_by=u).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).only('enumeration_date', 'added')
     lte_three = 0
     four_to_five = 0
     gt_five = 0
