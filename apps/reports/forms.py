@@ -6,7 +6,7 @@ import datetime
 from django import forms
 from ..enumerations.models import ENUMERATION_TYPE_CHOICES, Enumeration
 from django.db.models import Count
-
+from django.contrib.auth.models import User
 def report_year_range():
     this_year = datetime.date.today().year
     years = range(2005, this_year+1)
@@ -16,16 +16,12 @@ def report_year_range():
 class PendingEnumerationForm(forms.Form):
     
     enumeration_type    = forms.ChoiceField(choices = ENUMERATION_TYPE_CHOICES)
-    
-    
     required_css_class  = 'required'
     
-    def save(self, force_insert=False, force_update=False, commit=True):
+    def save(self):
          enumeration_type = self.cleaned_data.get("enumeration_type")
          qs = Enumeration.objects.filter(status = "P")
-
          return qs
-        
         
         
         
@@ -39,7 +35,7 @@ class EnumerationsStatisByStateForm(forms.Form):
                                                             
     required_css_class  = 'required'
     
-    def save(self, force_insert=False, force_update=False, commit=True):
+    def save(self):
             
         date_start = self.cleaned_data.get("date_start")
         date_stop =  self.cleaned_data.get("date_stop")
@@ -62,3 +58,40 @@ class EnumerationsStatisByStateForm(forms.Form):
                  'mode_totals':         mode_totals,
                  'total_enumerations':  total_enumerations
                  }
+        
+class EnumeratedApplicationsForm(forms.Form):
+    
+    date_start  = forms.DateField(widget=SelectDateWidget(
+                                    years=report_year_range()),
+                                    initial=datetime.date(2005,05,23))
+                                    
+    date_stop   = forms.DateField(initial=datetime.date.today,           
+                            widget=SelectDateWidget( years=report_year_range()))
+    
+    staff_user = forms.ModelChoiceField(queryset = User.objects.filter(is_staff=True), required=False)
+                                                            
+    required_css_class  = 'required'
+    
+    def save(self):
+            
+        date_start = self.cleaned_data.get("date_start")
+        date_stop =  self.cleaned_data.get("date_stop")
+        staff_user = self.cleaned_data.get("staff_user", None)
+        
+        print staff_user, type(staff_user)
+        
+        if not staff_user:
+            """Display Everything"""    
+            qs = Enumeration.objects.filter(status="A").exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).values('enumerated_by__username').annotate(Count('id'))
+        
+        else:
+            qs = Enumeration.objects.filter(status="A", enumerated_by=staff_user).exclude(enumeration_date__lt=date_start).exclude(enumeration_date__gt=date_stop).values('enumerated_by__username').annotate(Count('id'))
+        
+        
+        return qs        
+        
+        
+        
+        
+         
+    
