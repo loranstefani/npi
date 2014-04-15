@@ -525,14 +525,57 @@ def reactivate(request, id):
     if e.status != "A":
         e.status = "A"
         e.last_updated_ip=request.META['REMOTE_ADDR']
+        e.enumerated_by = request.user
         e.save()
         reversion.set_user(request.user)
-        reversion.set_comment("Reactivated a Deactivated Enumeration.")
+        reversion.set_comment("Reactivated a deactivated enumeration.")
         messages.success(request, "This record has been reactivated.")
     else:
-        messages.success(request, "This record was already active. Nothing was done.")
-    return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        messages.info(request, "This record was already active. Nothing was done.")
+    return HttpResponseRedirect(reverse('report_index'))
     
+
+
+@login_required
+@staff_member_required
+@reversion.create_revision()
+def activate(request, id):
+    name = _("Activate an Enumeration")
+    e = get_object_or_404(Enumeration, id=id)
+    if e.status != "A":
+        e.status = "A"
+        e.last_updated_ip=request.META['REMOTE_ADDR']
+        e.enumerated_by = request.user
+        e.save()
+        reversion.set_user(request.user)
+        comment = "Enumerated Application. Number is %s" % (e.number)
+        reversion.set_comment(comment)
+        messages.success(request, "This record has been enumerated/activated.")
+    else:
+        messages.info(request, "This record was already active. Nothing was done.")
+    return HttpResponseRedirect(reverse('report_index'))
+
+
+
+
+@login_required
+@staff_member_required
+@reversion.create_revision()
+def reject(request, id):
+    name = _("Activate an Enumeration")
+    e = get_object_or_404(Enumeration, id=id)
+    if e.status == "P":
+        e.status = "R"
+        e.last_updated_ip=request.META['REMOTE_ADDR']
+        e.enumerated_by = request.user
+        e.save()
+        reversion.set_user(request.user)
+        comment = "Application. Rejected"
+        reversion.set_comment(comment)
+        messages.success(request, "This record has been successfully been rejected.")
+    else:
+        messages.info(request, "This record was not pending so nothing was done. The record was not rejected.")
+    return HttpResponseRedirect(reverse('report_index'))
 
 
 

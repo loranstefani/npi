@@ -100,8 +100,9 @@ urlpatterns = patterns('',
     
     url(r'^flag-for-fraud/(?P<id>\S+)', flag_for_fraud, name="flag_for_fraud"),
 
+    url(r'^activate/(?P<id>\S+)', activate, name="enumeration_activate"),
+    url(r'^reject/(?P<id>\S+)', reject, name="enumeration_reject"),
     url(r'^reactivate/(?P<id>\S+)', reactivate, name="enumeration_reactivate"),
-    
     url(r'^replace/(?P<id>\S+)', replace, name="enumeration_replace"),
     
 

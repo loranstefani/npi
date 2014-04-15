@@ -431,6 +431,7 @@ class Enumeration(models.Model):
     last_updated        = models.DateField(blank=True, null=True)
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
+    enumerated_by       = models.ForeignKey(User, blank=True, null=True, editable=False)
     last_updated_ip     = models.CharField(max_length=20, blank=True,
                                 default="", db_index=True)
     
@@ -574,9 +575,7 @@ class Enumeration(models.Model):
     
     
     def save(self, commit=True, **kwargs):
-        
-
-
+    
         """Set Sole Proprieter to NO if its an organization"""
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
             self.sole_proprietor="NO"
@@ -601,7 +600,6 @@ class Enumeration(models.Model):
         if self.old_numbers:
             self.is_number_replaced=True
         
-            
         """Create a name for the handle """
         name = self.handle #Make it a UUID for starters to ensure unique
     
@@ -668,6 +666,10 @@ class Enumeration(models.Model):
             if self.enumeration_type in ("OEID", "OEID"):
                 self.number = random.randrange(6000000000,6999999999)
             self.enumeration_date = date.today()
+         
+        if self.status == "R":
+            self.enumeration_date = date.today()
+            
         
         """Captialize all names"""
         self.first_name =self.first_name.upper()
