@@ -110,7 +110,7 @@
             
             <tr>
               <td>{{enumeration.get_enumeration_type_display}}</td>
-              <td>{{enumeration.number}} ({{enumeration.entity_type}})</td>
+              <td>{{enumeration.number}} ({{enumeration.entity_type_formal}})</td>
             </tr>
             
             <tr>
@@ -167,7 +167,7 @@
             </tr>
             
             <tr>
-              <td>Identifiers</td>
+              <td>Other Identifiers</td>
               <td>{% for i in enumeration.identifiers.all %}
               {{i.pretty_identifier}} <br></br>
               {% endfor %}
