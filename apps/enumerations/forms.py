@@ -26,8 +26,7 @@ class SearchForm(forms.ModelForm):
         model = Enumeration
         fields = (
                   'number', 'first_name', 'last_name', 'organization_name',
-                  'ein'
-                  )
+                  'ein')
 
     city  = forms.CharField(required=False)
     state = forms.ChoiceField(choices=SEARCH_US_STATES_CHOICES, required=False)
@@ -125,6 +124,19 @@ class FraudAlertForm(forms.ModelForm):
 
 
 
+class SubmitApplicationForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(SubmitApplicationForm,self).__init__(*args,**kwargs)
+        self.fields['confirmation'].required = True
+    class Meta:
+        model = Enumeration
+        fields = ('confirmation', )
+    required_css_class = 'required'
+
+
+
+
 class CreateEnumeration1Form(forms.ModelForm):
 
     def __init__(self, *args,**kwargs):
@@ -176,22 +188,39 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
         super(CreateEnumerationIndividualForm,self).__init__(*args,**kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
+        self.fields['sole_proprietor'].required = True
+        self.fields['sole_proprietor'].choices = (("", "No Answer"), ("YES", "Yes"),("NO", "No"))
+        
+    class Meta:
+        model = Enumeration
+        fields = ('name_prefix','first_name', 'last_name', 'name_suffix',
+                  'sole_proprietor', 'doing_business_as', 'credential')
+
+    required_css_class = 'required'
+    
+
+
+
+class IndividualPIIForm(forms.ModelForm):
+
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(IndividualPIIForm,self).__init__(*args,**kwargs)
         self.fields['state_of_birth'].required = True
+        self.fields['date_of_birth'].required = True
         self.fields['gender'].required = True
         self.fields['country_of_birth'].required = True
 
     class Meta:
         model = Enumeration
-        fields = ('name_prefix','first_name', 'last_name', 'name_suffix',
-                  'sole_proprietor', 'doing_business_as', 'credential','ssn',
-                  'itin', 'state_of_birth','country_of_birth', 'birth_date',
-                  'gender', )
+        fields = ('ssn', 'itin', 'date_of_birth','state_of_birth',
+                  'country_of_birth', 'gender', )
 
 
     required_css_class = 'required'
     
     def clean(self):
-        cleaned_data = super(CreateEnumerationIndividualForm, self).clean()
+        cleaned_data = super(IndividualPIIForm, self).clean()
 
         
         #SSN and ITIN
@@ -208,6 +237,8 @@ class CreateEnumerationIndividualForm(forms.ModelForm):
         if country_of_birth != "US" and state_of_birth != "ZZ":
             raise forms.ValidationError("You cannot be born in the United States and in a foriegn country at the same time.")
         return cleaned_data
+
+
 
 
 class OtherNamesForm(forms.ModelForm):
@@ -342,18 +373,6 @@ class OtherTaxonomyForm(forms.ModelForm):
                             required=True)
     required_css_class = 'required'
     
-    #def save(self, force_insert=False, force_update=False, commit=True):
-    #    m = super(OtherTaxonomyForm, self).save(commit=False)
-    #    #print m.taxonomy
-    #    #taxonomy                 = self.cleaned_data.get("taxonomy", "")
-    #    # do custom stuff
-    #    #m.other_taxonomies.add(taxonomy)
-    #    #m.taxonomy = m.taxonomy
-    #    if commit:
-    #        m.save()
-    #    return m
-    
-
 
 
 class EnumerationEnhancementForm(forms.ModelForm):
@@ -361,7 +380,7 @@ class EnumerationEnhancementForm(forms.ModelForm):
         model = Enumeration
         fields = ('handle','custom_profile_url', 'website', 'gravatar_email',
                   'facebook_handle','twitter_handle', 'driving_directions', 'bio_headline',
-                  'bio_detail', 'avatar_image', 'background_image',)
+                  'background_image',)
     required_css_class = 'required'
     
 

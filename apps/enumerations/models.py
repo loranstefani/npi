@@ -26,7 +26,7 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (N
 
 ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"), ("E","EFI"), ("C","CSV"))
 
-ENUMERATION_STATUS_CHOICES  = (("P", "Pending"), ("A", "Active"),
+ENUMERATION_STATUS_CHOICES  = (("E", "Editing"),  ("P", "Pending"), ("A", "Active"),
                                ("D", "Deactived"), ("R","Rejected"),)
 
 DECACTIVAED_REASON_CHOICES = (("", "Blank"), ("DT", "Death"), ("DB", "Business Dissolved"),
@@ -63,7 +63,7 @@ class Enumeration(models.Model):
     
     status              = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
-                                    default ="P", blank=True)
+                                    default ="E", blank=True)
     
     mode                = models.CharField(max_length=1,
                                     choices=ENUMERATION_MODE_CHOICES,
@@ -82,17 +82,35 @@ class Enumeration(models.Model):
                             help_text="Old NPIs in case of a replacement number.")
     
     is_number_replaced  = models.BooleanField(default=False, editable=True)
-    
+
+
     is_reactivated      = models.BooleanField(default=False, editable=True)
     
     has_ever_been_active   = models.BooleanField(default=False, editable=True)
     has_ever_been_deactive = models.BooleanField(default=False, editable=True)
     flag_for_deactivation  = models.BooleanField(default=False,
                             help_text="Check this box to flag this record for enumeration. Final deactivation processed by CMS.")
-    
     decativation_note       = models.TextField(max_length=1024, blank=True,
                                 default="",
-                                help_text="Why do you wish to deactive this record")
+                                help_text="Why do you wish to deactive this record?")
+    pii_lock               = models.BooleanField(default=False,
+                                help_text="If False, then DOB, SSN, and ITIN can be changed.")
+    #Gatekeeper fields
+    practice_address_error     = models.BooleanField(default=False, editable=True)
+    mailing_address_error      = models.BooleanField(default=False, editable=True)
+    invalid_ssn_error          = models.BooleanField(default=False, editable=True)
+    invalid_ein_error          = models.BooleanField(default=False, editable=True)
+    ssn_already_issued_error   = models.BooleanField(default=False, editable=True)
+    lst_error                  = models.BooleanField(default=False, editable=True)
+    confirmation               = models.BooleanField(default=False,
+                                    help_text =
+                                    """I understand that the infomation on this site,
+                                    except for personally identifiable information such
+                                    as SSN, EIN, ITIN, date of birth, and place of
+                                    birth IS MADE PUBLIC in accordance with US
+                                    federal regulations. """)
+    #end Gatekeeper fields
+
 
     tracking            = UUIDField(db_index=True)
     
@@ -125,8 +143,7 @@ class Enumeration(models.Model):
 
     
     sole_proprietor           = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
-                                               default="", max_length=3,
-                                               blank=True)
+                                               blank=True, default="", max_length=3)
     organizational_subpart    = models.BooleanField(default=False)
     
     credential                = models.CharField(max_length=50, blank=True,
@@ -206,7 +223,7 @@ class Enumeration(models.Model):
                                                   db_index=True)
     website                    = models.CharField(max_length=200,   blank=True, default="")
     gravatar_email             = models.EmailField(max_length=200,   blank=True, default="",
-                                    help_text="Add an avatr image to your public profile by provding an email registered with Gravatar.com. This email will not be public.")
+                                    help_text="Add an avatar image to your public profile by provding an email registered with Gravatar.com. This email will not be public.")
     facebook_handle            = models.CharField(max_length=100,   blank=True, default="")
     twitter_handle             = models.CharField(max_length=100,   blank=True, default="")
     public_email               = models.EmailField(blank=True,      default="")
@@ -214,13 +231,10 @@ class Enumeration(models.Model):
     
     driving_directions         = models.TextField(max_length=256,   blank=True, default="")
     bio_headline               = models.CharField(max_length=255,   blank=True, default="")
-    bio_detail                 = models.TextField(max_length=1024,  blank=True, default="")
+   
     background_image           = models.ImageField(blank = True,    null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
                                     verbose_name= "Background Image")
-    avatar_image               = models.ImageField(blank = True, null=False, default='',
-                                    max_length=255L, upload_to="enumeration-avatars",
-                                    verbose_name= "Avatar Photo")
     #PECOS Related
     pecos_id                    = models.CharField(max_length=20, blank=True,
                                                    default="")
@@ -306,12 +320,12 @@ class Enumeration(models.Model):
     #PII --------------------------------------------------------------------
     state_of_birth      = models.CharField(max_length=2,  blank=True, default="",
                                     choices = US_STATE_W_FC_CHOICES,
-                        help_text="Choose Foriegn Country if the individual was not born in the US.")
+                        help_text="""Choose "Foreign Country" at the bottom of the list if the individual was not born in the US.""")
     
     country_of_birth    = models.CharField(max_length=2,  blank=True, default="US",
                                     choices = COUNTRIES)
     
-    birth_date          = models.DateField(blank=True, null=True,
+    date_of_birth          = models.DateField(blank=True, null=True,
                                            help_text="Format: YYYY-MM-DD")
     
     gender      = models.CharField(max_length=2,  blank=True, default="",
@@ -379,16 +393,16 @@ class Enumeration(models.Model):
     contact_person_title_or_position   = models.CharField(max_length=150,
                                             blank=True, default="")
     
-    contact_person_telephone_number   = PhoneNumberField(max_length=12,
-                                                         blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX.")
+    contact_person_telephone_number     = PhoneNumberField(max_length=12,
+                                            blank=True, default="",
+                                            help_text="Format: XXX-XXX-XXXX.")
     contact_person_telephone_extension   = models.CharField(max_length=10,
                                                   blank=True, default="")
-    contact_person_title_or_position       = models.CharField(max_length=150,
+    contact_person_title_or_position     = models.CharField(max_length=150,
                                                   blank=True, default="")
 
-    contact_person_title       = models.CharField(max_length=150,
-                                                  blank=True, default="")
+    contact_person_title = models.CharField(max_length=150, blank=True,
+                                            default="")
     
     authorized_official_email = models.EmailField(blank=True, default="",
                                help_text = "Required if the authorized official has an email.",
@@ -396,8 +410,8 @@ class Enumeration(models.Model):
     
     # End PII -----------------------------------------------------------------
     authorized_official_prefix        = models.CharField(choices=PREFIX_CHOICES, max_length=10,
-                                            blank=True, default="",
-                                            help_text = "For example, Mr., Ms., Mrs., Dr.")
+                                            blank=True, default="")
+    
     authorized_official_first_name    = models.CharField(max_length=150,
                                             blank=True, default="")
     authorized_official_middle_name   = models.CharField(max_length=150,
@@ -442,7 +456,6 @@ class Enumeration(models.Model):
         ordering = ('-enumeration_date',)
 
 
-
     def name(self):
         name = "Not Provided"
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
@@ -485,12 +498,12 @@ class Enumeration(models.Model):
         return entity_type
     
 
-    def entity_type_code(self):
+    def entity_type_formal(self):
         entity_type = None
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
-            entity_type = "2"
+            entity_type = "Entity Type 2"
         elif self.enumeration_type in ("NPI-1",):
-            entity_type = "1"
+            entity_type = "Entity Type 1"
         return entity_type
 
     
@@ -518,12 +531,12 @@ class Enumeration(models.Model):
 
     def detail(self):
         name = "Not Provided"
-        if self.enumeration_type in ("HPID", "OEID-2", "NPI-2"):
+        if self.enumeration_type in ("HPID", "NPI-2"):
             name = self.organization_name
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as,
                                     self.organization_name)
-        elif self.enumeration_type in ("OEID-1", "NPI-1"):
+        elif self.enumeration_type in ("OEID", "NPI-1"):
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
                 name = "%s (%s %s)" % (self.doing_business_as,
@@ -547,6 +560,46 @@ class Enumeration(models.Model):
         prefixed_number = "%s%s" % (settings.LUHN_PREFIX, self.number)
         return verify(prefixed_number)            
         
+
+
+    def gatekeeper(self):
+        msglist = []
+        
+        if Enumeration.objects.filter(ssn=self.ssn).count() > 1:
+            self.ssn_already_issued_error = True
+            msg = "There is an issue with your SSN. Please contact the help desk."
+            msglist.append(msg)
+            
+        if self.enumeration_type in ("OEID", "NPI-1") and not self.ssn and not self.itin:
+            msg = "No SSN or ITIN supplied."
+            msglist.append(msg)
+ 
+        if self.enumeration_type in ("OEID", "NPI-1") and not self.date_of_birth:
+            msg = "No date of birth supplied."
+            msglist.append(msg)
+            
+        
+        if self.enumeration_type in ("HPID", "NPI-2") and not self.ein:
+            msg = "No EIN supplied."
+            msglist.append(msg)
+            
+        if self.invalid_ssn_error:
+            msg = "Your SSN could not be verified."
+            msglist.append(msg)
+        
+        if self.practice_address_error:
+            msg = "Your practice address did not validate."
+            msglist.append(msg)
+            
+        if self.mailing_address_error:
+            msg = "Your mailing address did not validate."
+            msglist.append(msg)
+            
+        if self.lst_error:
+            msg = "There was an issue with your taxonomy and license combination."
+            msglist.append(msg)
+        
+        return msglist
 
     def __unicode__(self):
         name = "No Name"

@@ -79,6 +79,10 @@ urlpatterns = patterns('',
     url(r'^edit-basic/(?P<id>\S+)', edit_basic_enumeration,
                     name="edit_basic_enumeration"),
 
+    url(r'^edit-pii/(?P<id>\S+)', edit_pii,
+                    name="edit_pii_enumeration"),
+
+
     url(r'^contact-person/(?P<id>\S+)', contact_person, name="contact_person"),
 
     url(r'^authorized-official/(?P<id>\S+)', authorized_official,
@@ -104,6 +108,6 @@ urlpatterns = patterns('',
     url(r'^reject/(?P<id>\S+)', reject, name="enumeration_reject"),
     url(r'^reactivate/(?P<id>\S+)', reactivate, name="enumeration_reactivate"),
     url(r'^replace/(?P<id>\S+)', replace, name="enumeration_replace"),
-    
+    url(r'^submit-dialouge/(?P<id>\S+)', submit_dialouge, name="enumeration_submit_dialouge"),
 
     )

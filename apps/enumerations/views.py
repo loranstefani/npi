@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.admin.views.decorators import staff_member_required
@@ -34,6 +35,7 @@ def primary_taxonomy(request, enumeration_id):
         if form.is_valid():
             e = form.save(commit=False)
             e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="E"
             e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Primary taxonomy created/updated.")
@@ -271,6 +273,7 @@ def create_enumeration(request):
             e = Enumeration(enumeration_type = form.cleaned_data['enumeration_type'])
             e.save(commit=False)
             e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="E"
             e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Created Enumeration.")
@@ -319,17 +322,41 @@ def edit_basic_enumeration(request, id):
 
 
 
+Http404
+
 @login_required
 @reversion.create_revision()
-def edit_basic_enumeration(request, id):
-    name = _("Edit basic information for an enumeration")
+def edit_pii(request, id):
+    name = _("Birtday, SSN, and ITIN")
     e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
-    if e.enumeration_type in ("NPI-1", "OEID-1"):
-        return HttpResponseRedirect(reverse('edit_individual_enumeration',
-                                                   args=(e.id,)))
-    else:
-        return HttpResponseRedirect(reverse('edit_organization_enumeration',
-                                                   args=(e.id,)))
+    
+    #Do not let this function work if the PII is already locked.
+    if e.pii_lock:
+        raise Http404()
+    
+    if request.method == 'POST':
+        form = IndividualPIIForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="E"
+            e.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Edit personal PII.")
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
+    #this is a GET
+    context= {'name':name,
+              'form': IndividualPIIForm(instance=e)}
+    return render(request, 'generic/bootstrapform.html', context)
+
+
+
 
 @login_required
 @reversion.create_revision()
@@ -516,6 +543,70 @@ def flag_for_deactivation(request, id):
     return render(request, 'generic/bootstrapform.html', context)
 
 
+
+
+@login_required
+@reversion.create_revision()
+def submit_dialouge(request, id):
+    name = _("Submit Application for Enumeration")
+    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    
+    if e.status == "A":
+        messages.info(request, "This enumertation is already active and does not require re-submission.")
+        return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+    
+
+    if e.status == "P":
+        messages.info(request, "This enumertation application has already been submitted and is pending. Changes are not reccommended at this time unless instructed by the help desk.")
+        return HttpResponseRedirect(reverse('home'))
+
+ 
+    if request.method == 'POST':
+        form = SubmitApplicationForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            errors = e.gatekeeper()
+            if not errors:
+                e.status="A"
+                e.save()
+                msg = "The application has been enumerated. The number issued is %s." % (e.number)
+                messages.success(request, msg)
+                reversion.set_comment("Submit Enumeration Application - Auto-Enumerated")
+                
+            else:
+                e.status="P"
+                e.save()
+                messages.info(request, "This application has been received and is pending.")
+                reversion.set_comment("Submit Enumeration Application - Pending")
+
+            reversion.set_user(request.user)
+            return HttpResponseRedirect(reverse('home'))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+             
+    #this is a GET
+    
+    errors = e.gatekeeper()
+    for i in errors:
+        messages.error(request, i)
+    if not errors:
+        messages.success(request, "Congratulations. No validation errors were detectd with this application.")
+    else:
+        messages.info(request, "You can attempt to fix these errors or continue to submit your application with errors. The enumeration process may be stalled or delayed when errors are present.")
+
+    
+    context= {'name':name,
+              'form': SubmitApplicationForm(instance=e)}
+    return render(request, 'generic/bootstrapform.html', context)
+
+
+
+
+
 @login_required
 @staff_member_required
 @reversion.create_revision()
@@ -654,6 +745,7 @@ def edit_enhanced_enumeration(request, id):
         if form.is_valid():
             e = form.save(commit=False)
             e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="E"
             e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Edit Enhancements.")
@@ -785,6 +877,8 @@ def domestic_address(request,  address_id, enumeration_id):
             a.save()
             reversion.set_user(request.user)
             reversion.set_comment("Create/Edit Domestic Address")
+            e.status="E"
+            e.save()
             #based on address_purpose,
 
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -815,6 +909,8 @@ def foreign_address(request, address_id, enumeration_id):
             a = form.save(commit=False)
             a.last_updated_ip=request.META['REMOTE_ADDR']
             a.save()
+            e.status="E"
+            e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Create/Edit Foreign Address")
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -844,6 +940,8 @@ def military_address(request, address_id, enumeration_id):
             a = form.save(commit=False)
             a.last_updated_ip=request.META['REMOTE_ADDR']
             a.save()
+            e.status="E"
+            e.save()
             reversion.set_user(request.user)
             reversion.set_comment("Create/Edit Military Address")
             return HttpResponseRedirect(reverse('edit_enumeration',
