@@ -25,6 +25,7 @@ def manual_add_license(request, enumeration_id):
             e.licenses.add(l)
             e.save(commit=False)
             e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="E"
             e.save()
             return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(enumeration_id,)))
@@ -64,6 +65,7 @@ def add_license(request, enumeration_id):
             e.licenses.add(l)
             e.save(commit=False)
             e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="E"
             e.save()
             messages.success(request, "Your license was automatically verified.")
             return HttpResponseRedirect(reverse('edit_enumeration',
@@ -95,6 +97,7 @@ def delete_license(request, license_id, enumeration_id):
     e.licenses.remove(l)
     e.save(commit=False)
     e.last_updated_ip=request.META['REMOTE_ADDR']
+    e.status="E"
     e.save()
     l.delete()
     messages.success(request, "Your license was deleted.")
