@@ -188,6 +188,8 @@ AJAX_LOOKUP_CHANNELS = {
 
 LUHN_PREFIX ="80840"
 VERIFY_LUHN_AND_UNIQUE_ENUMERATION = False
+GATEKEEPER = True
+AUTO_ENUMERATION_USERNAME = "system"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
