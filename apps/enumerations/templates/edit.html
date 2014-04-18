@@ -22,9 +22,9 @@
 	      changes are complete, click the
 	      <a href ="href=/enumerations/submit-dialouge/{{enumeration.id}}">
 		Submit Application for Enumeration</a> to begin the activation
-		process. Some superficial changes, such as changing other
-		identifiers, the contact person, or a website will not change
-		the state of an already active record.
+		(or re-activation) process. Some superficial changes, such as
+		changing other identifiers, the contact person, or a website will
+		not change the state of an already active record.
             </div>
 	{% elif enumeration.status == "P" %}
 	 <div class="alert alert-warning">
@@ -169,7 +169,7 @@
     <td>Contact Person</td>
     <td><span class="label label-success">Yes</span></td>
    <td>
-    {{ enumeration.contact_person_first_name|default:"None"}} {{ enumeration.contact_person_last_name}} 
+    {{ enumeration.contact_person_first_name|lower|capfirst|default:"None"}} {{ enumeration.contact_person_last_name|lower|capfirst}} 
     </td>
     <td>
     {% if enumeration.contact_person_first_name %}
