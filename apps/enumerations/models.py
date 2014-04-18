@@ -89,14 +89,22 @@ class Enumeration(models.Model):
     has_ever_been_active   = models.BooleanField(default=False, editable=True)
     has_ever_been_deactive = models.BooleanField(default=False, editable=True)
     flag_for_deactivation  = models.BooleanField(default=False,
-                            help_text="Check this box to flag this record for enumeration. Final deactivation processed by CMS.")
+                            help_text="Check this box to flag this record for deactivation. Final deactivation processed by CMS.")
     decativation_note       = models.TextField(max_length=1024, blank=True,
                                 default="",
-                                help_text="Why do you wish to deactive this record?")
+                                help_text="Why do you wish to deactivate this record?")
+    
+    flag_for_reactivation  = models.BooleanField(default=False,
+                            help_text="Check this box to flag this record for reactivation. Final deactivation processed by CMS.")
+    recativation_note       = models.TextField(max_length=1024, blank=True,
+                                default="",
+                                help_text="Why do you wish to reactivate this record?")
+
+
     pii_lock               = models.BooleanField(default=False,
                                 help_text="If False, then DOB, SSN, and ITIN can be changed.")
     #Gatekeeper fields
-    practice_address_error     = models.BooleanField(default=False, editable=True)
+    location_address_error     = models.BooleanField(default=False, editable=True)
     mailing_address_error      = models.BooleanField(default=False, editable=True)
     invalid_ssn_error          = models.BooleanField(default=False, editable=True)
     invalid_ein_error          = models.BooleanField(default=False, editable=True)
@@ -336,6 +344,11 @@ class Enumeration(models.Model):
                         help_text = "An ITIN is required for individuals that are not eligible for a social security number (SSN).",
                         db_index=True)
     
+    itin_image   = models.ImageField(blank = True, null=False, default='',
+                    max_length=255L, upload_to="itin-verification",
+                    verbose_name= "ITIN Image",
+                    help_text ="If you have an ITIN, please upload an image of one form of identification or proof in PDF, PNG, JPG, or BMP format.",)
+    
     ssn          = models.CharField(max_length=10, blank=True, default="",
                         verbose_name = "Social Security Number (SSN)",
                         help_text= "Required for individuals unless an ITIN is provided",
@@ -565,6 +578,10 @@ class Enumeration(models.Model):
     def gatekeeper(self):
         msglist = []
         
+        if not settings.GATEKEEPER:
+            #The gatekeeper has be deactivated so return an empty list of errors.
+            return []
+        
         if Enumeration.objects.filter(ssn=self.ssn).count() > 1:
             self.ssn_already_issued_error = True
             msg = "There is an issue with your SSN. Please contact the help desk."
@@ -582,13 +599,28 @@ class Enumeration(models.Model):
         if self.enumeration_type in ("HPID", "NPI-2") and not self.ein:
             msg = "No EIN supplied."
             msglist.append(msg)
+        
+        if not self.contact_person_first_name or  not self.contact_person_last_name:
+            msg = "No contact person name was supplied."
+            msglist.append(msg)
+        
+        if not self.mailing_address:
+            self.mailing_address_error = True
+            msg = "No mailing address was supplied."
+            msglist.append(msg)
             
+        if not self.location_address:
+            self.location_address_error = True
+            msg = "No location address was supplied."
+            msglist.append(msg)
+        
         if self.invalid_ssn_error:
             msg = "Your SSN could not be verified."
             msglist.append(msg)
         
-        if self.practice_address_error:
+        if self.location_address_error:
             msg = "Your practice address did not validate."
+            self.mailing_address_error = True
             msglist.append(msg)
             
         if self.mailing_address_error:
@@ -642,6 +674,7 @@ class Enumeration(models.Model):
         if self.status=="A":
             self.deactivation_date=None
             self.has_ever_been_active=True
+            
             
         """Mark the has ever been deactive flag if the record is deactive"""     
         if self.status=="D":
@@ -745,7 +778,11 @@ class Enumeration(models.Model):
         """Set last updated date unless exlicitly suppressed."""
         if settings.UPDATE_LAST_UPDATE_DATE:
             self.last_updated = date.today()
-                
+        
+        
+        """Reset the confirmation flag"""
+        self.confirmation= False
+              
         if commit:
             
             super(Enumeration, self).save(**kwargs)

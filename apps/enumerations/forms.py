@@ -213,7 +213,7 @@ class IndividualPIIForm(forms.ModelForm):
 
     class Meta:
         model = Enumeration
-        fields = ('ssn', 'itin', 'date_of_birth','state_of_birth',
+        fields = ('ssn', 'itin', 'itin_image', 'date_of_birth','state_of_birth',
                   'country_of_birth', 'gender', )
 
 

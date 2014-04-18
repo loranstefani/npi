@@ -321,9 +321,6 @@ def edit_basic_enumeration(request, id):
 
 
 
-
-Http404
-
 @login_required
 @reversion.create_revision()
 def edit_pii(request, id):
@@ -554,13 +551,7 @@ def submit_dialouge(request, id):
     if e.status == "A":
         messages.info(request, "This enumertation is already active and does not require re-submission.")
         return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
-    
-
-    if e.status == "P":
-        messages.info(request, "This enumertation application has already been submitted and is pending. Changes are not reccommended at this time unless instructed by the help desk.")
-        return HttpResponseRedirect(reverse('home'))
-
- 
+     
     if request.method == 'POST':
         form = SubmitApplicationForm(request.POST, instance=e)
         if form.is_valid():
@@ -569,6 +560,8 @@ def submit_dialouge(request, id):
             errors = e.gatekeeper()
             if not errors:
                 e.status="A"
+                system_user = User.objects.get(username=settings.AUTO_ENUMERATION_USERNAME)
+                e.enumerated_by= system_user
                 e.save()
                 msg = "The application has been enumerated. The number issued is %s." % (e.number)
                 messages.success(request, msg)
