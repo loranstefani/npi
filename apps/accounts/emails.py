@@ -97,7 +97,7 @@ def send_invite_request_notices(invite_request):
            settings.HOSTNAME_URL, )
    
     text_content="""Hello: %s %s,
-Your request for an invite for NPPES Redux (%s) has been reveived.
+Your request for an invite for NPPES Redux (%s) has been received.
     """ % (invite_request.first_name,
            invite_request.last_name,
            settings.HOSTNAME_URL, )
