@@ -22,7 +22,7 @@ from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate, SurrogateRequestEnumeration, SurrogateRequestEIN
 import reversion
 from baluhn import generate
-
+from emails import send_pending_email, send_active_email
 
 @login_required
 @reversion.create_revision()
@@ -563,6 +563,7 @@ def submit_dialouge(request, id):
                 system_user = User.objects.get(username=settings.AUTO_ENUMERATION_USERNAME)
                 e.enumerated_by= system_user
                 e.save()
+                send_active_email(e)
                 msg = "The application has been enumerated. The number issued is %s." % (e.number)
                 messages.success(request, msg)
                 reversion.set_comment("Submit Enumeration Application - Auto-Enumerated")
@@ -570,6 +571,7 @@ def submit_dialouge(request, id):
             else:
                 e.status="P"
                 e.save()
+                send_pending_email(e)
                 messages.info(request, "This application has been received and is pending.")
                 reversion.set_comment("Submit Enumeration Application - Pending")
 
