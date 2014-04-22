@@ -24,7 +24,23 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (N
                             ("OEID","Other Entity Individual Atypical Provider (OEID)"),)
 
 
+EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
+                  ('FINAL-ACTION','Final Action'),)
+
+
+
+ERROR_CHOICES = ( ('ADDRESS','Address'),
+                  ('SSN-ALREADY-ASSIGNED','Another record with SSN was assigned'),
+                  ('SSN-INVALID','SSN Invalid'),
+                  ('LICENSE','License Problem'),
+                  ('TAXONOMY','Taxonomy'),
+                  ('LICENSE-TAXONOMY','License/Taxonomy Mismatch'),
+                  ('FIELD','A field did not validate.'),
+                  )
+
 ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"), ("E","EFI"), ("C","CSV"))
+
+ENUMERATION_CLASSIFICATION_CHOICES = (("N", "New"),("C", "Change Request"))
 
 ENUMERATION_STATUS_CHOICES  = (("E", "Editing"),  ("P", "Pending"), ("A", "Active"),
                                ("D", "Deactived"), ("R","Rejected"),)
@@ -60,7 +76,6 @@ def generateUUID():
 
 class Enumeration(models.Model):
     
-    
     status              = models.CharField(max_length=1,
                                     choices=ENUMERATION_STATUS_CHOICES,
                                     default ="E", blank=True)
@@ -69,6 +84,11 @@ class Enumeration(models.Model):
                                     choices=ENUMERATION_MODE_CHOICES,
                                     default ="W",
                                     verbose_name="Mode of Enumeration")
+    
+    classification                = models.CharField(max_length=1,
+                                    choices=ENUMERATION_CLASSIFICATION_CHOICES,
+                                    default ="N",)
+    
     
     enumeration_type    = models.CharField(max_length=5,
                                     choices=ENUMERATION_TYPE_CHOICES,)
@@ -103,13 +123,6 @@ class Enumeration(models.Model):
 
     pii_lock               = models.BooleanField(default=False,
                                 help_text="If False, then DOB, SSN, and ITIN can be changed.")
-    #Gatekeeper fields
-    location_address_error     = models.BooleanField(default=False, editable=True)
-    mailing_address_error      = models.BooleanField(default=False, editable=True)
-    invalid_ssn_error          = models.BooleanField(default=False, editable=True)
-    invalid_ein_error          = models.BooleanField(default=False, editable=True)
-    ssn_already_issued_error   = models.BooleanField(default=False, editable=True)
-    lst_error                  = models.BooleanField(default=False, editable=True)
     confirmation               = models.BooleanField(default=False,
                                     help_text =
                                     """I understand that the infomation on this site,
@@ -117,7 +130,7 @@ class Enumeration(models.Model):
                                     as SSN, EIN, ITIN, date of birth, and place of
                                     birth IS MADE PUBLIC in accordance with US
                                     federal regulations. """)
-    #end Gatekeeper fields
+
 
 
     tracking            = UUIDField(db_index=True)
@@ -152,6 +165,7 @@ class Enumeration(models.Model):
     
     sole_proprietor           = models.CharField(choices = SOLE_PROPRIETOR_CHOICES,
                                                blank=True, default="", max_length=3)
+    
     organizational_subpart    = models.BooleanField(default=False)
     
     credential                = models.CharField(max_length=50, blank=True,
@@ -165,11 +179,11 @@ class Enumeration(models.Model):
                                                  default="")
      
     organization_other_name   = models.CharField(max_length=300, blank=True,
-                                                 default="")
+                                        default="")
     
     organization_other_name_code  = models.CharField(max_length=1, blank=True,
-                                                     default="",
-                                    choices=ORGANIZATION_OTHER_NAME_CHOICES)
+                                        default="",
+                                        choices=ORGANIZATION_OTHER_NAME_CHOICES)
     
     other_first_name_1      = models.CharField(max_length=100, blank=True,
                                         default="",
@@ -180,25 +194,22 @@ class Enumeration(models.Model):
                                 help_text="Another previous or maiden last name")
 
     other_last_name_1     = models.CharField(max_length=100, blank=True,
-                                                   default="",
-                                                   help_text="Previous or Maiden Last Name") 
+                                default="", help_text="Previous or Maiden Last Name") 
 
-    other_name_prefix_1     = models.CharField(choices=PREFIX_CHOICES, max_length=5, blank=True,
-                                                   default="")
+    other_name_prefix_1     = models.CharField(choices=PREFIX_CHOICES, max_length=5,
+                                    blank=True, default="")
     
     other_name_suffix_1     = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
                                                    default="")
 
-    other_name_credential_1     = models.CharField(max_length=20, blank=True,
-                                                   default="")
+    other_name_credential_1  = models.CharField(max_length=20, blank=True, default="")
 
     other_name_code_1  = models.CharField(max_length=1, blank=True, default="",
                                     choices=INDIVIDUAL_OTHER_NAME_CHOICES)
     other_first_name_2    = models.CharField(max_length=100, blank=True,
                                        default="",
-                                       help_text="Another Previous first name")
-    
-    
+                                       help_text="Another previous first name")
+
     other_middle_name_2     = models.CharField(max_length=100, blank=True,
                                 default="",
                                 help_text="Another previous or maiden last name")
@@ -459,10 +470,10 @@ class Enumeration(models.Model):
     added               = models.DateField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
     enumerated_by       = models.ForeignKey(User, blank=True, null=True, editable=False)
+    initial_enumeration_date = models.DateField(blank=True, null=True)
+    
     last_updated_ip     = models.CharField(max_length=20, blank=True,
                                 default="", db_index=True)
-    
-    
     
     class Meta:
         get_latest_by = "id"
@@ -473,12 +484,15 @@ class Enumeration(models.Model):
         name = "Not Provided"
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
             name = self.organization_name.capitalize()
+       
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as,
                                     self.organization_name.capitalize())
+       
         elif self.enumeration_type in ("NPI-1", ):
             name = "%s %s" % (self.first_name.capitalize(),
                               self.last_name.capitalize())
+       
             if self.doing_business_as:
                 name = "%s %s (%s)" % (self.first_name.capitalize(),
                                        self.last_name.capitalize(),
@@ -569,68 +583,167 @@ class Enumeration(models.Model):
                                                self.enumeration_type, managers)
         return e
 
-    def verify_luhn(self):
+    def luhn_verify(self):
         prefixed_number = "%s%s" % (settings.LUHN_PREFIX, self.number)
         return verify(prefixed_number)            
         
+    def ssn_verify(self):
+        
+        """Add SSN validation code here."""
+        """Return True for valid and False for invalid"""
+        return True
+        
+    def ein_verify(self):
+        
+        """Add EIN validation code here."""
+        """Return True for valid and False for invalid"""
+        return True    
 
-
+    def license_taxonomy_verify(self):
+        
+        """Add License/Taxonomy validation code here."""
+        """Return True for valid and False for invalid"""
+        return True  
+        
     def gatekeeper(self):
+        
+
+        #create an empty message list
         msglist = []
         
         if not settings.GATEKEEPER:
             #The gatekeeper has be deactivated so return an empty list of errors.
-            return []
+            return msglist
+        
+        # Get all the errors and delete them
+        g = GateKeeperError.objects.filter(enumeration=self)
+        g.delete()
+        
+        
+        #create an empty message list
         
         if Enumeration.objects.filter(ssn=self.ssn).count() > 1:
-            self.ssn_already_issued_error = True
-            msg = "There is an issue with your SSN. Please contact the help desk."
-            msglist.append(msg)
+            e =GateKeeperError.objects.create(
+                enumeration =self,
+                error_type="SSN-ALREADY-ASSIGNED",
+                note= "There is an issue with your SSN. Please contact the help desk.")
+            msglist.append(e.note)
             
         if self.enumeration_type in ("OEID", "NPI-1") and not self.ssn and not self.itin:
-            msg = "No SSN or ITIN supplied."
-            msglist.append(msg)
- 
-        if self.enumeration_type in ("OEID", "NPI-1") and not self.date_of_birth:
-            msg = "No date of birth supplied."
-            msglist.append(msg)
+            e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="SSN-INVALID",
+                    note= "No SSN or ITIN supplied.")
+            msglist.append(e.note)
             
+
+            
+            
+        #Check some things for individuals
+        if self.enumeration_type in ("OEID", "NPI-1"):
+            
+            #If not DOB
+            if not self.date_of_birth:
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="FIELD",
+                    note= "No date of birth supplied.")
+                msglist.append(e.note)
+            
+            
+            #If no name
+            if not self.first_name:
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="FIELD",
+                    note= "No first name was supplied.")
+                msglist.append(e.note)
+                
+                
+            if not self.last_name:
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="FIELD",
+                    note= "No last name was supplied.")
+                msglist.append(e.note)
+      
+                  
+            if not self.ssn_verify():
+                e = GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="SSN-INVALID",
+                    note= "The SSN could not be verified.")
+                msglist.append(e.note)
+            
+        if self.enumeration_type in ("HPID", "NPI-2"):
+            if not self.ein:
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="FIELD",
+                    note= "No EIN was supplied.")
+                msglist.append(e.note)
+            
+            if not self.organization_name:
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="FIELD",
+                    note= "No organization name supplied.")
+                msglist.append(e.note)
+                
         
-        if self.enumeration_type in ("HPID", "NPI-2") and not self.ein:
-            msg = "No EIN supplied."
-            msglist.append(msg)
-        
-        if not self.contact_person_first_name or  not self.contact_person_last_name:
-            msg = "No contact person name was supplied."
-            msglist.append(msg)
-        
+        if not self.contact_person_first_name or not self.contact_person_last_name:
+            e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="FIELD",
+                    note= "No contact person was supplied.")
+            msglist.append(e.note)
+            
+    
+    
+    
         if not self.mailing_address:
-            self.mailing_address_error = True
-            msg = "No mailing address was supplied."
-            msglist.append(msg)
+            e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="ADDRESS",
+                    note= "No mailing address was supplied.")
+            msglist.append(e.note)
+        
+        else:
+            #there is an address but does it validate?
+            if not self.mailing_address.verify():
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="ADDRESS",
+                    note= "The mailing address could not be verified.")
+                msglist.append(e.note)
             
         if not self.location_address:
-            self.location_address_error = True
-            msg = "No location address was supplied."
-            msglist.append(msg)
-        
-        if self.invalid_ssn_error:
-            msg = "Your SSN could not be verified."
-            msglist.append(msg)
-        
-        if self.location_address_error:
-            msg = "Your practice address did not validate."
-            self.mailing_address_error = True
-            msglist.append(msg)
+            e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="ADDRESS",
+                    note= "No practice location address was supplied.")
+            msglist.append(e.note)
+        else:
+            #there is an address but does it validate?
+            if not self.location_address.verify():
+                e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="ADDRESS",
+                    note= "The practice location address could not be verified.")
+                msglist.append(e.note)
             
-        if self.mailing_address_error:
-            msg = "Your mailing address did not validate."
-            msglist.append(msg)
+
+        if not self.taxonomy:
+            e =GateKeeperError.objects.create(
+                    enumeration =self,
+                    error_type="TAXONOMY",
+                    note= "No primary taxonomy was provided.")
+            msglist.append(e.note) 
+    
             
-        if self.lst_error:
-            msg = "There was an issue with your taxonomy and license combination."
-            msglist.append(msg)
+
         
+        self.save()
         return msglist
 
     def __unicode__(self):
@@ -663,29 +776,84 @@ class Enumeration(models.Model):
     
         """Set Sole Proprieter to NO if its an organization"""
         if self.enumeration_type in ("HPID", "OEID", "NPI-2"):
-            self.sole_proprietor="NO"
+            self.sole_proprietor = "NO"
         
         
         """Mark the has ever been marked for fraud flag if fraud_alert==True"""
         if self.flag_for_fraud:
-            self.has_ever_been_fraud_alert=True
+            self.has_ever_been_fraud_alert = True
+        
+        "If the record has ever been active make it as a change (not new)"
+        if self.has_ever_been_active == True:
+            self.classification = "C"
+        
         
         """Mark the has ever been active flag if the record is active"""        
-        if self.status=="A":
-            self.deactivation_date=None
-            self.has_ever_been_active=True
-            
+        if self.status == "A":
+            self.deactivation_date = None
+            self.has_ever_been_active = True
+        
             
         """Mark the has ever been deactive flag if the record is deactive"""     
-        if self.status=="D":
-            self.has_ever_been_deactive=True
+        if self.status == "D":
+            self.has_ever_been_deactive = True
             if not self.deactivation_date:
                 self.deactivation_date = date.today()
+        
+        """If the record is rejected"""
+        if self.status == "R":
+            self.enumeration_date = None
             
+        """If the record has been edited."""    
+        if self.status in ("E", "A") :
+            self.last_updated = date.today()
+        
+           
         """Mark the is_number_replaced flag if old numbers exist."""        
         if self.old_numbers:
-            self.is_number_replaced=True
+            self.is_number_replaced = True
         
+        
+        """If the status is active but no enumeration number is assigned then create one."""
+        if self.status == "A" and self.number == "":
+            """This is new so mark it as such"""
+            self.classification = "N"
+            
+            if self.enumeration_type in ("NPI-1", "NPI-2"):
+                
+                if settings.VERIFY_LUHN_AND_UNIQUE_ENUMERATION:
+                    #create a candidate eumeration
+                    eight_digits = random.randrange(10000000,19999999)
+                    
+                    prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+                    
+                    checkdigit = generate(prefixed_eight_digits)
+                    
+                    self.number = "%s%s" % (eight_digits, checkdigit)
+                    while Enumeration.objects.filter(number=self.number).count()>0:
+                        eight_digits = random.randrange(10000000,19999999)
+                        prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+                        checkdigit = generate(prefixed_eight_digits)
+                        self.number = "%s%s" % (eight_digits, checkdigit)
+                else:
+                    self.number = random.randrange(100000000,199999999)
+                    
+            
+                
+            #Create and HPID
+            if self.enumeration_type == "HPID":
+                self.number = random.randrange(7000000000,7999999999)
+             
+            #C
+            if self.enumeration_type == "OEID":
+                self.number = random.randrange(6000000000,6999999999)
+            
+            self.initial_enumeration_date = date.today()
+            self.enumeration_date = date.today()
+
+
+
+
         """Create a name for the handle """
         name = self.handle #Make it a UUID for starters to ensure unique
     
@@ -695,6 +863,7 @@ class Enumeration(models.Model):
             if self.doing_business_as:
                 name = "%s (%s)" % (self.doing_business_as,
                                     self.organization_name)
+        
         elif self.enumeration_type in ("NPI-1", ) and self.first_name and self.last_name:
             name = "%s %s" % (self.first_name, self.last_name)
             if self.doing_business_as:
@@ -719,44 +888,8 @@ class Enumeration(models.Model):
         the field was left blank."""
         if self.organization_other_name and self.organization_other_name_code=="3" and \
            not self.doing_business_as:
-            self.doing_business_as = self.organization_other_name
-        
-        
-        """If the status is active but no enumeration number is assigned then create one."""
-        if self.status == "A" and self.number == "":
-            if self.enumeration_type in ("NPI-1", "NPI-2"):
-                
-                if settings.VERIFY_LUHN_AND_UNIQUE_ENUMERATION:
-                    #create a candidate eumeration
-                    eight_digits = random.randrange(10000000,19999999)
-                    
-                    prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
-                    
-                    checkdigit = generate(prefixed_eight_digits)
-                    
-                    self.number = "%s%s" % (eight_digits, checkdigit)
-                    while Enumeration.objects.filter(number=self.number).count()>0:
-                        eight_digits = random.randrange(10000000,19999999)
-                        prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
-                        checkdigit = generate(prefixed_eight_digits)
-                        self.number = "%s%s" % (eight_digits, checkdigit)
-                else:
-                    self.number = random.randrange(100000000,199999999)
-                    
-            
-                
-            
-            if self.enumeration_type in ("HPID"):
-                self.number = random.randrange(7000000000,7999999999)
-             
-            if self.enumeration_type in ("OEID", "OEID"):
-                self.number = random.randrange(6000000000,6999999999)
-            self.enumeration_date = date.today()
-         
-        if self.status == "R":
-            self.enumeration_date = date.today()
-            
-        
+            self.doing_business_as = self.organization_other_name   
+
         """Captialize all names"""
         self.first_name =self.first_name.upper()
         self.middle_name =self.middle_name.upper()
@@ -787,3 +920,25 @@ class Enumeration(models.Model):
             
             super(Enumeration, self).save(**kwargs)
         
+
+
+
+
+
+class Event(models.Model):
+    enumeration = models.ForeignKey(Enumeration)
+    event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20)
+    added       = models.DateField(auto_now_add=True)
+    note        = models.TextField(max_length=1024, blank=True, default="")
+    def __unicode__(self):
+        return "%s %s %s" % (self.enumeration, self.event_type, self.added)
+
+
+class GateKeeperError(models.Model):
+    enumeration = models.ForeignKey(Enumeration)
+    error_type  = models.CharField(choices = ERROR_CHOICES, max_length=20)
+    added       = models.DateField(auto_now_add=True)
+    note        = models.TextField(max_length=1024, blank=True, default="")
+    def __unicode__(self):
+        return "%s %s %s" % (self.enumeration, self.error_type, self.added)
+    
