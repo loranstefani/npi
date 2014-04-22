@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.http import Http404
+from django.utils.safestring import SafeString
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.admin.views.decorators import staff_member_required
@@ -560,7 +561,9 @@ def submit_dialouge(request, id):
             errors = e.gatekeeper()
             if not errors:
                 e.status="A"
-                system_user = User.objects.get(username=settings.AUTO_ENUMERATION_USERNAME)
+                e.enueration_date = datetime.date.today()
+                e.last_update     = datetime.date.today()
+                system_user       = User.objects.get(username=settings.AUTO_ENUMERATION_USERNAME)
                 e.enumerated_by= system_user
                 e.save()
                 send_active_email(e)
@@ -591,7 +594,10 @@ def submit_dialouge(request, id):
     if not errors:
         messages.success(request, "Congratulations. No validation errors were detectd with this application.")
     else:
-        messages.info(request, "You can attempt to fix these errors or continue to submit your application with errors. The enumeration process may be stalled or delayed when errors are present.")
+        msg = """You can <a href="%s">go back attempt to fix these errors</a>
+        or continue to submit your application with errors. The enumeration process may be
+        stalled or delayed when errors are present.""" % (reverse('edit_enumeration', args=(id,)))
+        messages.info(request, SafeString(msg))
 
     
     context= {'name':name,

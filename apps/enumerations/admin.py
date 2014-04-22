@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Enumeration
+from models import Enumeration, GateKeeperError, Event
 from ajax_select import make_ajax_field
 from ajax_select.fields import autoselect_fields_check_can_add
 from ajax_select import make_ajax_form
@@ -31,13 +31,29 @@ class EnumerationAJAXAdmin(AjaxSelectAdmin):
                                         'direct_addresses': 'direct',
                                         'identifiers': 'identifier',
                                         'licenses': 'license',
-                                        'parent_organization': 'enumeration',
-                                        
-                                        })
+                                        'parent_organization': 'enumeration',})
  
  
 class EnumerationAdmin(EnumerationVersionAdmin, EnumerationAJAXAdmin):
     pass
  
 admin.site.register(Enumeration, EnumerationAdmin)
-#patch_admin(Enumeration)   
+#patch_admin(Enumeration)
+
+
+
+
+class GateKeeperErrorAJAXAdmin(AjaxSelectAdmin):
+    list_display = ('enumeration', 'error_type', 'note', 'added',)
+    search_fields = ('error_type',)
+    form = make_ajax_form(GateKeeperError, {'enumeration': 'enumeration',})
+ 
+admin.site.register(GateKeeperError, GateKeeperErrorAJAXAdmin)
+
+
+class EventAJAXAdmin(AjaxSelectAdmin):
+    list_display = ('enumeration', 'event_type','note', 'added',)
+    search_fields = ('event_type',)
+    form = make_ajax_form(Event, {'enumeration': 'enumeration',})
+ 
+admin.site.register(Event, EventAJAXAdmin)

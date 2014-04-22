@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
-from forms import ( PendingEnumerationForm, EnumerationsStatisByStateForm,
-                   EnumeratedApplicationsForm)
+from forms import *
 from datetime import timedelta, date, datetime
 from ..enumerations.models import Enumeration
 
@@ -18,7 +17,32 @@ from ..enumerations.models import Enumeration
 def report_index(request):
     context ={'foo': 'bar'}
     return render(request,'report-index.html',context)
+
+
+
+@login_required
+@staff_member_required
+def pending_application_overview(request):
+    name = "Pending Application Overview"
+    if request.method == 'POST':
+        form = PendingEnumerationOverviewForm(request.POST)
     
+        if form.is_valid():
+            search_results = form.save()
+            context= {'name':           name,
+                      'search_results': search_results}
+            return render(request, 'pending-overview.html', context)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = { 'form': form, 'name': name}
+             return render(request, 'daterange.html', context)
+    
+    #this is a GET
+    context= {'name':name,
+              'form': PendingEnumerationOverviewForm()}
+    return render(request, 'daterange.html', context)
+
 @login_required
 @staff_member_required
 def pending_applications(request):

@@ -4,13 +4,25 @@
 from django.forms.extras.widgets import SelectDateWidget
 import datetime
 from django import forms
-from ..enumerations.models import ENUMERATION_TYPE_CHOICES, Enumeration
+from ..enumerations.models import (ENUMERATION_TYPE_CHOICES, Enumeration,
+                                   ENUMERATION_MODE_CHOICES,
+                                   ENUMERATION_CLASSIFICATION_CHOICES )
 from django.db.models import Count
 from django.contrib.auth.models import User
 def report_year_range():
     this_year = datetime.date.today().year
     years = range(2005, this_year+1)
     return years
+
+
+ENUMERATION_TYPE_WITH_ALL_CHOICES = [(None, "All"), ] +  list(ENUMERATION_TYPE_CHOICES)
+
+def default_from_date(subtract_days=60):
+    return datetime.date.today() - datetime.timedelta(days=subtract_days)
+    
+    this_year = datetime.date.today().year
+
+
 
 
 class PendingEnumerationForm(forms.Form):
@@ -24,7 +36,76 @@ class PendingEnumerationForm(forms.Form):
          return qs
         
         
+
+class PendingEnumerationOverviewForm(forms.Form):
+    
+    date_since  = forms.DateField( widget    = SelectDateWidget(
+                                    years   = report_year_range()),
+                                    initial = default_from_date)
+                                    
+    #date_since   = forms.DateField(initial=datetime.date.today,           
+    #                        widget=SelectDateWidget( years=report_year_range()))
+    
+    enumeration_type    = forms.ChoiceField(choices = ENUMERATION_TYPE_WITH_ALL_CHOICES)
+    classification  = forms.ChoiceField(choices =ENUMERATION_CLASSIFICATION_CHOICES)
+    mode            = forms.ChoiceField(choices = ENUMERATION_MODE_CHOICES)
         
+    required_css_class  = 'required'
+    
+    def save(self):
+          
+         
+        enumeration_type = self.cleaned_data.get("enumeration_type")
+        date_since = self.cleaned_data.get("date_since")
+        classification = self.cleaned_data.get("classification")
+        mode = self.cleaned_data.get("mode")
+
+        
+        
+        if enumeration_type:
+            qs = Enumeration.objects.filter(enumeration_type = enumeration_type,
+                                            mode = mode,
+                                            classification = classification) \
+                .exclude(last_updated__gte=datetime.date.today) \
+                .exclude(last_updated__lt=date_since)
+        else:
+             qs = Enumeration.objects.filter(mode = mode,
+                                            classification = classification)\
+                .exclude(last_updated__gte=datetime.date.today) \
+                .exclude(last_updated__lt=date_since) 
+        
+
+        total                     = qs.filter()
+        total_field               = total.filter(field_error=True)
+        total_license             = total.filter(license_error=True)
+        total_license_taxonomy    = total.filter(license_taxonomy_error=True)
+        total_location_address    = total.filter(location_address_error=True )
+        total_mailing_address     = total.filter(mailing_address_error=True)
+        total_invalid_ssn         = total.filter(invalid_ssn_error=True)
+        total_invalid_ein         = total.filter(invalid_ein_error=True)
+        total_ssn_already_issued  = total.filter(ssn_already_issued_error=True)            
+
+        
+        
+        # one to five 
+        # create a date 5 days from today
+        fda = datetime.date.today() - datetime.timedelta(days=5)
+        one_to_five = qs.filter(last_updated__gte=fda)
+        one_to_five_field  = one_to_five .filter()
+        one_to_five_license = one_to_five .filter()
+        one_to_five_license_taxonomy = one_to_five .filter()
+        one_to_five_location_address = one_to_five .filter()
+        one_to_five_mailing_address = one_to_five .filter()
+        one_to_five_ssn = qs.filter()
+        one_to_five_ein = qs.filter()
+        
+        
+        results = {"one_to_five": one_to_five}
+        return results
+
+
+
+   
 class EnumerationsStatisByStateForm(forms.Form):
     date_start  = forms.DateField(widget=SelectDateWidget(
                                     years=report_year_range()),
