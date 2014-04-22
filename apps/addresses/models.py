@@ -148,6 +148,10 @@ class Address(models.Model):
         verbose_name_plural = "Addresses"
 
 
+    def verify(self):
+        """Add Address validation code here."""
+        """Return True for valid and False for invalid"""
+        return True
 
 
     def save(self, **kwargs):
