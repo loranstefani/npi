@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 import uuid, random
-from models import Enumeration
+from models import Enumeration, GateKeeperError
 from ..addresses.models import Address
 from ..licenses.models import License
 from ..taxonomy.models import TaxonomyCode
@@ -614,7 +614,13 @@ def submit_dialouge(request, id):
 def reactivate(request, id):
     name = _("Reactivate a Deactivated Enumeration")
     e = get_object_or_404(Enumeration, id=id)
-    if e.status != "A":
+    if e.status == "D":
+        
+        
+        #Remove all gatekeeper errors.
+        GateKeeperError.objects.filter(enumeration=e).delete()
+        
+        # Status A
         e.status = "A"
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
@@ -622,9 +628,11 @@ def reactivate(request, id):
         reversion.set_user(request.user)
         reversion.set_comment("Reactivated a deactivated enumeration.")
         messages.success(request, "This record has been reactivated.")
+    elif e.status == "A":
+        messages.info(request, "This record was already active. Nothing was done.")
     else:
         messages.info(request, "This record was already active. Nothing was done.")
-    return HttpResponseRedirect(reverse('report_index'))
+    return HttpResponseRedirect(reverse('pending_applications'))
     
 
 
@@ -635,6 +643,10 @@ def activate(request, id):
     name = _("Activate an Enumeration")
     e = get_object_or_404(Enumeration, id=id)
     if e.status != "A":
+        
+        #Remove all gatekeeper errors.
+        GateKeeperError.objects.filter(enumeration=e).delete()
+        
         e.status = "A"
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
@@ -645,7 +657,7 @@ def activate(request, id):
         messages.success(request, "This record has been enumerated/activated.")
     else:
         messages.info(request, "This record was already active. Nothing was done.")
-    return HttpResponseRedirect(reverse('report_index'))
+    return HttpResponseRedirect(reverse('pending_applications'))
 
 
 
@@ -657,6 +669,11 @@ def reject(request, id):
     name = _("Activate an Enumeration")
     e = get_object_or_404(Enumeration, id=id)
     if e.status == "P":
+        
+        
+        #Remove all gatekeeper errors.
+        GateKeeperError.objects.filter(enumeration=e).delete()
+        
         e.status = "R"
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
@@ -667,7 +684,7 @@ def reject(request, id):
         messages.success(request, "This record has been successfully been rejected.")
     else:
         messages.info(request, "This record was not pending so nothing was done. The record was not rejected.")
-    return HttpResponseRedirect(reverse('report_index'))
+    return HttpResponseRedirect(reverse('pending_applications'))
 
 
 
@@ -677,44 +694,46 @@ def reject(request, id):
 def replace(request, id):
     name = _("Replace an issued Enumeration number with a new number.")
     e = get_object_or_404(Enumeration, id=id)
-    
-    #create a candidate eumeration
-    eight_digits = random.randrange(10000000,19999999)                
-    prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
-    checkdigit = generate(prefixed_eight_digits)            
-    new_number = "%s%s" % (eight_digits, checkdigit)
-    while Enumeration.objects.filter(number=new_number).count()>0:
-        eight_digits          = random.randrange(10000000,19999999)
+    if e.has_ever_been_active:
+        #create a candidate eumeration
+        eight_digits = random.randrange(10000000,19999999)                
         prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
-        checkdigit            = generate(prefixed_eight_digits)
-        new_number            = "%s%s" % (eight_digits, checkdigit)
-    
-    #create a message
-    msg = "The number %s has been replaced with %s" % (e.number, new_number)
-    
-    #Append the old number to the old_numbers field.
-    e.old_numbers = "%s, %s" % (e.old_numbers, e.number)
-    
-    #Remove any command or whitespace from the begining
-    if e.old_numbers.startswith(","):
-        e.old_numbers = e.old_numbers[1:]
+        checkdigit = generate(prefixed_eight_digits)            
+        new_number = "%s%s" % (eight_digits, checkdigit)
+        while Enumeration.objects.filter(number=new_number).count()>0:
+            eight_digits          = random.randrange(10000000,19999999)
+            prefixed_eight_digits = "%s%s" % (settings.LUHN_PREFIX, eight_digits)
+            checkdigit            = generate(prefixed_eight_digits)
+            new_number            = "%s%s" % (eight_digits, checkdigit)
         
-    if e.old_numbers.startswith(" "):
-        e.old_numbers = e.old_numbers[1:]
-    
-    #Set the new number
-    e.number = new_number
-    #flag this recors as having been replaced
-    e.is_number_replaced = True
-    
-    e.last_updated_ip=request.META['REMOTE_ADDR']
-    e.save()
-    reversion.set_user(request.user)
-    rmsg = "Replacement: %s", (msg)
-    reversion.set_comment(rmsg)
-    messages.success(request, msg)
+        #create a message
+        msg = "The number %s has been replaced with %s" % (e.number, new_number)
+        
+        #Append the old number to the old_numbers field.
+        e.old_numbers = "%s, %s" % (e.old_numbers, e.number)
+        
+        #Remove any command or whitespace from the begining
+        if e.old_numbers.startswith(","):
+            e.old_numbers = e.old_numbers[1:]
+            
+        if e.old_numbers.startswith(" "):
+            e.old_numbers = e.old_numbers[1:]
+        
+        #Set the new number
+        e.number = new_number
+        #flag this recors as having been replaced
+        e.is_number_replaced = True
+        
+        e.last_updated_ip=request.META['REMOTE_ADDR']
+        e.save()
+        reversion.set_user(request.user)
+        rmsg = "Replacement: %s", (msg)
+        reversion.set_comment(rmsg)
+        messages.success(request, msg)
+    else:
+        messages.info(request, "This record has never been active so a replacement is not allowed.")
 
-    return HttpResponseRedirect(reverse('edit_enumeration', args=(id,)))
+    return HttpResponseRedirect(reverse('pending_applications'))
 
 
 
