@@ -16,6 +16,9 @@ urlpatterns = patterns('',
                 enumerated_applications,
                 name = "enumerated_applications"),
     
+    url(r'view-errors/(?P<enumeration_id>\S+)$', view_errors, name = "reports_view_errors"),
+
+    
     
     url(r'application-overview$',
                 application_overview,

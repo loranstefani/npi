@@ -1,6 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -15,8 +14,22 @@ from ..enumerations.models import Enumeration
 @login_required
 @staff_member_required
 def report_index(request):
-    context ={'foo': 'bar'}
+    context ={}
     return render(request,'report-index.html',context)
+
+
+
+@login_required
+@staff_member_required
+def view_errors(request, enumeration_id):
+    name = "View Errors"
+    enumeration = get_object_or_404(Enumeration, id=enumeration_id)
+    context ={'name': name, 'gatekeeper_errors':
+                GateKeeperError.objects.filter(enumeration = enumeration_id),
+                'enumeration' : enumeration}
+    
+    
+    return render(request,'gatekeeper-errors.html', context)
 
 
 

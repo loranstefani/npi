@@ -788,10 +788,12 @@ class Enumeration(models.Model):
             self.classification = "C"
         
         
-        """Mark the has ever been active flag if the record is active"""        
+        """If Active. Mark the has ever been active flag if the record is active"""        
         if self.status == "A":
             self.deactivation_date = None
             self.has_ever_been_active = True
+            #Remove all gatekeeper errors.
+            GateKeeperError.objects.filter(enumeration=self).delete()
         
             
         """Mark the has ever been deactive flag if the record is deactive"""     
@@ -807,7 +809,7 @@ class Enumeration(models.Model):
         """If the record has been edited."""    
         if self.status in ("E", "A") :
             self.last_updated = date.today()
-        
+            
            
         """Mark the is_number_replaced flag if old numbers exist."""        
         if self.old_numbers:
@@ -938,7 +940,7 @@ class Event(models.Model):
 class GateKeeperError(models.Model):
     enumeration = models.ForeignKey(Enumeration, db_index=True)
     error_type  = models.CharField(choices = ERROR_CHOICES, max_length=20,db_index=True)
-    added       = models.DateField( db_index=True)
+    added       = models.DateField(db_index=True)
     note        = models.TextField(max_length=1024, blank=True, default="")
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.error_type, self.added)

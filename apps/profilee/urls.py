@@ -6,6 +6,7 @@ from views import *
 
 
 urlpatterns = patterns('',
-    url(r'random$', display_random_enumeration_profile, name="display_random_enumeration_profile"),
-    url(r'(?P<number>\S+)$', display_enumeration_profile, name="display_enumeration_profile"),
+    url(r'random$', display_random_enumeration_profile, name="display_random_enumeration_profile"),    
+    url(r'npi/(?P<number>\S+)$', display_enumeration_profile, name="display_enumeration_profile"),
+    url(r'id/(?P<enumeration_id>\S+)$', display_enumeration_profile_by_id, name="display_enumeration_profile_by_id"),
     )
