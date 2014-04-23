@@ -22,15 +22,34 @@ def report_index(request):
 
 @login_required
 @staff_member_required
-def pending_application_overview(request):
-    name = "Pending Application Overview"
+def application_overview(request):
+    name = "Application Overview"
     if request.method == 'POST':
         form = PendingEnumerationOverviewForm(request.POST)
     
         if form.is_valid():
-            search_results = form.save()
-            context= {'name':           name,
-                      'search_results': search_results}
+            results = form.save()
+            
+            name = "Overview Results"
+            
+            enumeration_type = form.cleaned_data.get("enumeration_type"),
+            enumeration_type = dict(form.fields['enumeration_type'].choices)[enumeration_type[0]]
+            classification = form.cleaned_data.get("classification"),  
+            classification = dict(form.fields['classification'].choices)[classification[0]]
+            mode = form.cleaned_data.get("mode"),
+            mode = dict(form.fields['mode'].choices)[mode[0]]
+            status = form.cleaned_data.get("status"),
+            status = dict(form.fields['status'].choices)[status[0]]
+            
+            
+            
+            context= {'name':  name,
+                      'enumeration_type': enumeration_type,
+                        'from_date': form.cleaned_data.get("from_date"),
+                        'classification': classification,                
+                        'mode': mode,
+                        'status': status,
+                        'results': results}
             return render(request, 'pending-overview.html', context)
         else:
             #The form is invalid

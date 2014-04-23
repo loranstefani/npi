@@ -17,9 +17,9 @@ urlpatterns = patterns('',
                 name = "enumerated_applications"),
     
     
-    url(r'pending-application-overview$',
-                pending_application_overview,
-                name = "pending_application_overview"),
+    url(r'application-overview$',
+                application_overview,
+                name = "application_overview"),
 
     url(r'staff-member-summary/(?P<username>\S+)/(?P<date_start>\S+)/(?P<date_stop>\S+)',
         staff_member_summary,

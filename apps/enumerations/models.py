@@ -926,8 +926,9 @@ class Enumeration(models.Model):
 
 
 class Event(models.Model):
-    enumeration = models.ForeignKey(Enumeration)
-    event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20)
+    enumeration = models.ForeignKey(Enumeration, db_index=True)
+    event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20,
+                                   db_index=True)
     added       = models.DateField(auto_now_add=True)
     note        = models.TextField(max_length=1024, blank=True, default="")
     def __unicode__(self):
@@ -935,9 +936,9 @@ class Event(models.Model):
 
 
 class GateKeeperError(models.Model):
-    enumeration = models.ForeignKey(Enumeration)
-    error_type  = models.CharField(choices = ERROR_CHOICES, max_length=20)
-    added       = models.DateField(auto_now_add=True)
+    enumeration = models.ForeignKey(Enumeration, db_index=True)
+    error_type  = models.CharField(choices = ERROR_CHOICES, max_length=20,db_index=True)
+    added       = models.DateField( db_index=True)
     note        = models.TextField(max_length=1024, blank=True, default="")
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.error_type, self.added)
