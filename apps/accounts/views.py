@@ -62,8 +62,15 @@ def simple_login(request):
 
                 if user.is_active:
                     login(request,user)
+                    
+                    next = request.GET.get('next','')
+                    if next:
+                        #If a next is in the URL, then go there
+                        return HttpResponseRedirect(next)
+                    #otherwise just go to home.
                     return HttpResponseRedirect(reverse('home'))
                 else:
+                   #The user exists but is_active=False
                    messages.error(request,
                         _("Your account is inactive so you may not log in."))
                    return render_to_response('accounts/login.html',

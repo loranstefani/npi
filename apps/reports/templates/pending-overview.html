@@ -34,211 +34,41 @@
 
  <div class="row">
     <div class="col-lg-12">     
- <h2>New Applications (Web)</h2>
-      
+ <h2>{{enumeration_type|default:"All"}} {{status}} {{classification}} {{mode}} submisstons from {{from_date}}</h2>
+ 
+ 
+
   <table class="table table-striped table-bordered">
   <thead>
   <tr>
     <th>Error Type</th>
     <th>Total</th>
-    <th>1-5 Days</th>
-    <th>6-10 Days</th>
-    <th>11-15 Days</th>
-    <th>16-20 Days</th>
-    <th>21-30 Days</th>
+    <th>1 Day</th>
+    <th>2-7 Days</th>
+    <th>8-30 Days</th>
     <th>30+ Days</th>
-    <th>Average</th>
+    <th>Average Days Waiting</th>
   </tr>
   </thead>
   
 
-    <tr><td>Field Validation </td<</tr>
-     <tr><td>License State</td></tr>
-     <tr><td>License Taxonomy</td></tr>
-     <tr><td>Mailing Address</td></tr>
-     <tr><td>Practice Location Address</td></tr>
-     <tr><td>SSN</td></tr>
-     <tr><td>Total</td></tr>
-      
+  {% for row in results %}
+    
+   
+    <tr>
+       {%for i in row %}
+      <td> {{ i }} </td>
+    {% endfor %}
+    </tr>
+
+  {% endfor %}
+  
       </table>
 
     </div>
 </div>
 
 
- <div class="row">
-    <div class="col-lg-12">     
- <h2>New Applications (Paper)</h2>
-      
-  <table class="table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Error Type</th>
-    <th>Total</th>
-    <th>1-5 Days</th>
-    <th>6-10 Days</th>
-    <th>11-15 Days</th>
-    <th>16-20 Days</th>
-    <th>21-30 Days</th>
-    <th>30+ Days</th>
-    <th>Average</th>
-  </tr>
-  </thead>
-  
-
-    <tr><td>Field Validation </td<</tr>
-     <tr><td>License State</td></tr>
-     <tr><td>License Taxonomy</td></tr>
-     <tr><td>Mailing Address</td></tr>
-     <tr><td>Practice Location Address</td></tr>
-     <tr><td>SSN</td></tr>
-     <tr><td>Total</td></tr>
-      
-      </table>
-
-    </div>
-</div>
-
-
-
- <div class="row">
-    <div class="col-lg-12">     
- <h2>New Applications (EFI)</h2>
-      
-  <table class="table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Error Type</th>
-    <th>Total</th>
-    <th>1-5 Days</th>
-    <th>6-10 Days</th>
-    <th>11-15 Days</th>
-    <th>16-20 Days</th>
-    <th>21-30 Days</th>
-    <th>30+ Days</th>
-    <th>Average</th>
-  </tr>
-  </thead>
-  
-
-    <tr><td>Field Validation </td<</tr>
-     <tr><td>License State</td></tr>
-     <tr><td>License Taxonomy</td></tr>
-     <tr><td>Mailing Address</td></tr>
-     <tr><td>Practice Location Address</td></tr>
-     <tr><td>SSN</td></tr>
-     <tr><td>Total</td></tr>
-      
-      </table>
-
-    </div>
-</div>
-
-
-
-
-
- <div class="row">
-    <div class="col-lg-12">     
- <h2>Change Requests (Web)</h2>
-      
-  <table class="table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Error Type</th>
-    <th>Total</th>
-    <th>1-5 Days</th>
-    <th>6-10 Days</th>
-    <th>11-15 Days</th>
-    <th>16-20 Days</th>
-    <th>21-30 Days</th>
-    <th>30+ Days</th>
-    <th>Average</th>
-  </tr>
-  </thead>
-  
-
-    <tr><td>Field Validation </td<</tr>
-     <tr><td>License State</td></tr>
-     <tr><td>License Taxonomy</td></tr>
-     <tr><td>Mailing Address</td></tr>
-     <tr><td>Practice Location Address</td></tr>
-     <tr><td>SSN</td></tr>
-     <tr><td>Total</td></tr>
-      
-      </table>
-
-    </div>
-</div>
-
-
- <div class="row">
-    <div class="col-lg-12">     
- <h2>Change Requests (Paper)</h2>
-      
-  <table class="table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Error Type</th>
-    <th>Total</th>
-    <th>1-5 Days</th>
-    <th>6-10 Days</th>
-    <th>11-15 Days</th>
-    <th>16-20 Days</th>
-    <th>21-30 Days</th>
-    <th>30+ Days</th>
-    <th>Average</th>
-  </tr>
-  </thead>
-  
-
-    <tr><td>Field Validation </td<</tr>
-     <tr><td>License State</td></tr>
-     <tr><td>License Taxonomy</td></tr>
-     <tr><td>Mailing Address</td></tr>
-     <tr><td>Practice Location Address</td></tr>
-     <tr><td>SSN</td></tr>
-     <tr><td>Total</td></tr>
-      
-      </table>
-
-    </div>
-</div>
-
-
-
- <div class="row">
-    <div class="col-lg-12">     
- <h2>Change Requests (EFI)</h2>
-      
-  <table class="table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Error Type</th>
-    <th>Total</th>
-    <th>1-5 Days</th>
-    <th>6-10 Days</th>
-    <th>11-15 Days</th>
-    <th>16-20 Days</th>
-    <th>21-30 Days</th>
-    <th>30+ Days</th>
-    <th>Average</th>
-  </tr>
-  </thead>
-  
-
-    <tr><td>Field Validation </td></tr>
-     <tr><td>License State</td></tr>
-     <tr><td>License Taxonomy</td></tr>
-     <tr><td>Mailing Address</td></tr>
-     <tr><td>Practice Location Address</td></tr>
-     <tr><td>SSN</td></tr>
-     <tr><td>Total</td></tr>
-      
-      </table>
-
-    </div>
-</div>
 
 
 
