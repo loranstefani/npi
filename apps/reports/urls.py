@@ -20,6 +20,14 @@ urlpatterns = patterns('',
                 enumerated_applications,
                 name = "enumerated_applications"),
     
+    url(r'event-totals$',
+                event_totals,
+                name = "event_totals"),
+
+    url(r'enumerated-applications$',
+                enumerated_applications,
+                name = "enumerated_applications"),
+    
     url(r'view-errors/(?P<enumeration_id>\S+)$', view_errors, name = "reports_view_errors"),
     url(r'view-events/(?P<enumeration_id>\S+)$', view_events, name = "reports_view_events"),
     
