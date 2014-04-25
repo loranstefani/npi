@@ -12,13 +12,18 @@ urlpatterns = patterns('',
                 name = "enumeration_stats_by_state"),
 
 
+    url(r'search$',
+                reports_search,
+                name = "reports_search"),
+
     url(r'enumerated-applications$',
                 enumerated_applications,
                 name = "enumerated_applications"),
     
     url(r'view-errors/(?P<enumeration_id>\S+)$', view_errors, name = "reports_view_errors"),
-
     
+    url(r'rescan-for-errors/(?P<enumeration_id>\S+)$', rescan_for_errors, name = "reports_rescan_for_errors"),
+
     
     url(r'application-overview$',
                 application_overview,

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4
 from django.forms.extras.widgets import SelectDateWidget
+from localflavor.us.us_states import US_STATES
 import datetime
 from django import forms
 from ..enumerations.models import (Enumeration, GateKeeperError,
@@ -11,6 +12,10 @@ from ..enumerations.models import (Enumeration, GateKeeperError,
                                    ENUMERATION_STATUS_CHOICES )
 from django.db.models import Count, Avg
 from django.contrib.auth.models import User
+
+
+SEARCH_US_STATES_CHOICES = [("", "No State"), ] + list(US_STATES)
+
 def report_year_range():
     this_year = datetime.date.today().year
     years = range(2005, this_year+1)
@@ -21,36 +26,100 @@ ENUMERATION_TYPE_WITH_ALL_CHOICES = [("ALL", "All"), ] +  list(ENUMERATION_TYPE_
 
 def default_from_date(subtract_days=60):
     return datetime.date.today() - datetime.timedelta(days=subtract_days)
-    
-    this_year = datetime.date.today().year
 
 
 
 
-class PendingEnumerationForm(forms.Form):
-    
+class ReportSearchForm(forms.ModelForm):
+    class Meta:
+        model = Enumeration
+        fields = ( 'status', 'number', 'first_name', 'last_name',
+                  'organization_name', 'ein', 'ssn', )
+
+    city  = forms.CharField(required=False)
+    state = forms.ChoiceField(choices=SEARCH_US_STATES_CHOICES, required=False)
+    required_css_class = 'required'
+
+    def save(self, force_insert=False, force_update=False, commit=True):
+
+        q={}
+        number              = self.cleaned_data.get("number", "")
+        first_name          = self.cleaned_data.get("first_name", "")
+        last_name           = self.cleaned_data.get("last_name", "")
+        organization_name   = self.cleaned_data.get("organization_name", "")
+        city                = self.cleaned_data.get("city", "")
+        state               = self.cleaned_data.get("state", "")
+        ein                 = self.cleaned_data.get("ein", "")
+        ssn                 = self.cleaned_data.get("ssn", "")
+        status              = self.cleaned_data.get("status", "")
+        itin                = self.cleaned_data.get("itin", "")
+
+        if status:
+            q['status']=status
+        if number:
+            q['ssn']=ssn
+
+        if number:
+            q['number']=number.upper()
+
+        if first_name:
+            q['first_name']=first_name.upper()
+
+        if last_name:
+            q['last_name']=last_name.upper()
+
+        if organization_name:
+            q['organization_name']=organization_name.upper()
+
+
+        if ein:
+            q['ein']=ein
+
+        if state and not city:
+
+            qs = Enumeration.objects.filter(location_address__state=state.upper(), **q)[:10]
+
+        elif state and city:
+            qs = Enumeration.objects.filter(location_address__state=state.upper(),
+                                            location_address__city=city.upper(),
+                                            **q)[:5000]
+        else:
+            qs = Enumeration.objects.filter(**q)[:5000]
+
+        return qs
+
+
+
+
+class EnumerationApplicationForm(forms.Form):
+    ENUMERATION_STATUS_CHOICES = (('P','Pending'), ('E','Editing'))
+    status    = forms.ChoiceField(choices = ENUMERATION_STATUS_CHOICES,
+                                    initial ="P")
     enumeration_type    = forms.ChoiceField(choices = ENUMERATION_TYPE_CHOICES)
     required_css_class  = 'required'
     
     def save(self):
          enumeration_type = self.cleaned_data.get("enumeration_type")
-         qs = Enumeration.objects.filter(status = "P")
+         status = self.cleaned_data.get("status")
+         qs = Enumeration.objects.filter(status = status,
+                                         enumeration_type = enumeration_type)
          return qs
         
         
 
 class PendingEnumerationOverviewForm(forms.Form):
-    
-    from_date         = forms.DateField(widget    = SelectDateWidget(
+    from_date   = forms.DateField(widget    = SelectDateWidget(
                                   years           = report_year_range()),
                                   initial         = datetime.date.today)
     
-    status    = forms.ChoiceField(choices = ENUMERATION_STATUS_CHOICES,
+    status      = forms.ChoiceField(choices = ENUMERATION_STATUS_CHOICES,
                                     initial ="P")
                                     
     enumeration_type    = forms.ChoiceField(choices = ENUMERATION_TYPE_WITH_ALL_CHOICES,
                                     initial ="ALL")
+    
     classification      = forms.ChoiceField(choices = ENUMERATION_CLASSIFICATION_CHOICES)
+    
     mode                = forms.ChoiceField(choices = ENUMERATION_MODE_CHOICES)
         
     required_css_class  = 'required'

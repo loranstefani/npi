@@ -38,7 +38,9 @@
   <tr>
     <th>Number</th>
     <th>Type</th>
+    <th>Status</th>
     <th>Name</th>
+    
     <th>Taxonomy</th>
     <th>Actions</th>
   </tr>
@@ -46,14 +48,28 @@
   
   {% for e in search_results %}
    <tr>
-    <td>{{e.pretty_number}}</td>
-    <td>{{e.enumeration_type}}</td>
-    <td>{{e.name}}</td>
-    <td>{{e.primary_taxonomy}}</td>
+    {% if e.status == "A" %}
+    <td>{{ e.pretty_number }}</td>
+    <td>{{ e.get_status_display }}</td>
+    <td>{{ e.enumeration_type }}</td>
+    <td>{{ e.name }}</td>
+    <td>{{ e.primary_taxonomy|default:"None" }}</td>
     <td>
        <a href="/profile/{{e.number}}">View</a> |
        <a href="/enumeration/manage/{{e.id}}">Manage</a>
       </td>
+    {% else %}
+    
+    <td>{{ e.pretty_number }}</td>
+    <td>{{ e.enumeration_type }}</td>
+    <td>{{ e.get_status_display }}</td>
+    <td>Unavailable</td>
+    <td>{{ e.primary_taxonomy|default:"None"  }}</td>
+    <td>--</td>
+    
+    {% endif %}
+  
+    
   </tr>
   {% endfor %}
   

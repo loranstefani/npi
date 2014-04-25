@@ -31,6 +31,13 @@ def view_errors(request, enumeration_id):
     
     return render(request,'gatekeeper-errors.html', context)
 
+@login_required
+@staff_member_required
+def rescan_for_errors(request, enumeration_id):
+    enumeration = get_object_or_404(Enumeration, id=enumeration_id)
+    enumeration.gatekeeper()
+    return view_errors(request, enumeration_id)
+
 
 
 @login_required
@@ -80,7 +87,7 @@ def application_overview(request):
 def pending_applications(request):
     name = "Pending Applications"
     if request.method == 'POST':
-        form = PendingEnumerationForm(request.POST)
+        form = EnumerationApplicationForm(request.POST)
     
         if form.is_valid():
             
@@ -95,7 +102,7 @@ def pending_applications(request):
     
     #this is a GET
     context= {'name':name,
-              'form': PendingEnumerationForm()}
+              'form': EnumerationApplicationForm()}
     return render(request, 'daterange.html', context)
     
 @login_required
@@ -190,4 +197,30 @@ def staff_member_summary(request, username, date_start, date_stop):
                }
     
     return render(request, 'staff-member-summary.html', context)
+    
+def reports_search(request):
+    name = _("Administrative Search")
+    if request.method == 'POST':
+
+        form = ReportSearchForm(request.POST,)
+
+        if form.is_valid():
+            qs = form.save()
+            context= {'name':name,
+                      'search_results': qs,
+              'form': ReportSearchForm()}
+            return render(request, 'reports-search.html', context)
+
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+
+    #this is a GET
+    context= {'name':name,
+              'form': ReportSearchForm()}
+    return render(request, 'generic/bootstrapform.html', context)
+
+
       

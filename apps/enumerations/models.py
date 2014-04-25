@@ -4,7 +4,7 @@ from datetime import date
 from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-import uuid, random
+import uuid, random, datetime
 from utils import valid_uuid
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
@@ -620,7 +620,7 @@ class Enumeration(models.Model):
         g.delete()
         
         
-        #create an empty message list
+        #create an empty message list ------------------------------------------
         
         if Enumeration.objects.filter(ssn=self.ssn).count() > 1:
             e =GateKeeperError.objects.create(
@@ -635,9 +635,6 @@ class Enumeration(models.Model):
                     error_type="SSN-INVALID",
                     note= "No SSN or ITIN supplied.")
             msglist.append(e.note)
-            
-
-            
             
         #Check some things for individuals
         if self.enumeration_type in ("OEID", "NPI-1"):
@@ -763,7 +760,7 @@ class Enumeration(models.Model):
         if not number:
             number = "Unassigned"
             
-        e = "%s/%s/%s" % (self.enumeration_type, number, name)
+        e = "%s (%s) %s" % (name, self.enumeration_type, number)
         return e
 
 
@@ -939,9 +936,18 @@ class Event(models.Model):
 
 class GateKeeperError(models.Model):
     enumeration = models.ForeignKey(Enumeration, db_index=True)
-    error_type  = models.CharField(choices = ERROR_CHOICES, max_length=20,db_index=True)
-    added       = models.DateField(db_index=True)
-    note        = models.TextField(max_length=1024, blank=True, default="")
+    error_type  = models.CharField(choices = ERROR_CHOICES,
+                                   max_length=20,
+                                   db_index=True)
+    added       = models.DateField(auto_now_add=True,
+                                   db_index=True,)
+    note        = models.TextField(max_length=1024, blank=True,
+                                   default="", null=True)
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.error_type, self.added)
+        
+    def save(self, commit=True, **kwargs):
+        if not self.added:
+            self.added= datetime.date.today()
+        super(GateKeeperError, self).save(**kwargs)
     
