@@ -83,7 +83,7 @@ urlpatterns = patterns('',
                     name="edit_pii_enumeration"),
 
 
-    url(r'^contact-person/(?P<id>\S+)', contact_person, name="contact_person"),
+    url(r'^contact-person/(?P<id>\S+)$', contact_person, name="contact_person"),
 
     url(r'^authorized-official/(?P<id>\S+)', authorized_official,
                     name="authorized_official"),
@@ -94,7 +94,7 @@ urlpatterns = patterns('',
     url(r'^edit-enhanced/(?P<id>\S+)', edit_enhanced_enumeration,
                     name="edit_enhanced_enumeration"),
 
-    url(r'^stop-managing/(?P<enumeration_id>\S+)', stop_managing_enumeration,
+    url(r'^stop-managing/(?P<enumeration_id>\S+)$', stop_managing_enumeration,
                     name="stop_managing_enumeration"),
 
     url(r'^edit/(?P<id>\S+)', edit_enumeration, name="edit_enumeration"),
@@ -105,6 +105,7 @@ urlpatterns = patterns('',
     url(r'^flag-for-fraud/(?P<id>\S+)', flag_for_fraud, name="flag_for_fraud"),
 
     url(r'^activate/(?P<id>\S+)', activate, name="enumeration_activate"),
+    url(r'^deactivate/(?P<id>\S+)', deactivate, name="enumeration_deactivate"),
     url(r'^reject/(?P<id>\S+)', reject, name="enumeration_reject"),
     url(r'^reactivate/(?P<id>\S+)', reactivate, name="enumeration_reactivate"),
     url(r'^replace/(?P<id>\S+)', replace, name="enumeration_replace"),

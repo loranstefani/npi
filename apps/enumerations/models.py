@@ -25,7 +25,13 @@ ENUMERATION_TYPE_CHOICES = (("NPI-1","Individual National Provider Identifier (N
 
 
 EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
-                  ('FINAL-ACTION','Final Action'),)
+                  ('FINAL-ACTION','Final Action'),
+                  ('ACTIVATION','Activation'),
+                  ('REJECTION','Rejection'),
+                  ('DEACTIVATION','De-activation'),
+                  ('REACTIVATION','Re-activation'),
+                  ('REENUMERATION','Reenumeration'),
+                  )
 
 
 
@@ -851,8 +857,6 @@ class Enumeration(models.Model):
             self.enumeration_date = date.today()
 
 
-
-
         """Create a name for the handle """
         name = self.handle #Make it a UUID for starters to ensure unique
     
@@ -890,15 +894,15 @@ class Enumeration(models.Model):
             self.doing_business_as = self.organization_other_name   
 
         """Captialize all names"""
-        self.first_name =self.first_name.upper()
-        self.middle_name =self.middle_name.upper()
-        self.last_name =self.last_name.upper()
+        self.first_name                      = self.first_name.upper()
+        self.middle_name                     = self.middle_name.upper()
+        self.last_name                       = self.last_name.upper()
         self.authorized_official_first_name  = self.authorized_official_first_name.upper()    
         self.authorized_official_middle_name = self.authorized_official_middle_name.upper() 
         self.authorized_official_last_name   = self.authorized_official_last_name.upper()
-        self.contact_person_first_name  = self.contact_person_first_name.upper()   
-        self.contact_person_middle_name = self.contact_person_middle_name.upper()
-        self.contact_person_last_name   = self.contact_person_last_name.upper()
+        self.contact_person_first_name       = self.contact_person_first_name.upper()   
+        self.contact_person_middle_name      = self.contact_person_middle_name.upper()
+        self.contact_person_last_name        = self.contact_person_last_name.upper()
 
         
         
@@ -928,10 +932,15 @@ class Event(models.Model):
     enumeration = models.ForeignKey(Enumeration, db_index=True)
     event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20,
                                    db_index=True)
-    added       = models.DateField(auto_now_add=True)
+    added       = models.DateField()#auto_now_add=True
     note        = models.TextField(max_length=1024, blank=True, default="")
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.event_type, self.added)
+    
+    def save(self, commit=True, **kwargs):
+        if not self.added:
+            self.added= datetime.date.today()
+        super(Event, self).save(**kwargs)
 
 
 class GateKeeperError(models.Model):

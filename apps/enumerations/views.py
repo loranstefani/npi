@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 import uuid, random
-from models import Enumeration, GateKeeperError
+from models import Enumeration, GateKeeperError, Event
 from ..addresses.models import Address
 from ..licenses.models import License
 from ..taxonomy.models import TaxonomyCode
@@ -625,13 +625,16 @@ def reactivate(request, id):
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
         e.save()
+        msg = "This record has been reactivated."
+        Event.objects.create(enumeration=e, event_type="REACTIVATION",
+                             note= msg)
         reversion.set_user(request.user)
-        reversion.set_comment("Reactivated a deactivated enumeration.")
-        messages.success(request, "This record has been reactivated.")
+        reversion.set_comment(msg)
+        messages.success(request, msg)
     elif e.status == "A":
-        messages.info(request, "This record was already active. Nothing was done.")
+        messages.info(request, "This record was not deactivated. Nothing was done.")
     else:
-        messages.info(request, "This record was already active. Nothing was done.")
+        messages.info(request, "This record was not deactivated. Nothing was done.")
     return HttpResponseRedirect(reverse('pending_applications'))
     
 
@@ -642,7 +645,7 @@ def reactivate(request, id):
 def activate(request, id):
     name = _("Activate an Enumeration")
     e = get_object_or_404(Enumeration, id=id)
-    if e.status != "A":
+    if e.status not in  ("E", "P"):
         
         #Remove all gatekeeper errors.
         GateKeeperError.objects.filter(enumeration=e).delete()
@@ -651,12 +654,15 @@ def activate(request, id):
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
         e.save()
+        msg = "This record has been enumerated/activated."
+        Event.objects.create(enumeration=e, event_type="ACTIVATION",
+                             note= msg)
         reversion.set_user(request.user)
         comment = "Enumerated Application. Number is %s" % (e.number)
         reversion.set_comment(comment)
-        messages.success(request, "This record has been enumerated/activated.")
+        messages.success(request, msg)
     else:
-        messages.info(request, "This record was already active. Nothing was done.")
+        messages.info(request, "This record has already been activated at least once. Use reactive to reactivate.")
     return HttpResponseRedirect(reverse('pending_applications'))
 
 
@@ -678,6 +684,8 @@ def reject(request, id):
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
         e.save()
+        msg = "This record has been rejected."
+        Event.objects.create(enumeration=e, event_type="REJECTION", note= msg)
         reversion.set_user(request.user)
         comment = "Application. Rejected"
         reversion.set_comment(comment)
@@ -685,6 +693,30 @@ def reject(request, id):
     else:
         messages.info(request, "This record was not pending so nothing was done. The record was not rejected.")
     return HttpResponseRedirect(reverse('pending_applications'))
+
+
+
+@login_required
+@staff_member_required
+@reversion.create_revision()
+def deactivate(request, id):
+    name = _("Deactivate")
+    e = get_object_or_404(Enumeration, id=id)
+    if e.status != "D":
+        e.status = "D"
+        e.last_updated_ip=request.META['REMOTE_ADDR']
+        e.enumerated_by = request.user
+        e.save()
+        msg = "This record has been deactivated."
+        Event.objects.create(enumeration=e, event_type="DEACTIVATION", note= msg)
+        reversion.set_user(request.user)
+        comment = "Deactivation"
+        reversion.set_comment(comment)
+        messages.success(request, msg)
+    else:
+        messages.info(request, "This record was not deactive so nothing was done. The record was not rejected.")
+    return HttpResponseRedirect(reverse('report_index'))
+
 
 
 
@@ -726,6 +758,8 @@ def replace(request, id):
         
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.save()
+        msg = "A new enumeration number %s was assigned." % (e.number)
+        Event.objects.create(enumeration=e, event_type="REENUMERATION", note= msg)
         reversion.set_user(request.user)
         rmsg = "Replacement: %s", (msg)
         reversion.set_comment(rmsg)
