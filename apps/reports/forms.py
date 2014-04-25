@@ -5,7 +5,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from localflavor.us.us_states import US_STATES
 import datetime
 from django import forms
-from ..enumerations.models import (Enumeration, GateKeeperError,
+from ..enumerations.models import (Enumeration, GateKeeperError, Event,
                                    ENUMERATION_TYPE_CHOICES, 
                                    ENUMERATION_MODE_CHOICES,
                                    ENUMERATION_CLASSIFICATION_CHOICES,
@@ -295,6 +295,26 @@ class EnumeratedApplicationsForm(forms.Form):
                 'total_enumerations':total_enumerations,
                 'total_rejections': total_rejections}        
         
+        
+
+class EventTotalsForm(forms.Form):
+    
+    date_start  = forms.DateField(widget=SelectDateWidget(
+                                    years=report_year_range()),
+                                    initial=datetime.date(2005,05,23))
+                                    
+    date_stop   = forms.DateField(initial=datetime.date.today,           
+                            widget=SelectDateWidget( years=report_year_range()))
+                                                            
+    required_css_class  = 'required'
+    
+    def save(self):
+            
+        date_start = self.cleaned_data.get("date_start")
+        date_stop =  self.cleaned_data.get("date_stop")
+        event_totals = Event.objects.filter().exclude(added__lt=date_start).exclude(added__gt=date_stop).values('event_type').annotate(Count('id'))
+
+        return event_totals    
         
         
         

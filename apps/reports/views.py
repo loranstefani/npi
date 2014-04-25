@@ -163,7 +163,40 @@ def enumerated_applications(request):
               'form': EnumeratedApplicationsForm()}
     return render(request, 'daterange.html', context)    
     
+
+
+
+@login_required
+@staff_member_required   
+def event_totals(request):
+    name = "Event Totals"
+    if request.method == 'POST':
+        form = EventTotalsForm(request.POST)
     
+        if form.is_valid():
+            search_results = form.save()            
+            context= {'name':name, 
+                      'date_start': form.cleaned_data.get("date_start"),
+                       'date_stop': form.cleaned_data.get("date_stop"),
+                       'search_results': search_results
+                       }
+            
+
+            return render(request, 'event-totals.html', context)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'daterange.html', context)
+    
+    #this is a GET
+    context= {'name':name,
+              'form': EventTotalsForm()}
+    return render(request, 'daterange.html', context)    
+    
+    
+
+
     
 @login_required
 @staff_member_required   
