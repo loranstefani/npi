@@ -221,6 +221,7 @@ LOGGING = {
 }
 
 
+
 MESSAGE_TAGS ={messages.DEBUG: 'debug',
 messages.INFO: 'info',
 messages.SUCCESS: 'success',

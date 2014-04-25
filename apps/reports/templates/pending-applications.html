@@ -61,23 +61,19 @@
        <a target=_blank href="/admin/enumerations/enumeration/{{e.id}}">Edit</a>|
        
        
-      {% if e.status == "E" or e.status == "P" %}
+      {% if e.status == "P" %}
       <a href="/reports/view-errors/{{e.id}}">View Errors</a>|
        <a href="/reports/rescan-for-errors/{{e.id}}">Rescan for Errors</a>|
        <a href="/enumerations/activate/{{e.id}}">Activate</a>|
        <a  href="/enumerations/reject/{{e.id}}">Reject</a>
       
       {% elif e.status == "D" %}
-       <a  href="/enumerations/reactivate/{{e.id}}">Re-Activate A Deactivated Record</a>
+       <a  href="/enumerations/reactivate/{{e.id}}">Reactivate</a>
       {% elif e.status == "A" %}
-       <a  href="/enumerations/deactivate/{{e.id}}">Deactivate A Record</a>
+       <a  href="/enumerations/deactivate/{{e.id}}">Deactivate</a>
     {% endif %}
        
-       
-       <a href="/enumerations/activate/{{e.id}}">Activate</a>|
-       <a  href="/enumerations/reject/{{e.id}}">Reject</a>|
-       <a  href="/enumerations/reactivate/{{e.id}}">Re-Activate Deactivated Record</a>|
-       <a  href="/enumerations/replace/{{e.id}}">Replace a Number</a>
+
     </td>
     
   </tr>

@@ -31,10 +31,16 @@ def default_from_date(subtract_days=60):
 
 
 class ReportSearchForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(ReportSearchForm,self).__init__(*args,**kwargs)
+        self.fields['status'].initial = None
+    
+    
     class Meta:
         model = Enumeration
         fields = ( 'status', 'number', 'first_name', 'last_name',
-                  'organization_name', 'ein', 'ssn', )
+                  'organization_name', 'ein', 'ssn', 'itin' )
 
     city  = forms.CharField(required=False)
     state = forms.ChoiceField(choices=SEARCH_US_STATES_CHOICES, required=False)

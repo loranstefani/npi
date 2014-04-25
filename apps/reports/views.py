@@ -9,13 +9,15 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 from forms import *
 from datetime import timedelta, date, datetime
-from ..enumerations.models import Enumeration
+from ..enumerations.models import Enumeration, Event, GateKeeperError
 
 @login_required
 @staff_member_required
 def report_index(request):
     context ={}
     return render(request,'report-index.html',context)
+
+
 
 
 
@@ -27,9 +29,15 @@ def view_errors(request, enumeration_id):
     context ={'name': name, 'gatekeeper_errors':
                 GateKeeperError.objects.filter(enumeration = enumeration_id),
                 'enumeration' : enumeration}
-    
-    
     return render(request,'gatekeeper-errors.html', context)
+
+def view_events(request, enumeration_id):
+    name = "View Events"
+    enumeration = get_object_or_404(Enumeration, id=enumeration_id)
+    context ={'name': name, 'gatekeeper_errors':
+                Event.objects.filter(enumeration = enumeration_id),
+                'enumeration' : enumeration}
+    return render(request,'events.html', context)
 
 @login_required
 @staff_member_required

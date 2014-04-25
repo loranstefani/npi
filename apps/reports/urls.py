@@ -21,6 +21,7 @@ urlpatterns = patterns('',
                 name = "enumerated_applications"),
     
     url(r'view-errors/(?P<enumeration_id>\S+)$', view_errors, name = "reports_view_errors"),
+    url(r'view-events/(?P<enumeration_id>\S+)$', view_events, name = "reports_view_events"),
     
     url(r'rescan-for-errors/(?P<enumeration_id>\S+)$', rescan_for_errors, name = "reports_rescan_for_errors"),
 

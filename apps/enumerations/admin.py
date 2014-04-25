@@ -6,10 +6,6 @@ from ajax_select import make_ajax_form
 
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from reversion.helpers import patch_admin
-
-
-
-
 import reversion
 
 class EnumerationVersionAdmin(reversion.VersionAdmin):
