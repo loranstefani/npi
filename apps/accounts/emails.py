@@ -74,7 +74,7 @@ def send_signup_key_via_email(user, signup_key):
 
 
 def send_invite_request_notices(invite_request):
-    subject = "[%s]Initation Request Received" % (settings.ORGANIZATION_NAME)    
+    subject = "[%s]Invitation Request Received" % (settings.ORGANIZATION_NAME)    
     from_email = settings.EMAIL_HOST_USER
     to = invite_request.email 
     headers = {'Reply-To': from_email}
@@ -84,7 +84,7 @@ def send_invite_request_notices(invite_request):
     Hello: %s %s,
     </p>
     <p>
-    Your request for an invite for NPPES Redux (%s) has been received.
+    Your request for an invite to NPPES Redux (%s) has been received.
     </p>
     <p>
     Thank You,
@@ -97,7 +97,7 @@ def send_invite_request_notices(invite_request):
            settings.HOSTNAME_URL, )
    
     text_content="""Hello: %s %s,
-Your request for an invite for NPPES Redux (%s) has been received.
+Your request for an invite to NPPES Redux (%s) has been received.
     """ % (invite_request.first_name,
            invite_request.last_name,
            settings.HOSTNAME_URL, )
