@@ -95,7 +95,7 @@
     <td><span class="label label-default">N/A</span></td>
     <td>{{enumeration.enumeration_type}} / {{enumeration.number|default:"Unassigned"}} / {{enumeration.get_status_display}}</td>
     <td>
-       <a href=/{{enumeration.handle}} target="_blank">View Public Profile</a>|
+       <a href=/p/{{enumeration.handle}} target="_blank">View Public Profile</a>|
        <a href="/enumerations/flag-for-deactivation/{{enumeration.id}}">Flag for Deactivation</a> |
        <a href="/enumerations/flag-for-fraud/{{enumeration.id}}">Flag for Fraud</a>
     {% if user.is_staff %}
