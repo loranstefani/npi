@@ -46,12 +46,12 @@ urlpatterns = patterns('',
 
 
     #Enumeration URLs -------------------------------------
-
+    
     url(r'^search$', search_enumeration, name="search_enumeration"),
     url(r'^surrogate-lookup$', surrogate_lookup, name="surrogate_lookup"),
 
     url(r'^ein-lookup$', ein_lookup, name="ein_lookup"),
-
+    url(r'^self-take-over', self_take_over, name="enmeration_self_take_over"),
 
     url(r'^request-to-manage-enumeration/(?P<id>\S+)$',
                             request_to_manage_enumeration,

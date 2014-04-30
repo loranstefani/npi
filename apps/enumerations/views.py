@@ -265,7 +265,7 @@ def request_to_manage_ein(request, ein):
 @login_required
 @reversion.create_revision()
 def create_enumeration(request):
-    name = _("Create New Entity for Enumeration")
+    name = _("Create a New Provider Identifier")
     if request.method == 'POST':
 
         form = CreateEnumeration2Form(request.POST)
@@ -295,7 +295,6 @@ def create_enumeration(request):
             else:
                 return HttpResponseRedirect(reverse('create_organization_enumeration',
                                                    args=(e.id,)))
-
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
@@ -320,6 +319,43 @@ def edit_basic_enumeration(request, id):
         return HttpResponseRedirect(reverse('edit_organization_enumeration',
                                                    args=(e.id,)))
 
+
+@login_required
+@reversion.create_revision()
+def self_take_over(request):
+    
+    name = "Take control of your individual provider identifer"
+    if request.method == 'POST':
+        form = SelfTakeOverForm(request.POST)
+        if form.is_valid():
+            e = form.get_enumeration()
+            #Give ownership to the individual
+            
+            e.managers.add(request.user)
+            #make sure this user is also the surrogate
+            s = Surrogate.objects.get(user=request.user)
+            s.save()
+            s.enumerations.add(e)
+            s.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Self Take Over")
+            messages.success(request,_("You are now in control of your own record."))
+            return HttpResponseRedirect(reverse('edit_enumeration', args=(e.id,)))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+    
+    
+    
+    
+    #this is a GET
+    context= {'name':name,
+              'form': SelfTakeOverForm()}
+    return render(request, 'generic/bootstrapform.html', context)
+    
+    
 
 
 @login_required
@@ -645,24 +681,37 @@ def reactivate(request, id):
 def activate(request, id):
     name = _("Activate an Enumeration")
     e = get_object_or_404(Enumeration, id=id)
-    if e.status not in  ("E", "P"):
+
+    if e.has_ever_been_active:
+        messages.info(request, "This record has already been activated at least once. Use reactivate to reactivate.")
         
-        #Remove all gatekeeper errors.
-        GateKeeperError.objects.filter(enumeration=e).delete()
-        
-        e.status = "A"
-        e.last_updated_ip=request.META['REMOTE_ADDR']
-        e.enumerated_by = request.user
-        e.save()
-        msg = "This record has been enumerated/activated."
-        Event.objects.create(enumeration=e, event_type="ACTIVATION",
-                             note= msg)
-        reversion.set_user(request.user)
-        comment = "Enumerated Application. Number is %s" % (e.number)
-        reversion.set_comment(comment)
-        messages.success(request, msg)
     else:
-        messages.info(request, "This record has already been activated at least once. Use reactive to reactivate.")
+        if e.status in  ("E", "P"):
+            #Remove all gatekeeper errors.
+            GateKeeperError.objects.filter(enumeration=e).delete()
+            
+            
+            e.status = "A"
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.enumerated_by = request.user
+            e.save()
+            msg = "This record has been activated."
+            Event.objects.create(enumeration=e, event_type="ACTIVATION",
+                                 note= msg)
+            reversion.set_user(request.user)
+            comment = "Enumerated Application. Number is %s" % (e.number)
+            reversion.set_comment(comment)
+            messages.success(request, msg)
+        elif e.status== "A":
+            messages.info(request, "This record is already active. Nothing done.")
+        
+        elif e.status== "D":
+            messages.info(request, "This record is deactived. Use reactivate to make it active again.")
+        
+        elif e.status== "R":
+            messages.info(request, "This record was rejected. Activation is not possible.")
+        
+        
     return HttpResponseRedirect(reverse('pending_applications'))
 
 
@@ -819,11 +868,11 @@ def edit_enhanced_enumeration(request, id):
 
 @login_required
 def stop_managing_enumeration(request, enumeration_id):
-    e = get_enumeration_user_manages_or_404(Enumeration, id, request.user)
+    e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id, request.user)
     e.managers.remove(e)
     s = Surrogate.objects.get(user=request.user)
     s.enumerations.remove(e)
-    msg = _("You are no longer managing.")
+    msg = "You are no longer managing %s." % (e.name())
     messages.error(request,msg)
     return HttpResponseRedirect(reverse('home',))
 
