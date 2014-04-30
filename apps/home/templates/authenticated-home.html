@@ -42,16 +42,12 @@
       </div>
     
       
-      <div class="btn-group">
+    
+	<a href=/enumerations/create><button type="button" class="btn btn-success">Create a New Provider identifer</button></a>
 	<a href=/enumerations/self-take-over><button type="button" class="btn btn-success">Take Control of My Own Provider Identifier</button></a>
-	<a href=/enumerations/create><button type="button" class="btn btn-success">Create a New provider identifer</button></a>
+	
 	<a href=/enumerations/surrogate-lookup><button type="button" class="btn btn-success">Request to Manage an Existing Provider Identifier</button></a>
 	<a href=/enumerations/ein-lookup><button type="button" class="btn btn-success">Request to Manage Organization and Subparts via EIN</button></a>
-	
-	
-    
-      </div>
-     
       
       <br><br>
 
@@ -87,7 +83,7 @@
     <td>{{ e.pretty_number }}</td>
     <td>{{ e.get_status_display }}</td>
     <td>
-      <a "target=_blank" href="/{{e.handle}}">View</a> |
+      <a "target=_blank" href="/p/{{e.handle}}">View</a> |
       {% if surrogate.user in e.managers.all %}
           <a href="/enumerations/edit/{{ e.id }}">Edit</a> | 
 	  <a href="/enumerations/stop-managing/{{ e.id }}"> Stop Managing</a>
@@ -95,6 +91,10 @@
           <a href="/enumerations/request-to-manage-enumeration/{{ e.id }}"> Re-Request Authority to Manage</a> | 
 	  <a href="/enumerations/cance-request-to-manage-enumeration/{{ e.id }}"> Cancel Authority to Manage Request</a>
       {% endif %}
+      
+      
+      
+      
       </td>
   </tr>
   {% endfor %}
