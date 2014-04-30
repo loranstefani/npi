@@ -116,10 +116,43 @@ def pending_applications(request):
 
 
 
+
+
+
+
+
+@login_required
+@staff_member_required
+def locked_accounts(request):
+    name = "Locked Accounts"
+    users = User.objects.filter(is_active=False)
+    
+    #this is a GET
+    context= {'name':name,
+              'users': users}
+    return render(request, 'locked-accounts.html', context)
+
+
+
+@login_required
+@staff_member_required
+def unlock_account(request, id):
+    
+    HttpResponseRedirect
+    name        = "Unlock Account"
+    u           = get_object_or_404(User, id=id)
+    u.is_active = True
+    u.save()
+    msg         = "Account for %s %s was unlocked." % (u.first_name, u.last_name) 
+    messages.success(request,_(msg))
+    return HttpResponseRedirect(reverse('reports_locked_accounts'))
+
+
+
 @login_required
 @staff_member_required
 def fraud_alerts(request):
-    name = "Fraud AlertsPending Applications"
+    name = "Fraud Alerts"
     if request.method == 'POST':
         form = EnumerationApplicationForm(request.POST)
     

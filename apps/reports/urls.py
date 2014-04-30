@@ -12,7 +12,7 @@ urlpatterns = patterns('',
                 name = "enumeration_stats_by_state"),
 
 
-    url(r'search$',
+    url(r'search/$',
                 reports_search,
                 name = "reports_search"),
 
@@ -27,7 +27,8 @@ urlpatterns = patterns('',
 
     url(r'fraud-alerts$', fraud_alerts, name = "reports_fraud_alerts"),
 
-
+    url(r'locked-accounts$', locked_accounts, name = "reports_locked_accounts"),
+    url(r'unlock-account/(?P<id>\S+)$', unlock_account, name = "reports_unlock_account"),
 
     url(r'enumerated-applications$',
                 enumerated_applications,
@@ -51,6 +52,6 @@ urlpatterns = patterns('',
                 pending_applications,
                 name = "pending_applications"),
         
-    url(r'$', report_index, name="report_index"),
+    url(r'^$', report_index, name="report_index"),
     
     )
