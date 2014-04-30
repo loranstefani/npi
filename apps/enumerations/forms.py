@@ -21,6 +21,61 @@ def dob_range():
     return years
 
 
+
+class SelfTakeOverForm(forms.Form):
+    provider_identifier  = forms.CharField(help_text ="""
+                            Supply the nine digit provider identifier already assigned to you.""")
+    year_of_birth        = forms.IntegerField()
+    last_four_ssn        = forms.CharField(max_length=4, required=False)
+    last_four_itin        = forms.CharField(max_length=4, required=False)
+    i_attest             = forms.BooleanField(help_text ="""
+                            I attest that this is me under the penalty of federal law.""")
+    
+    
+    required_css_class = 'required'
+    def clean(self):
+        cleaned_data = super(SelfTakeOverForm, self).clean()
+
+        
+        #SSN and ITIN
+        last_four_ssn = cleaned_data.get("last_four_ssn", "")
+        last_four_itin = cleaned_data.get("last_four_itin", "")
+        provider_identifier = cleaned_data.get("provider_identifier", "")
+        year_of_birth= cleaned_data.get("year_of_birth", "")
+        
+        if not last_four_ssn and not last_four_itin:
+            raise forms.ValidationError("You must provide either an SSN or an ITIN.")
+        if  last_four_ssn and  last_four_itin:
+            raise forms.ValidationError("You cannot proide both an SSN and an ITIN.")
+            
+        try:
+            e = Enumeration.objects.get(number=provider_identifier)
+        
+        except Enumeration.DoesNotExist:
+            raise forms.ValidationError("No provider identifer exists with that number.")
+        #except:
+        #    raise forms.ValidationError("No provider identifer exists with that number.")
+        
+        if last_four_ssn:
+            print e.date_of_birth.year, e.ssn[-4:]
+            if  last_four_ssn != e.ssn[-4:] or year_of_birth != e.date_of_birth.year:
+                raise forms.ValidationError("This information cannot be verified.  Please call the help desk.")
+       
+        if last_four_itin:
+            print e.date_of_birth.year, e.itin[-4:]
+            if  last_four_itin != e.itin[-4:] or year_of_birth != e.date_of_birth.year:
+                raise forms.ValidationError("This information cannot be verified.  Please call the help desk.")
+       
+        return cleaned_data
+    
+    def get_enumeration(self):
+        number              = self.cleaned_data.get("provider_identifier", "")
+        return Enumeration.objects.get(number=number)
+        
+        
+
+
+
 class SearchForm(forms.ModelForm):
     class Meta:
         model = Enumeration
@@ -235,7 +290,7 @@ class IndividualPIIForm(forms.ModelForm):
         country_of_birth = cleaned_data.get("country_of_birth", "")
         state_of_birth   = cleaned_data.get("state_of_birth", "")
         if country_of_birth != "US" and state_of_birth != "ZZ":
-            raise forms.ValidationError("You cannot be born in the United States and in a foriegn country at the same time.")
+            raise forms.ValidationError("You cannot be born in the United States and in a foreign country at the same time.")
         return cleaned_data
 
 
