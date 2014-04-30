@@ -19,38 +19,20 @@
 <div class="row">
     <div class="col-lg-10">
       {% include "include/messages.html" %}
-      
-    {% if not surrogate.enumerations.all %}
-    <div class="alert alert-info">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <h4>{%trans "Welcome" %}</h4>
-    This looks like is your first time here.  If you already have an NPI,
-    then find yourself or the person you are managing by clicking
-    <a href="#" class="alert-link">Add Existing Entity</a>.
-    If you need to create an NPI for you or someone else, click
-    <a href="#" class="alert-link">Create New Entity</a>. If you manage a large
-    number of individuals or organizations, you can use the
-    <a href="#" class="alert-link">Bulk Update</a> or
-    <a href="#" class="alert-link">Bulk Create</a> features which allow you to
-    upload information with a specially formatted-spreadsheet.
-    </div>
     
-  {% endif %}
-      
       <div class="alert alert-info">
     <button type="button" class="close" data-dismiss="alert">×</button>
     <h4>{%trans "Managing Data for others:" %}</h4>
     
-      Although you can manage your own information, this system is designed to
-      allow delgation of enumeration information management. Use the request authroity
-      features below or setup a surrogacy or employment relationship within the
-       <a target="_blank"href="https://nppes.cms.hhs.gov/IAWeb" class="alert-link">CMS Identity and Access</a>
-       system.
-      
-      
+    From here you can manage provider eidentifiers for yourself, and others.
+    Provider identifiers correspond to people (NPI Type 1 and OEID) or
+    organizations ( NPI Type 2 and HPID ). <a href="/help/provider-types">Learn more about different provider
+    indentifier types...</a>
+  .
+    
+  
+    
     </div>
-    
-    
       <div class="row">
         <div class="col-lg-12">
 	  <ol class="breadcrumb">
@@ -61,22 +43,15 @@
     
       
       <div class="btn-group">
-	<a href=/enumerations/create><button type="button" class="btn btn-default">Create a New Enumeration</button></a>	
-      </div>
-      <br><br>
-      
-      
-      <div class="btn-group">
-	<a href=/enumerations/surrogate-lookup><button type="button" class="btn btn-default">Request Authority to Manage an Existing Enumeration</button></a>
-	<a href=/enumerations/ein-lookup><button type="button" class="btn btn-default">Request Authority to Manage All Enumerations with the same ein (Tax ID)</button></a>
+	<a href=/enumerations/self-take-over><button type="button" class="btn btn-success">Take Control of My Own Provider Identifier</button></a>
+	<a href=/enumerations/create><button type="button" class="btn btn-success">Create a New provider identifer</button></a>
+	<a href=/enumerations/surrogate-lookup><button type="button" class="btn btn-success">Request to Manage an Existing Provider Identifier</button></a>
+	<a href=/enumerations/ein-lookup><button type="button" class="btn btn-success">Request to Manage Organization and Subparts via EIN</button></a>
 	
+	
+    
       </div>
-      <br><br>
-      <div class="btn-group">
-
-	<a href=/enumerations/bulk-create><button type="button" class="btn btn-default">Create New Enumerations in Bulk with a CSV</button></a>
-	<a href=/enumerations/bulk-update><button type="button" class="btn btn-default">Update Enumerations in bulk with a CSV</button></a>
-      </div>
+     
       
       <br><br>
 
@@ -92,7 +67,7 @@
   <thead>
   <tr>
     <th>Name</th>
-    <th>Enumeration Type</th>
+    <th>Provider Identifer Type</th>
     <th>Number</th>
     <th>Status</th>
     <th>Actions</th>
