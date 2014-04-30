@@ -112,7 +112,67 @@ def pending_applications(request):
     context= {'name':name,
               'form': EnumerationApplicationForm()}
     return render(request, 'daterange.html', context)
+
+
+
+
+
+
+
+
+
+@login_required
+@staff_member_required
+def locked_accounts(request):
+    name = "Locked Accounts"
+    users = User.objects.filter(is_active=False)
     
+    #this is a GET
+    context= {'name':name,
+              'users': users}
+    return render(request, 'locked-accounts.html', context)
+
+
+
+@login_required
+@staff_member_required
+def unlock_account(request, id):
+    
+    HttpResponseRedirect
+    name        = "Unlock Account"
+    u           = get_object_or_404(User, id=id)
+    u.is_active = True
+    u.save()
+    msg         = "Account for %s %s was unlocked." % (u.first_name, u.last_name) 
+    messages.success(request,_(msg))
+    return HttpResponseRedirect(reverse('reports_locked_accounts'))
+
+
+
+@login_required
+@staff_member_required
+def fraud_alerts(request):
+    name = "Fraud Alerts"
+    if request.method == 'POST':
+        form = EnumerationApplicationForm(request.POST)
+    
+        if form.is_valid():
+            
+            qs = form.save()
+            context= {'name':name, 'search_results': qs}
+            return render(request, 'pending-applications.html', context)
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'daterange.html', context)
+    
+    #this is a GET
+    context= {'name':name,
+              'search_results': Enumeration.objects.filter(flag_for_fraud = True)}
+    return render(request, 'fraud-alerts.html', context)
+
+
 @login_required
 @staff_member_required   
 def enumerations_stats_by_state(request):
