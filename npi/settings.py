@@ -163,8 +163,9 @@ INSTALLED_APPS = (
     'apps.downloads',
     'apps.statistics',
     'apps.reports',
+    'apps.api',
     
-)
+    )
 
 
 AJAX_LOOKUP_CHANNELS = {

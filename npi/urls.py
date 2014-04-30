@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     #url(r'^$',   TemplateView.as_view(template_name='index.html'), name='home'),
     url(r'^$',              include('apps.home.urls')),
+    url(r'^api/',            include('apps.api.urls')),
     url(r'^accounts/',      include('apps.accounts.urls')),
     url(r'^downloads/',     include('apps.downloads.urls')),
     url(r'^statistics/',    include('apps.statistics.urls')),
@@ -28,16 +29,18 @@ urlpatterns = patterns('',
     url(r'^enumerations/',  include('apps.enumerations.urls')),
     url(r'^licenses/',      include('apps.licenses.urls')),
     url(r'^direct/',        include('apps.direct.urls')),
-    url(r'^profile/',       include('apps.profilee.urls')),
+    
     url(r'^surrogates/',    include('apps.surrogates.urls')),
     url(r'^identifiers/',   include('apps.identifiers.urls')),
     url(r'^reports',        include('apps.reports.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
+    
+    url(r'^profile/',       include('apps.profilee.urls')),
     url(r'^npi/(?P<number>\S+)/$', display_enumeration_profile,
                         name="display_enumeration_profile"),
     
-    url(r'^(?P<handle>\S+)/$', display_enumeration_profile_handle,
+    url(r'^p/(?P<handle>\S+)/$', display_enumeration_profile_handle,
                         name="display_enumeration_profile_handle"),
     
     
