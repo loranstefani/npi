@@ -24,6 +24,11 @@ urlpatterns = patterns('',
                 event_totals,
                 name = "event_totals"),
 
+
+    url(r'fraud-alerts$', fraud_alerts, name = "reports_fraud_alerts"),
+
+
+
     url(r'enumerated-applications$',
                 enumerated_applications,
                 name = "enumerated_applications"),
