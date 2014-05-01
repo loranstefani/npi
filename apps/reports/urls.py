@@ -27,6 +27,10 @@ urlpatterns = patterns('',
 
     url(r'fraud-alerts$', fraud_alerts, name = "reports_fraud_alerts"),
 
+
+    url(r'taxonomy-by-enumeration-type$', taxonomy_by_enumeration_type, name = "taxonomy_by_enumeration_type"),
+
+
     url(r'locked-accounts$', locked_accounts, name = "reports_locked_accounts"),
     url(r'unlock-account/(?P<id>\S+)$', unlock_account, name = "reports_unlock_account"),
 

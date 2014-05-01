@@ -32,7 +32,7 @@ urlpatterns = patterns('',
     
     url(r'^surrogates/',    include('apps.surrogates.urls')),
     url(r'^identifiers/',   include('apps.identifiers.urls')),
-    url(r'^reports',        include('apps.reports.urls')),
+    url(r'^reports/',        include('apps.reports.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
     
