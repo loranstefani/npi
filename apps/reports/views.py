@@ -10,7 +10,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from forms import *
 from datetime import timedelta, date, datetime
 from ..enumerations.models import Enumeration, Event, GateKeeperError
-
+from ..taxonomy.models import TaxonomyCode
 @login_required
 @staff_member_required
 def report_index(request):
@@ -138,7 +138,6 @@ def locked_accounts(request):
 @staff_member_required
 def unlock_account(request, id):
     
-    HttpResponseRedirect
     name        = "Unlock Account"
     u           = get_object_or_404(User, id=id)
     u.is_active = True
@@ -146,6 +145,41 @@ def unlock_account(request, id):
     msg         = "Account for %s %s was unlocked." % (u.first_name, u.last_name) 
     messages.success(request,_(msg))
     return HttpResponseRedirect(reverse('reports_locked_accounts'))
+
+
+
+@login_required
+@staff_member_required
+def lock_account(request, id):
+    
+    name        = "Lock Account"
+    u           = get_object_or_404(User, id=id)
+    u.is_active = False
+    u.save()
+    msg         = "Account for %s %s was locked." % (u.first_name, u.last_name) 
+    messages.success(request,_(msg))
+    return HttpResponseRedirect(reverse('reports_locked_accounts'))
+
+
+
+
+@login_required
+@staff_member_required
+def taxonomy_by_enumeration_type(request):
+    name        = "Taxonomy By Enumeration Type"
+    r = Enumeration.objects.all().values('taxonomy__code', 'enumeration_type',).annotate(Count('id'))    
+    
+    for i in r:
+        try:
+            t = TaxonomyCode.objects.get(code=i['taxonomy__code'])
+            i['description'] = t.description
+        except TaxonomyCode.DoesNotExist:
+            i['description'] = None
+        
+    #this is a GET
+    context= {'name':name,
+              'results': r}
+    return render(request, 'taxonomy-by-enumeration-type.html', context)
 
 
 
