@@ -5,9 +5,21 @@ from apps.enumerations.views import search_enumeration
 from apps.profilee.views import display_enumeration_profile_handle, display_enumeration_profile
 from django.conf.urls.static import static
 from ajax_select import urls as ajax_select_urls
+from sitemaps import NPISitemap, HandleSitemap
+from django.contrib.sitemaps import views
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
+
+
+sitemaps = {
+  'npi':    NPISitemap,
+  'handle': HandleSitemap,
+}
+
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -42,6 +54,13 @@ urlpatterns = patterns('',
     
     url(r'^p/(?P<handle>\S+)/$', display_enumeration_profile_handle,
                         name="display_enumeration_profile_handle"),
+    
+    
+    url(r'^sitemap\.xml$', views.index, {'sitemaps': sitemaps}),
+    url(r'^sitemap-(?P<section>.+)\.xml$', views.sitemap, {'sitemaps': sitemaps}),
+    
+    
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     
     
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

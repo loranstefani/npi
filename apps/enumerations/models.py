@@ -4,6 +4,7 @@ from datetime import date
 from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 import uuid, random, datetime
 from utils import valid_uuid
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
@@ -560,6 +561,10 @@ class Enumeration(models.Model):
         address_plus = str(self.location_address).replace(" ", "+")
         return address_plus
     
+
+    def get_absolute_url(self):
+        return reverse('display_enumeration_profile', args=[str(self.number)])
+
 
 
     def detail(self):
