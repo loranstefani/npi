@@ -79,7 +79,37 @@ class DomesticAddressForm(forms.ModelForm):
     address_type = forms.CharField(widget= forms.HiddenInput, initial="DOM")
 
     required_css_class = 'required'
+
+
+
+class DomesticAddress2Form(forms.ModelForm):
     
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(DomesticAddress2Form,self).__init__(*args,**kwargs)
+        #self.fields['state'].choices=US_STATE_CHOICES
+        #self.fields['country_code'].choices=US_COUNTRY_CHOICES
+        self.fields['country_code'].initial="US"
+        self.fields['country_code'].required = True
+        self.fields['city'].required = True
+        self.fields['state'].required = True
+        self.fields['zip'].required = True
+        
+    
+    class Meta:
+        model = Address
+        fields = ('address_1', 'address_2', 'city', 'state', 'zip', 'country_code',
+                  'us_telephone_number','us_fax_number')
+    
+    
+    address_type = forms.CharField(widget= forms.HiddenInput, initial="DOM")
+    state        = forms.CharField()
+    country_code      = forms.CharField()
+
+
+    required_css_class = 'required'
+
+  
 
 
     

@@ -1,7 +1,10 @@
 from django.db import models
+from django.conf import settings
 from localflavor.us.models import PhoneNumberField
 from localflavor.us.us_states import US_STATES
 from countries import COUNTRIES
+import urllib, urllib2, json, pprint
+
 
 US_STATE_CHOICES = list(US_STATES)
 #US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
@@ -90,8 +93,6 @@ class Address(models.Model):
     usps_stadardized        = models.BooleanField(default=False)
     ignore_standardized     = models.BooleanField(default=False,
                                       help_text="Check this if the USPS is just wrong and causes missed correspondence.")             
-     
-     
     county_name             = models.CharField(max_length=150,  blank=True, default="")
     active                  = models.CharField(max_length=2,  blank=True, default="")
     deliverable             = models.CharField(max_length=2,  blank=True, default="")
@@ -150,8 +151,78 @@ class Address(models.Model):
 
     def verify(self):
         """Add Address validation code here."""
-        """Return True for valid and False for invalid"""
-        return True
+        URL = 'https://api.smartystreets.com/street-address/?auth-id={0}&auth-token={1}'.format(
+                settings.SMARTYSTREETS_AUTH_ID,
+                settings.SMARTYSTREETS_SECRET)
+        
+
+    
+
+        addresses = [
+            {
+                'street': self.address_1,
+                'street2': self.address_2,
+                'city': self.city,
+                'state': self.state,
+                'zipCode': self.zip,
+                'candidates': '10',
+            }
+        ]
+        
+        DATA = json.dumps(addresses)
+        
+        request = urllib2.Request(URL, data=DATA)
+        response = None
+        r = {}
+        
+        try:
+            response = urllib2.urlopen(request)
+
+    
+        except urllib2.HTTPError, e:          
+            r = {
+                "code": e.code,
+                "errors":
+                      [
+                        {"description":  e.code },
+                        ]
+                }
+           
+        except urllib2.URLError, e:
+            error = 'URLError = ' + str(e.reason)            
+            r = {
+                "code": 500,
+                "errors":
+                      [
+                        {"description":  error },
+                        ]
+                }
+
+            
+        except httplib.HTTPException, e:
+            error = "HTTPException = %s"  % (str(e))
+            r = {
+                "code": 500,
+                "errors":
+                      [
+                        {"description":  error },
+                        ]
+                }
+
+        except Exception:
+            
+            r = {
+                "code": 500,
+                "errors":
+                      [
+                        {"description":  str(sys.exc_info()[1]) },
+                        ]
+                }
+
+        if response:    
+            r  = json.loads(response.read())
+    
+        return r
 
 
     def save(self, **kwargs):

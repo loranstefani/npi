@@ -12,14 +12,10 @@ from django.contrib.sitemaps import views
 from django.contrib import admin
 admin.autodiscover()
 
-
-
 sitemaps = {
   'npi':    NPISitemap,
   'handle': HandleSitemap,
 }
-
-
 
 urlpatterns = patterns('',
     # Examples:
@@ -59,8 +55,7 @@ urlpatterns = patterns('',
     url(r'^sitemap\.xml$', views.index, {'sitemaps': sitemaps}),
     url(r'^sitemap-(?P<section>.+)\.xml$', views.sitemap, {'sitemaps': sitemaps}),
     
-    
-    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+
     
     
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

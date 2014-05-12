@@ -16,7 +16,7 @@ from ..addresses.models import Address
 from ..licenses.models import License
 from ..taxonomy.models import TaxonomyCode
 from ..specialties.models import SpecialtyCode
-import sys
+import sys, json
 from forms import *
 from ..addresses.forms import *
 from utils import get_enumeration_user_manages_or_404
@@ -877,6 +877,7 @@ def stop_managing_enumeration(request, enumeration_id):
     return HttpResponseRedirect(reverse('home',))
 
 
+
 @login_required
 @reversion.create_revision()
 def select_address_type(request, address_purpose, enumeration_id):
@@ -973,28 +974,53 @@ def domestic_address(request,  address_id, enumeration_id):
                                             request.user)
     address = Address.objects.get(id=address_id)
     if request.method == 'POST':
-        form = DomesticAddressForm(request.POST, instance=address)
-        if form.is_valid():
-            a = form.save(commit=False)
-            a.last_updated_ip=request.META['REMOTE_ADDR']
-            a.save()
-            reversion.set_user(request.user)
-            reversion.set_comment("Create/Edit Domestic Address")
-            e.status="E"
-            e.save()
-            #based on address_purpose,
+        form = DomesticAddress2Form(request.POST, instance=address)
 
+        if form.is_valid():
+            
+            #Get the fields and ensure they validate.
+            a               = form.save(commit=False)
+            a.city          =  form.cleaned_data.get("city", "")
+            a.address_1     =  form.cleaned_data.get("address_1", "")
+            a.address_2     =  form.cleaned_data.get("address_2", "")
+            a.state         =  form.cleaned_data.get("state", "")
+            a.zip           =  form.cleaned_data.get("zip", "")
+            
+            #hit the smartystreets api
+            verify          = a.verify()
+            
+            if type({}) == type(verify):
+                print "Connectivity or auth error"
+                #Accept addesss anyway  - Verificain is turned off.
+                a = form.save(commit=False)
+                a.last_updated_ip=request.META['REMOTE_ADDR']
+                a.save()
+                reversion.set_user(request.user)
+                reversion.set_comment("Create/Edit Domestic Address")
+                e.status="E"
+                e.save()
+            
+            else:
+                #we got a response from the address service.
+                
+
+                print json.dumps(verify, indent=4)
+                
+                
+                        
+            
+            
             return HttpResponseRedirect(reverse('edit_enumeration',
                                     args=(enumeration_id, )))
         else:
             #The form is invalid
              messages.error(request,_("Please correct the errors in the form."))
              context = {'form': form,'name':name,}
-             return render(request, 'generic/bootstrapform.html', context)
+             return render(request, 'live-address.html', context)
              
     #this is a GET
-    context= {'name':name, 'form': DomesticAddressForm(instance=address)}
-    return render(request, 'generic/bootstrapform.html', context)
+    context= {'name':name, 'form': DomesticAddress2Form(instance=address)}
+    return render(request, 'live-address.html', context)
 
 
 
