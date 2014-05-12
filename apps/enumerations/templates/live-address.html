@@ -36,7 +36,7 @@
     <div class="col-lg-8">
       {% include "include/messages.html" %}
       <script src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/2.4/jquery.liveaddress.js"></script>
-        <script> jQuery.LiveAddress({ key: "3680695684526884811", debug: true }); </script>
+        <script> jQuery.LiveAddress({ key: "{{SMARTY_STREETS_HTML_SECRET}}", debug: true }); </script>
         
         
       <form class="well" method="post" action="" enctype="multipart/form-data">
