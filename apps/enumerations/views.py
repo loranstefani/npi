@@ -1005,10 +1005,14 @@ def domestic_address(request,  address_id, enumeration_id):
                 
 
                 print json.dumps(verify, indent=4)
+                a = form.save(commit=False)
+                a.last_updated_ip=request.META['REMOTE_ADDR']
+                a.save()
+                reversion.set_user(request.user)
+                reversion.set_comment("Create/Edit Domestic Address")
+                e.status="E"
+                e.save()
                 
-                
-                        
-            
             
             return HttpResponseRedirect(reverse('edit_enumeration',
                                     args=(enumeration_id, )))
@@ -1019,7 +1023,9 @@ def domestic_address(request,  address_id, enumeration_id):
              return render(request, 'live-address.html', context)
              
     #this is a GET
-    context= {'name':name, 'form': DomesticAddress2Form(instance=address)}
+    context= {'name':name, 'form': DomesticAddress2Form(instance=address),
+              'SMARTY_STREETS_HTML_SECRET': settings.SMARTY_STREETS_HTML_SECRET
+              }
     return render(request, 'live-address.html', context)
 
 
