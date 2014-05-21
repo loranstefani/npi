@@ -671,7 +671,7 @@ def reactivate(request, id):
         messages.info(request, "This record was not deactivated. Nothing was done.")
     else:
         messages.info(request, "This record was not deactivated. Nothing was done.")
-    return HttpResponseRedirect(reverse('pending_applications'))
+    return HttpResponseRedirect(reverse('report_index'))
     
 
 
@@ -712,7 +712,7 @@ def activate(request, id):
             messages.info(request, "This record was rejected. Activation is not possible.")
         
         
-    return HttpResponseRedirect(reverse('pending_applications'))
+    return HttpResponseRedirect(reverse('report_index'))
 
 
 
@@ -741,7 +741,7 @@ def reject(request, id):
         messages.success(request, "This record has been successfully been rejected.")
     else:
         messages.info(request, "This record was not pending so nothing was done. The record was not rejected.")
-    return HttpResponseRedirect(reverse('pending_applications'))
+    return HttpResponseRedirect(reverse('report_index'))
 
 
 
@@ -816,7 +816,7 @@ def replace(request, id):
     else:
         messages.info(request, "This record has never been active so a replacement is not allowed.")
 
-    return HttpResponseRedirect(reverse('pending_applications'))
+    return HttpResponseRedirect(reverse('report_index'))
 
 
 

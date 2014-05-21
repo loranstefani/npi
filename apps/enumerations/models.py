@@ -245,8 +245,6 @@ class Enumeration(models.Model):
     parent_organization_ein     = models.CharField(max_length=10, default="", blank=True)
     
     #Profile Enhancements
-    custom_profile_url         = models.CharField(max_length=100,   blank=True, default="",
-                                                  db_index=True)
     website                    = models.CharField(max_length=200,   blank=True, default="")
     gravatar_email             = models.EmailField(max_length=200,   blank=True, default="",
                                     help_text="Add an avatar image to your public profile by provding an email registered with Gravatar.com. This email will not be public.")

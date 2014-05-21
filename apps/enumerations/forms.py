@@ -370,12 +370,6 @@ class AuthorizedOfficialForm(forms.ModelForm):
 
 
 
-
-
-
-
-
-
 class PrimaryTaxonomyForm(forms.ModelForm):
 
     def __init__(self, *args,**kwargs):
@@ -433,9 +427,9 @@ class OtherTaxonomyForm(forms.ModelForm):
 class EnumerationEnhancementForm(forms.ModelForm):
     class Meta:
         model = Enumeration
-        fields = ('handle','custom_profile_url', 'website', 'gravatar_email',
-                  'facebook_handle','twitter_handle', 'driving_directions', 'bio_headline',
-                  'background_image',)
+        fields = ('handle', 'website', 'gravatar_email',
+                  'facebook_handle','twitter_handle',
+                  'driving_directions', 'bio_headline',)
     required_css_class = 'required'
     
 
