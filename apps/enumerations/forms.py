@@ -350,7 +350,7 @@ class AuthorizedOfficialForm(forms.ModelForm):
 
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
-        super(ContactPersonForm,self).__init__(*args,**kwargs)
+        super(AuthorizedOfficialForm,self).__init__(*args,**kwargs)
         self.fields['authorized_official_first_name'].required = True
         self.fields['authorized_official_last_name'].required = True
 
