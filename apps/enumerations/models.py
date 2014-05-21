@@ -35,6 +35,7 @@ EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
                   )
 
 
+CONTACT_METHOD_CHOICES = (("E","Email"),("M","Mail"))
 
 ERROR_CHOICES = ( ('ADDRESS','Address'),
                   ('SSN-ALREADY-ASSIGNED','Another record with SSN was assigned'),
@@ -353,7 +354,7 @@ class Enumeration(models.Model):
                                            help_text="Format: YYYY-MM-DD")
     
     date_of_death          = models.DateField(blank=True, null=True,
-                                           help_text="Format: YYYY-MM-DD")
+                                   help_text="Format: YYYY-MM-DD")
     
     gender      = models.CharField(max_length=2,  blank=True, default="",
                         verbose_name = "Sex", choices = GENDER_CHOICES )
@@ -391,7 +392,22 @@ class Enumeration(models.Model):
     negative_action       = models.BooleanField(default=False,
                                  verbose_name="Negative Action on file with HRSA")
     
-    #Deactivation information ---------------------------
+    #End PII/Sensitive
+    
+    # Death Information (When Appliciable) ------------------------------
+    deceased_in_dmf             = models.BooleanField(blank=True)
+    deceased_notice_day_sent   = models.DateField(blank=True, null=True,
+                                           help_text="Format: YYYY-MM-DD")
+    deceased_notes            = models.TextField(max_length=1000, blank=True, default="")
+    
+    # Contract Methods
+    contact_method         = models.CharField(max_length=1,
+                                    choices=CONTACT_METHOD_CHOICES,
+                                    default="E", blank=True)
+    
+    
+    
+    # Deactivation information ---------------------------
     deactivation_reason_code  = models.CharField(max_length=2,
                                     choices=DECACTIVAED_REASON_CHOICES,
                                     default="", blank=True)
