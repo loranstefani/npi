@@ -350,7 +350,7 @@ class AuthorizedOfficialForm(forms.ModelForm):
 
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
-        super(ContactPersonForm,self).__init__(*args,**kwargs)
+        super(AuthorizedOfficialForm,self).__init__(*args,**kwargs)
         self.fields['authorized_official_first_name'].required = True
         self.fields['authorized_official_last_name'].required = True
 
@@ -367,12 +367,6 @@ class AuthorizedOfficialForm(forms.ModelForm):
 
 
     required_css_class = 'required'
-
-
-
-
-
-
 
 
 
@@ -433,9 +427,9 @@ class OtherTaxonomyForm(forms.ModelForm):
 class EnumerationEnhancementForm(forms.ModelForm):
     class Meta:
         model = Enumeration
-        fields = ('handle','custom_profile_url', 'website', 'gravatar_email',
-                  'facebook_handle','twitter_handle', 'driving_directions', 'bio_headline',
-                  'background_image',)
+        fields = ('handle', 'website', 'gravatar_email',
+                  'facebook_handle','twitter_handle',
+                  'driving_directions', 'bio_headline',)
     required_css_class = 'required'
     
 
