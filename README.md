@@ -62,6 +62,22 @@ Run the development server on http://127.0.0.1:8000.
 Point your browser to http://127.0.0.1:8000 to see the main page.
 
 
+Installing Antivirus for File Uploads
+=====================================
+
+This is not rewuired for development, but should be used in production.
+
+Install ClamAV and Daemon
+
+
+    sudo apt-get install clamav-daemon
+    pip install pyclamd
+    
+Turn on Anti-virus in Django `settings_local.py`.
+
+
+    ANTI_VIRUS = True
+
 Other Important Notes:
 ======================
 
