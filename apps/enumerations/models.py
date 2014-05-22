@@ -395,12 +395,12 @@ class Enumeration(models.Model):
     #End PII/Sensitive
     
     # Death Information (When Appliciable) ------------------------------
-    deceased_in_dmf             = models.BooleanField(blank=True)
-    deceased_notice_day_sent   = models.DateField(blank=True, null=True,
+    deceased_in_dmf             = models.BooleanField(blank=True, default=False)
+    deceased_notice_day_sent    = models.DateField(blank=True, null=True,
                                            help_text="Format: YYYY-MM-DD")
-    deceased_notes            = models.TextField(max_length=1000, blank=True, default="")
+    deceased_notes              = models.TextField(max_length=1000, blank=True, default="")
     
-    # Contract Methods
+    # Contact Method
     contact_method         = models.CharField(max_length=1,
                                     choices=CONTACT_METHOD_CHOICES,
                                     default="E", blank=True)

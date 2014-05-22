@@ -37,10 +37,10 @@ urlpatterns = patterns('',
     url(r'^enumerations/',  include('apps.enumerations.urls')),
     url(r'^licenses/',      include('apps.licenses.urls')),
     url(r'^direct/',        include('apps.direct.urls')),
-    
     url(r'^surrogates/',    include('apps.surrogates.urls')),
     url(r'^identifiers/',   include('apps.identifiers.urls')),
-    url(r'^reports/',        include('apps.reports.urls')),
+    url(r'^reports/',       include('apps.reports.urls')),
+    url(r'^dmf/',           include('apps.dmf.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
     
@@ -50,7 +50,6 @@ urlpatterns = patterns('',
     
     url(r'^p/(?P<handle>\S+)/$', display_enumeration_profile_handle,
                         name="display_enumeration_profile_handle"),
-    
     
     url(r'^sitemap\.xml$', views.index, {'sitemaps': sitemaps}),
     url(r'^sitemap-(?P<section>.+)\.xml$', views.sitemap, {'sitemaps': sitemaps}),

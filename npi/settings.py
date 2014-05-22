@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'apps.downloads',
     'apps.statistics',
     'apps.reports',
+    'apps.dmf',
     'apps.api',
     
     )
@@ -191,6 +192,9 @@ LUHN_PREFIX ="80840"
 VERIFY_LUHN_AND_UNIQUE_ENUMERATION = False
 GATEKEEPER = True
 AUTO_ENUMERATION_USERNAME = "system"
+
+ANTI_VIRUS = False
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
