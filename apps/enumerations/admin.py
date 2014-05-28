@@ -34,8 +34,6 @@ class EnumerationAdmin(EnumerationVersionAdmin, EnumerationAJAXAdmin):
     pass
  
 admin.site.register(Enumeration, EnumerationAdmin)
-#patch_admin(Enumeration)
-
 
 
 
@@ -48,7 +46,8 @@ admin.site.register(GateKeeperError, GateKeeperErrorAJAXAdmin)
 
 
 class EventAJAXAdmin(AjaxSelectAdmin):
-    list_display = ('enumeration', 'event_type','note', 'added',)
+    list_display = ('enumeration', 'event_type','status', 'notification_sent',
+                    'added',)
     search_fields = ('event_type',)
     form = make_ajax_form(Event, {'enumeration': 'enumeration',})
  

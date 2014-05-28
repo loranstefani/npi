@@ -29,10 +29,20 @@ EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
                   ('FINAL-ACTION','Final Action'),
                   ('ACTIVATION','Activation'),
                   ('REJECTION','Rejection'),
-                  ('DEACTIVATION','De-activation'),
+                  ('DEACTIVATION-DECEASED','De-activation Decesaed'),
+                  ("DEACTIVATION-BUSINESS_DISOLVED", "De-activation Business Dissolved"),
+                  ("DEACTIVATION_FRAUD", "De-activation Fraud"),
+                  ("DEACTIVATION_OTHER", "De-activation Other"),
                   ('REACTIVATION','Re-activation'),
                   ('REENUMERATION','Reenumeration'),
+                  ('NAME-CHANGE','Name Change'),
+                  ('SSN-CHANGE','SSN Change'),
                   )
+
+
+EVENT_STATUS_CHOICES= ( ('PENDING','Pending (Notification not Sent'),
+                        ('SENT','Notification Sent'),
+                        ('NOT-SENT','No notification will be sent.'),)
 
 
 CONTACT_METHOD_CHOICES = (("E","Email"),("M","Mail"))
@@ -396,9 +406,16 @@ class Enumeration(models.Model):
     
     # Death Information (When Appliciable) ------------------------------
     deceased_in_dmf             = models.BooleanField(blank=True, default=False)
+    deceased_fuzzy_match        = models.BooleanField(blank=True, default=False,
+                                    help_text = "True when SSN matches but name DOB does not.")
     deceased_notice_day_sent    = models.DateField(blank=True, null=True,
                                            help_text="Format: YYYY-MM-DD")
     deceased_notes              = models.TextField(max_length=1000, blank=True, default="")
+    dmf_incorrect               = models.BooleanField(blank=True, default=False,
+                                    help_text = "DMF appears to be incorrect. Individual is not actually deceased.")
+    
+    
+    
     
     # Contact Method
     contact_method         = models.CharField(max_length=1,
@@ -954,12 +971,32 @@ class Event(models.Model):
     enumeration = models.ForeignKey(Enumeration, db_index=True)
     event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20,
                                    db_index=True)
-    added       = models.DateField()#auto_now_add=True
-    note        = models.TextField(max_length=1024, blank=True, default="")
+    status      =  models.CharField(choices = EVENT_STATUS_CHOICES, max_length=20)
+    subject                 = models.CharField(max_length=200, default="", blank=True)
+    body                    = models.TextField(max_length=2048, default="", blank=True)
+    notify_contact_person  = models.BooleanField(default=False, blank=True,
+                        help_text= "If checked, the contact person will receive a notification.")
+    send_now   = models.BooleanField(default=False, blank=True,
+                        help_text= "If checked, the notification will be sent/resent to contact person.")
+    notification_sent   = models.BooleanField(default=False, blank=True,
+                        help_text= "Notification Sent")
+    added                   = models.DateField()#auto_now_add=True
+    updated                 = models.DateField(auto_now=True)
+    note                    = models.TextField(max_length=1024, blank=True, default="")
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.event_type, self.added)
     
     def save(self, commit=True, **kwargs):
+        if self.send_now or (self.notification_sent==False and self.notify_contact_person==True):
+            #Send notification
+            print "Send notice"
+            
+            #Flag message as sent.
+            #reset out send now flag.
+            self.send_now = False
+            
+        
+        
         if not self.added:
             self.added= datetime.date.today()
         super(Event, self).save(**kwargs)
@@ -970,8 +1007,13 @@ class GateKeeperError(models.Model):
     error_type  = models.CharField(choices = ERROR_CHOICES,
                                    max_length=20,
                                    db_index=True)
+    
+    error_critical  = models.BooleanField(default=False, blank=True,
+                        help_text= "If checked, the Enumeration cannot be submitted for enumeration.")
+    
     added       = models.DateField(auto_now_add=True,
                                    db_index=True,)
+    
     note        = models.TextField(max_length=1024, blank=True,
                                    default="", null=True)
     def __unicode__(self):
