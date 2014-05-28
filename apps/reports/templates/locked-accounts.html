@@ -49,6 +49,7 @@
   </thead>
   
   {% for u in users %}
+   {% if u.username != "system"%}
    <tr>
     <td>{{ u.last_name }}, {{u.first_name}}</td>
     <td>{{u.username}}</td>
@@ -56,7 +57,7 @@
     <td>{{u.last_login}}</td>
     <td>{{u.date_joined}}</td>
     <td> <a href="/reports/unlock-account/{{u.id}}">Unlock</a></td>
-    
+    {% endif %}
   </tr>
   {% endfor %}
   

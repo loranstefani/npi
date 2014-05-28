@@ -57,15 +57,17 @@
 
        <a href=/profile/id/{{e.id}}>View Profile</a>|
        <a target=_blank href=/admin/enumerations/enumeration/{{e.id}}>Admin Edit</a>|
-       <a href=/enumerations/replace/{{e.id}}>Replace</a>|
+       <a href=/enumerations/flag-for-fraud/{{e.id}}>Flag for Fraud</a>|
+       <a href=/enumerations/replace/{{e.id}}>Replace (Re-enumerate)</a>|
        <a href="/enumeration/manage/{{e.id}}">Manage</a>|
+       <a href="/reports/rescan-for-errors/{{e.id}}">Rescan for Errors</a>|
        <a href="/reports/view-events/{{e.id}}">View Events</a>|
       
       {% if e.status == "P" %}
       <a href="/reports/view-errors/{{e.id}}">View Errors</a>|
-       <a href="/reports/rescan-for-errors/{{e.id}}">Rescan for Errors</a>|
        <a href="/enumerations/activate/{{e.id}}">Activate</a>|
       <a  href="/enumerations/reject/{{e.id}}">Reject</a>
+      
       
       {% elif e.status == "E" %}
        <a  href="/enumerations/reject/{{e.id}}">Reject</a>
