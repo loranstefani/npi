@@ -96,13 +96,8 @@
     <td>{{enumeration.enumeration_type}} / {{enumeration.number|default:"Unassigned"}} / {{enumeration.get_status_display}}</td>
     <td>
        <a href=/p/{{enumeration.handle}} target="_blank">View Public Profile</a>|
-       <a href="/enumerations/flag-for-deactivation/{{enumeration.id}}">Flag for Deactivation</a> |
-       <a href="/enumerations/flag-for-fraud/{{enumeration.id}}">Flag for Fraud</a>
-    {% if user.is_staff %}
-    |<a href="/enumerations/reactivate/{{enumeration.id}}">Reactivate</a>|
-    <a href="/enumerations/replace/{{enumeration.id}}">Replace Enumeration with a New Number</a>
-    {% endif %}
-    
+       <a href="/enumerations/flag-for-deactivation/{{enumeration.id}}">Request Deactivation</a>
+       
     </td>
   </tr>
 

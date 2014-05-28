@@ -751,6 +751,49 @@ def reject(request, id):
 def deactivate(request, id):
     name = _("Deactivate")
     e = get_object_or_404(Enumeration, id=id)
+    
+    #If status is already deactivated then redirect.
+    if e.status == "D":
+        messages.info(request, "This record was not deactive so nothing was done. The record was not rejected.")
+        return HttpResponseRedirect(reverse('report_index'))
+    
+    if request.method == 'POST':
+        form = DeactivationForm(request.POST, instance=e)
+        if form.is_valid():
+            e = form.save(commit=False)
+            e.last_updated_ip=request.META['REMOTE_ADDR']
+            e.status="D"
+            e.deactivation_date = datetime.date.today()
+            e.save()
+            msg = "Enumeration %s has been deactivated." % (e.number)
+            Event.objects.create(enumeration=e, event_type="DEACTIVATION", note= msg)
+            reversion.set_user(request.user)
+            comment = "Deactivation of %s" % (e.number)
+            reversion.set_comment(comment)
+            messages.success(request, msg)
+            return HttpResponseRedirect(reverse('report_index'))
+        else:
+            #The form is invalid
+             messages.error(request,_("Please correct the errors in the form."))
+             context = {'form': form,'name':name,}
+             return render(request, 'generic/bootstrapform.html', context)
+    #this is a GET
+    context= {'name':name,
+              'form': DeactivationForm(instance=e)}
+    return render(request, 'generic/bootstrapform.html', context)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     if e.status != "D":
         e.status = "D"
         e.last_updated_ip=request.META['REMOTE_ADDR']
@@ -808,7 +851,10 @@ def replace(request, id):
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.save()
         msg = "A new enumeration number %s was assigned." % (e.number)
+        
+        #Create an event
         Event.objects.create(enumeration=e, event_type="REENUMERATION", note= msg)
+        
         reversion.set_user(request.user)
         rmsg = "Replacement: %s", (msg)
         reversion.set_comment(rmsg)

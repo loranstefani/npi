@@ -167,6 +167,19 @@ class DeactivateEnumerationForm(forms.ModelForm):
 
 
 
+
+class DeactivationForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        """Override the form's init"""
+        super(DeactivationForm,self).__init__(*args,**kwargs)
+        self.fields['deactivation_reason_code'].required = True
+    class Meta:
+        model = Enumeration
+        fields = ('deactivation_reason_code','deactivated_details',)
+    required_css_class = 'required'
+
+
+
 class FraudAlertForm(forms.ModelForm):
     def __init__(self, *args,**kwargs):
         """Override the form's init"""
