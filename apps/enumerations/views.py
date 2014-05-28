@@ -878,10 +878,6 @@ def edit_enumeration(request, id):
     return render(request, 'edit.html', context)
 
 
-
-
-
-
 @login_required
 @reversion.create_revision()
 def edit_enhanced_enumeration(request, id):

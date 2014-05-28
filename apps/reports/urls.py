@@ -11,7 +11,6 @@ urlpatterns = patterns('',
                 enumerations_stats_by_state,
                 name = "enumeration_stats_by_state"),
 
-
     url(r'search/$',
                 reports_search,
                 name = "reports_search"),
@@ -24,14 +23,13 @@ urlpatterns = patterns('',
                 event_totals,
                 name = "event_totals"),
 
-
     url(r'fraud-alerts$', fraud_alerts, name = "reports_fraud_alerts"),
 
-
-    url(r'taxonomy-by-enumeration-type$', taxonomy_by_enumeration_type, name = "taxonomy_by_enumeration_type"),
-
+    url(r'taxonomy-by-enumeration-type$', taxonomy_by_enumeration_type,
+        name = "taxonomy_by_enumeration_type"),
 
     url(r'locked-accounts$', locked_accounts, name = "reports_locked_accounts"),
+
     url(r'unlock-account/(?P<id>\S+)$', unlock_account, name = "reports_unlock_account"),
 
     url(r'enumerated-applications$',
@@ -39,9 +37,11 @@ urlpatterns = patterns('',
                 name = "enumerated_applications"),
     
     url(r'view-errors/(?P<enumeration_id>\S+)$', view_errors, name = "reports_view_errors"),
+
     url(r'view-events/(?P<enumeration_id>\S+)$', view_events, name = "reports_view_events"),
     
-    url(r'rescan-for-errors/(?P<enumeration_id>\S+)$', rescan_for_errors, name = "reports_rescan_for_errors"),
+    url(r'rescan-for-errors/(?P<enumeration_id>\S+)$', rescan_for_errors,
+        name = "reports_rescan_for_errors"),
 
     
     url(r'application-overview$',
@@ -49,7 +49,7 @@ urlpatterns = patterns('',
                 name = "application_overview"),
 
     url(r'staff-member-summary/(?P<username>\S+)/(?P<date_start>\S+)/(?P<date_stop>\S+)',
-        staff_member_summary,
+                staff_member_summary,
                 name = "staff_member_summary"),
 
     url(r'pending-applications$',
