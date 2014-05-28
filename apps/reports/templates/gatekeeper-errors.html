@@ -40,6 +40,7 @@
   <thead>
   <tr>
     <th>Code</th>
+    <th>Critical</th>
     <th>Note</th>
     <th>Date</th>
     <th>Actions</th>
@@ -48,6 +49,7 @@
   {% for g in gatekeeper_errors %}
    <tr>
     <td>{{g.error_type}}</td>
+    <td>{{g.critical_error}}</td>
     <td>{{g.note}}</td>
     <td>{{g.added}}</td>
 

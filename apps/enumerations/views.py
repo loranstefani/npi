@@ -603,11 +603,21 @@ def submit_dialouge(request, id):
                 e.enumerated_by= system_user
                 e.save()
                 send_active_email(e)
-                msg = "The application has been enumerated. The number issued is %s." % (e.number)
+                msg = "The application has been automaticaly enumerated. The number issued is %s." % (e.number)
                 messages.success(request, msg)
                 reversion.set_comment("Submit Enumeration Application - Auto-Enumerated")
+                Event.objects.create(enumeration=e, event_type="ACTIVATION",
+                             note= msg)
                 
             else:
+                for i in errors:
+                    if i.critical_error:
+                        msg = "The application cotains critical errors and cannot be submitted." 
+                        messages.error(request, msg)
+                        return HttpResponseRedirect(reverse('edit_enumeration',
+                                                   args=(e.id,)))
+                
+                #No xcritical errors so we let it pend for the enumerator to figure it out.
                 e.status="P"
                 e.save()
                 send_pending_email(e)
@@ -623,10 +633,24 @@ def submit_dialouge(request, id):
              return render(request, 'generic/bootstrapform.html', context)
              
     #this is a GET
-    
     errors = e.gatekeeper()
+    critical_errors = False
     for i in errors:
-        messages.error(request, i)
+        if i.critical_error:
+            critical_errors = True        
+            msg = "%s (Critical)" % (i.note)
+        else:
+            msg = i.note        
+        messages.error(request, msg)
+    if critical_errors:
+        msg = """The application contains one or more critical errors that are preventing the application submission.
+        Fix these errors, then resubmit you application for enumeration.
+        """
+        messages.error(request, msg)
+        return HttpResponseRedirect(reverse('edit_enumeration',
+                                                   args=(e.id,)))
+
+        
     if not errors:
         messages.success(request, "Congratulations. No validation errors were detectd with this application.")
     else:
@@ -639,9 +663,6 @@ def submit_dialouge(request, id):
     context= {'name':name,
               'form': SubmitApplicationForm(instance=e)}
     return render(request, 'generic/bootstrapform.html', context)
-
-
-
 
 
 @login_required
@@ -661,7 +682,7 @@ def reactivate(request, id):
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
         e.save()
-        msg = "This record has been reactivated."
+        msg = "This record has been reactivated by %s" % (request.user)
         Event.objects.create(enumeration=e, event_type="REACTIVATION",
                              note= msg)
         reversion.set_user(request.user)
@@ -695,7 +716,7 @@ def activate(request, id):
             e.last_updated_ip=request.META['REMOTE_ADDR']
             e.enumerated_by = request.user
             e.save()
-            msg = "This record has been activated."
+            msg = "This record has been manually activated by %s." % (request.user)
             Event.objects.create(enumeration=e, event_type="ACTIVATION",
                                  note= msg)
             reversion.set_user(request.user)
@@ -733,7 +754,7 @@ def reject(request, id):
         e.last_updated_ip=request.META['REMOTE_ADDR']
         e.enumerated_by = request.user
         e.save()
-        msg = "This record has been rejected."
+        msg = "This record has been rejected by %s" % (request.user)
         Event.objects.create(enumeration=e, event_type="REJECTION", note= msg)
         reversion.set_user(request.user)
         comment = "Application. Rejected"
@@ -765,7 +786,7 @@ def deactivate(request, id):
             e.status="D"
             e.deactivation_date = datetime.date.today()
             e.save()
-            msg = "Enumeration %s has been deactivated." % (e.number)
+            msg = "Enumeration %s has been deactivated by %s." % (e.number, request.user)
             Event.objects.create(enumeration=e, event_type="DEACTIVATION", note= msg)
             reversion.set_user(request.user)
             comment = "Deactivation of %s" % (e.number)
@@ -784,34 +805,6 @@ def deactivate(request, id):
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    if e.status != "D":
-        e.status = "D"
-        e.last_updated_ip=request.META['REMOTE_ADDR']
-        e.enumerated_by = request.user
-        e.save()
-        msg = "This record has been deactivated."
-        Event.objects.create(enumeration=e, event_type="DEACTIVATION", note= msg)
-        reversion.set_user(request.user)
-        comment = "Deactivation"
-        reversion.set_comment(comment)
-        messages.success(request, msg)
-    else:
-        messages.info(request, "This record was not deactive so nothing was done. The record was not rejected.")
-    return HttpResponseRedirect(reverse('report_index'))
-
-
-
-
 @login_required
 @staff_member_required
 @reversion.create_revision()
@@ -980,8 +973,6 @@ def select_address_type(request, address_purpose, enumeration_id):
     context= {'name':name,
               'form': SelectAddressPurposeForm(address_purpose=address_purpose)}
     return render(request, 'generic/bootstrapform.html', context)
-
-
 
 
 

@@ -651,7 +651,7 @@ class Enumeration(models.Model):
         return True  
         
     def gatekeeper(self):
-        
+        """Return a list of errors or an empty list"""
 
         #create an empty message list
         msglist = []
@@ -671,15 +671,17 @@ class Enumeration(models.Model):
             e =GateKeeperError.objects.create(
                 enumeration =self,
                 error_type="SSN-ALREADY-ASSIGNED",
+                error_critical = True,
                 note= "There is an issue with your SSN. Please contact the help desk.")
-            msglist.append(e.note)
+            msglist.append(e)
             
         if self.enumeration_type in ("OEID", "NPI-1") and not self.ssn and not self.itin:
             e =GateKeeperError.objects.create(
                     enumeration =self,
+                    critical_error = True,
                     error_type="SSN-INVALID",
                     note= "No SSN or ITIN supplied.")
-            msglist.append(e.note)
+            msglist.append(e)
             
         #Check some things for individuals
         if self.enumeration_type in ("OEID", "NPI-1"):
@@ -688,49 +690,55 @@ class Enumeration(models.Model):
             if not self.date_of_birth:
                 e =GateKeeperError.objects.create(
                     enumeration =self,
+                    critical_error = True,
                     error_type="FIELD",
                     note= "No date of birth supplied.")
-                msglist.append(e.note)
+                msglist.append(e)
             
             
             #If no name
             if not self.first_name:
                 e =GateKeeperError.objects.create(
                     enumeration =self,
+                    critical_error = True,
                     error_type="FIELD",
                     note= "No first name was supplied.")
-                msglist.append(e.note)
+                msglist.append(e)
                 
                 
             if not self.last_name:
                 e =GateKeeperError.objects.create(
                     enumeration =self,
+                    critical_error = True,
                     error_type="FIELD",
                     note= "No last name was supplied.")
-                msglist.append(e.note)
+                msglist.append(e)
       
                   
             if not self.ssn_verify():
                 e = GateKeeperError.objects.create(
                     enumeration =self,
+                    critical_error = True,
                     error_type="SSN-INVALID",
                     note= "The SSN could not be verified.")
-                msglist.append(e.note)
+                msglist.append(e)
             
         if self.enumeration_type in ("HPID", "NPI-2"):
             if not self.ein:
                 e =GateKeeperError.objects.create(
                     enumeration =self,
                     error_type="FIELD",
+                    critical_error = True,
                     note= "No EIN was supplied.")
-                msglist.append(e.note)
+                msglist.append(e)
             
             if not self.organization_name:
                 e =GateKeeperError.objects.create(
                     enumeration =self,
                     error_type="FIELD",
+                    critical_error = True,
                     note= "No organization name supplied.")
-                msglist.append(e.note)
+                msglist.append(e)
                 
         
         if not self.contact_person_first_name or not self.contact_person_last_name:
@@ -738,7 +746,7 @@ class Enumeration(models.Model):
                     enumeration =self,
                     error_type="FIELD",
                     note= "No contact person was supplied.")
-            msglist.append(e.note)
+            msglist.append(e)
             
     
     
@@ -747,8 +755,9 @@ class Enumeration(models.Model):
             e =GateKeeperError.objects.create(
                     enumeration =self,
                     error_type="ADDRESS",
+                    critical_error = True,
                     note= "No mailing address was supplied.")
-            msglist.append(e.note)
+            msglist.append(e)
         
         else:
             #there is an address but does it validate?
@@ -757,14 +766,15 @@ class Enumeration(models.Model):
                     enumeration =self,
                     error_type="ADDRESS",
                     note= "The mailing address could not be verified.")
-                msglist.append(e.note)
+                msglist.append(e)
             
         if not self.location_address:
             e =GateKeeperError.objects.create(
                     enumeration =self,
                     error_type="ADDRESS",
+                    critical_error = True,
                     note= "No practice location address was supplied.")
-            msglist.append(e.note)
+            msglist.append(e)
         else:
             #there is an address but does it validate?
             if not self.location_address.verify():
@@ -772,19 +782,17 @@ class Enumeration(models.Model):
                     enumeration =self,
                     error_type="ADDRESS",
                     note= "The practice location address could not be verified.")
-                msglist.append(e.note)
+                msglist.append(e)
             
 
         if not self.taxonomy:
             e =GateKeeperError.objects.create(
                     enumeration =self,
                     error_type="TAXONOMY",
+                    critical_error = True,
                     note= "No primary taxonomy was provided.")
-            msglist.append(e.note) 
+            msglist.append(e) 
     
-            
-
-        
         self.save()
         return msglist
 
@@ -1008,7 +1016,7 @@ class GateKeeperError(models.Model):
                                    max_length=20,
                                    db_index=True)
     
-    error_critical  = models.BooleanField(default=False, blank=True,
+    critical_error  = models.BooleanField(default=False, blank=True,
                         help_text= "If checked, the Enumeration cannot be submitted for enumeration.")
     
     added       = models.DateField(auto_now_add=True,
