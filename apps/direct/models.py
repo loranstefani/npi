@@ -9,6 +9,8 @@ class DirectAddress(models.Model):
     dns           = models.CharField(max_length=150,  blank=True, default="",
                                     editable=False, db_index=True)
     status      = models.CharField(max_length=10, blank=True,default ="")
+    public      = models.BooleanField(default=True,
+                    help_text="When checked this address will be public (discoverable by others)")
     verified    = models.BooleanField(default=False, editable=False)
     added       = models.DateField(auto_now_add=True)
     updated     = models.DateTimeField(auto_now=True)

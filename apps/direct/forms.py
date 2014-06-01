@@ -5,7 +5,7 @@ class CreateDirectAddressForm(forms.ModelForm):
     
     class Meta:
         model =  DirectAddress
-        fields = ('email', 'organization',)
+        fields = ('email', 'public', 'organization',)
     
    
     required_css_class = 'required'

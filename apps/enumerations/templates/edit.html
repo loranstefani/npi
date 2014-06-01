@@ -499,6 +499,7 @@
   <thead>
   <tr>
     <th>Address</th>
+    <th>Public</th>
     <th>Organization</th>
     <th>Actions</th>
   </tr>
@@ -507,8 +508,9 @@
 
   {% for a in enumeration.direct_addresses.all %}
   <tr>
-    <td>{{a.email}} </td>
-    <td>{{a.organization }} </td>
+    <td>{{ a.email }} </td>
+    <td>{{ a.public }} </td>
+    <td>{{ a.organization }} </td>
     <td>
          <a href=/direct/delete/{{a.id}}/{{enumeration.id}}>Delete</a>
     </td>
@@ -520,8 +522,6 @@
 
     </div>
     </div>
-
-
 
  <div class="row">
     <div class="col-lg-12">
