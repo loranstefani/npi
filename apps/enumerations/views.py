@@ -644,7 +644,7 @@ def submit_dialouge(request, id):
         messages.error(request, msg)
     if critical_errors:
         msg = """The application contains one or more critical errors that are preventing the application submission.
-        Fix these errors, then resubmit you application for enumeration.
+        Fix these errors, then resubmit your application for enumeration.
         """
         messages.error(request, msg)
         return HttpResponseRedirect(reverse('edit_enumeration',

@@ -29,6 +29,7 @@ EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
                   ('FINAL-ACTION','Final Action'),
                   ('ACTIVATION','Activation'),
                   ('REJECTION','Rejection'),
+                  ('FUZZY-DECEASED','Fuzzy Deceased'),
                   ('DEACTIVATION-DECEASED','De-activation Decesaed'),
                   ("DEACTIVATION-BUSINESS_DISOLVED", "De-activation Business Dissolved"),
                   ("DEACTIVATION_FRAUD", "De-activation Fraud"),
@@ -980,17 +981,25 @@ class Event(models.Model):
     event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20,
                                    db_index=True)
     status      =  models.CharField(choices = EVENT_STATUS_CHOICES, max_length=20)
-    subject                 = models.CharField(max_length=200, default="", blank=True)
-    body                    = models.TextField(max_length=2048, default="", blank=True)
-    notify_contact_person  = models.BooleanField(default=False, blank=True,
-                        help_text= "If checked, the contact person will receive a notification.")
-    send_now   = models.BooleanField(default=False, blank=True,
+    subject     = models.CharField(max_length=200, default="", blank=True)
+    
+    body        = models.TextField(max_length=2048, default="", blank=True)
+    
+    notify_contact_person   = models.BooleanField(default=False, blank=True,
+                                help_text= "If checked, the contact person will receive a notification.")
+    
+    send_now   = models.BooleanField(default=True, blank=True,
                         help_text= "If checked, the notification will be sent/resent to contact person.")
-    notification_sent   = models.BooleanField(default=False, blank=True,
+    
+    notification_sent       = models.BooleanField(default=False, blank=True,
                         help_text= "Notification Sent")
-    added                   = models.DateField()#auto_now_add=True
-    updated                 = models.DateField(auto_now=True)
     note                    = models.TextField(max_length=1024, blank=True, default="")
+    
+    added                   = models.DateField()#auto_now_add=True
+    
+    updated                 = models.DateField(auto_now=True)
+    
+    
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.event_type, self.added)
     
