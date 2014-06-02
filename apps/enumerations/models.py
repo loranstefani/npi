@@ -5,7 +5,7 @@ from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-import uuid, random, datetime
+import uuid, random, datetime, json
 from utils import valid_uuid
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
@@ -30,7 +30,7 @@ EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
                   ('ACTIVATION','Activation'),
                   ('REJECTION','Rejection'),
                   ('FUZZY-DECEASED','Fuzzy Deceased'),
-                  ('DEACTIVATION-DECEASED','De-activation Decesaed'),
+                  ('DEACTIVATION-DECEASED','De-activation Deceased'),
                   ("DEACTIVATION-BUSINESS_DISOLVED", "De-activation Business Dissolved"),
                   ("DEACTIVATION_FRAUD", "De-activation Fraud"),
                   ("DEACTIVATION_OTHER", "De-activation Other"),
@@ -112,7 +112,7 @@ class Enumeration(models.Model):
     enumeration_type    = models.CharField(max_length=5,
                                     choices=ENUMERATION_TYPE_CHOICES,)
         
-    number              = models.CharField(max_length=10, blank=True, default="",
+    number               = models.CharField(max_length=10, blank=True, default="",
                             #editable=False,
                             db_index=True)
     
@@ -999,9 +999,52 @@ class Event(models.Model):
     
     updated                 = models.DateField(auto_now=True)
     
-    
+
+
+    class Meta:
+        get_latest_by = "id"
+        ordering = ('-updated', '-added')
+        
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.event_type, self.added)
+    
+    
+    def as_json(self):
+        d = {"enumeration_number": self.enumeration.number,
+            "enumeration_type": self.enumeration.enumeration_type,
+            "enumeration_name": self.enumeration.name(),
+            "event_type": self.event_type,          
+            "status" : self.status,
+            "subject" : self.subject,
+            "body" : self.body,
+            "notify_contact_person": self.notify_contact_person, 
+            "send_now": self.send_now,
+            "notification_sent": self.notification_sent,                       
+            "note": self.note,                   
+            "added": str(self.added),                  
+            "updated":str(self.updated)               
+             }
+        return json.dumps(d, indent=4)
+        
+
+    def as_dict(self):
+        d = {"enumeration_number": self.enumeration.number,
+            "enumeration_type": self.enumeration.enumeration_type,
+            "enumeration_name": self.enumeration.name(),
+            "event_type": self.event_type,          
+            "status" : self.status,
+            "subject" : self.subject,
+            "body" : self.body,
+            "notify_contact_person": self.notify_contact_person, 
+            "send_now": self.send_now,
+            "notification_sent": self.notification_sent,                       
+            "note": self.note,                   
+            "added": str(self.added),                  
+            "updated":str(self.updated)               
+             }
+        return d
+        
+        
     
     def save(self, commit=True, **kwargs):
         if self.send_now or (self.notification_sent==False and self.notify_contact_person==True):
