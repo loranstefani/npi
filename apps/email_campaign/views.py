@@ -22,7 +22,7 @@ def sns_email_bounce(request):
         
         try:
             new_body = json.loads(json_body)
-            #load into SNS response into model
+            #load into model
             
             
         except ValueError:
