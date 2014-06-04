@@ -46,7 +46,7 @@ admin.site.register(GateKeeperError, GateKeeperErrorAJAXAdmin)
 
 
 class EventAJAXAdmin(AjaxSelectAdmin):
-    list_display = ('enumeration', 'event_type','status', 'notification_sent',
+    list_display = ('enumeration', 'event_type', 'notification_sent',
                     'added',)
     search_fields = ('event_type',)
     form = make_ajax_form(Event, {'enumeration': 'enumeration',})

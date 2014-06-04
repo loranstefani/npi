@@ -23,7 +23,11 @@ from utils import get_enumeration_user_manages_or_404
 from ..surrogates.models import Surrogate, SurrogateRequestEnumeration, SurrogateRequestEIN
 import reversion
 from baluhn import generate
-from emails import send_pending_email, send_active_email
+from emails import send_event_notification_email
+from notifications import (ACTIVATED_BODY, ACTIVATED_SUBJECT, DEACTIVATED_BODY,
+                           DEACTIVATED_SUBJECT, REACTIVATED_BODY, REACTIVATED_SUBJECT,
+                           RENUMBERED_SUBJECT, RENUMBERED_BODY, REJECTION_BODY,
+                           REJECTION_SUBJECT)
 
 @login_required
 @reversion.create_revision()
@@ -665,6 +669,31 @@ def submit_dialouge(request, id):
     return render(request, 'generic/bootstrapform.html', context)
 
 
+
+
+
+@login_required
+@staff_member_required
+def resend_email(request, event_id):
+    name = _("Resend an Event Notification by Email") 
+    event = get_object_or_404(Event, id=event_id)
+    event.send_email_now = True
+    event.save()
+    messages.success(request, "Thr event notification email was resent.")
+    return HttpResponseRedirect(reverse('report_index'))
+    
+@login_required
+@staff_member_required
+def resend_mail(request, event_id):
+    name = _("Resend an Event Notification by Email") 
+    event = get_object_or_404(Event, id=event_id)
+    event.send_mail_now = True
+    event.save()
+    messages.success(request, "Thr event notification mail was resent.")
+    return HttpResponseRedirect(reverse('report_index'))    
+
+
+
 @login_required
 @staff_member_required
 @reversion.create_revision()
@@ -684,7 +713,10 @@ def reactivate(request, id):
         e.save()
         msg = "This record has been reactivated by %s" % (request.user)
         Event.objects.create(enumeration=e, event_type="REACTIVATION",
-                             note= msg)
+                             note= msg,
+                             details = msg,
+                             body=REACTIVATED_SUBJECT,
+                             subject = REACTIVATED_BODY)
         reversion.set_user(request.user)
         reversion.set_comment(msg)
         messages.success(request, msg)
@@ -718,6 +750,9 @@ def activate(request, id):
             e.save()
             msg = "This record has been manually activated by %s." % (request.user)
             Event.objects.create(enumeration=e, event_type="ACTIVATION",
+                                 details = msg,
+                                 body = ACTIVATED_BODY, 
+                                 subject =ACTIVATED_SUBJECT, 
                                  note= msg)
             reversion.set_user(request.user)
             comment = "Enumerated Application. Number is %s" % (e.number)
@@ -755,9 +790,13 @@ def reject(request, id):
         e.enumerated_by = request.user
         e.save()
         msg = "This record has been rejected by %s" % (request.user)
-        Event.objects.create(enumeration=e, event_type="REJECTION", note= msg)
+        Event.objects.create(enumeration=e, event_type="REJECTION", note= msg,
+                             details=msg,
+                             body = RECJECTION_BODY,
+                             subject = REJECTION_SUBJECT)
+
         reversion.set_user(request.user)
-        comment = "Application. Rejected"
+        comment = "Application rejected"
         reversion.set_comment(comment)
         messages.success(request, "This record has been successfully been rejected.")
     else:
@@ -787,7 +826,9 @@ def deactivate(request, id):
             e.deactivation_date = datetime.date.today()
             e.save()
             msg = "Enumeration %s has been deactivated by %s." % (e.number, request.user)
-            Event.objects.create(enumeration=e, event_type="DEACTIVATION", note= msg)
+            Event.objects.create(enumeration=e, event_type="DEACTIVATION", note= msg,
+                                 details=msg, body = DEACTIVATED_BODY,
+                                 subject = DEACTIVATED_SUBJECT)
             reversion.set_user(request.user)
             comment = "Deactivation of %s" % (e.number)
             reversion.set_comment(comment)
@@ -846,7 +887,9 @@ def replace(request, id):
         msg = "A new enumeration number %s was assigned." % (e.number)
         
         #Create an event
-        Event.objects.create(enumeration=e, event_type="REENUMERATION", note= msg)
+        Event.objects.create(enumeration=e, event_type="REENUMERATION", note= msg,
+                             details = msg, body=RENUMBERED_BODY,
+                             subject = RENUMBERED_SUBJECT)
         
         reversion.set_user(request.user)
         rmsg = "Replacement: %s", (msg)

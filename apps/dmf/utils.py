@@ -7,7 +7,6 @@ from apps.enumerations.models import Enumeration, Event
 from apps.enumerations.notifications import DECEASED_SUBJECT, DECEASED_BODY
 
 
-
 def valid_dmf(f):
     # -1 indicates the file had an error. Defaults to error/
     result = True
@@ -28,7 +27,6 @@ def valid_dmf(f):
          result = False
     f.close()
     return result
-
 
 def process_dmf(f):
     
@@ -61,13 +59,14 @@ def process_dmf(f):
                     
                     #deactivate Enumeration
                     e.status = "D"
-                    note = "%s %s died on %s" % (first_name, last_name, date_death)
+                    note = "%s %s died on %s." % (first_name, last_name, date_death)
                     #Create an event                      
                     Event.objects.create(enumeration=e,
                                         event_type="DEACTIVATED-DECEASED",
                                         note= note,
+                                        details = note,
                                         body =  DECEASED_BODY,
-                                        subject = DECSEAED_SUBJECT
+                                        subject = DECEASED_SUBJECT
                                         )
                     
                 else:
@@ -81,6 +80,7 @@ def process_dmf(f):
                     
                     Event.objects.create(enumeration=e, event_type="FUZZY-DECEASED",
                                             send_now=False, note=note,
+                                            details = note,
                                             body =  DECEASED_BODY,
                                             subject = DECSEAED_SUBJECT)
 
