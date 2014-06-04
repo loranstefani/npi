@@ -17,5 +17,11 @@ urlpatterns = patterns('',
     #CREATE
     url(r'^enumeration/create',
                     api_enumeration_create, name="api_enumeration_create"),
+    
+    
+    url(r'^events/since/(?P<date_start>\S+)',
+                    events_since_date, name="api_events_since_date"),
+
+    
 
     )

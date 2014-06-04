@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'apps.statistics',
     'apps.reports',
     'apps.dmf',
+    'apps.email_campaign',
     'apps.api',
     
     )

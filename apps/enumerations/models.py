@@ -1,11 +1,12 @@
 from django.db import models
 from django.conf import settings
+from django.core.mail import EmailMessage,  EmailMultiAlternatives
 from datetime import date
 from ..taxonomy.models import TaxonomyCode
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-import uuid, random, datetime
+import uuid, random, datetime, json
 from utils import valid_uuid
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
@@ -30,20 +31,15 @@ EVENT_CHOICES = ( ('ADVERSE-EVENT','Adverse Event'),
                   ('ACTIVATION','Activation'),
                   ('REJECTION','Rejection'),
                   ('FUZZY-DECEASED','Fuzzy Deceased'),
-                  ('DEACTIVATION-DECEASED','De-activation Decesaed'),
-                  ("DEACTIVATION-BUSINESS_DISOLVED", "De-activation Business Dissolved"),
-                  ("DEACTIVATION_FRAUD", "De-activation Fraud"),
-                  ("DEACTIVATION_OTHER", "De-activation Other"),
+                  ('DEACTIVATED-DECEASED','De-activation Deceased'),
+                  ("DEACTIVATED-BUSINESS_DISOLVED", "De-activation Business Dissolved"),
+                  ("DEACTIVATED_FRAUD", "De-activation Fraud"),
+                  ("DEACTIVATED_OTHER", "De-activation Other"),
                   ('REACTIVATION','Re-activation'),
                   ('REENUMERATION','Reenumeration'),
                   ('NAME-CHANGE','Name Change'),
                   ('SSN-CHANGE','SSN Change'),
                   )
-
-
-EVENT_STATUS_CHOICES= ( ('PENDING','Pending (Notification not Sent'),
-                        ('SENT','Notification Sent'),
-                        ('NOT-SENT','No notification will be sent.'),)
 
 
 CONTACT_METHOD_CHOICES = (("E","Email"),("M","Mail"))
@@ -111,8 +107,12 @@ class Enumeration(models.Model):
     
     enumeration_type    = models.CharField(max_length=5,
                                     choices=ENUMERATION_TYPE_CHOICES,)
+    
+    contact_method         = models.CharField(max_length=1,
+                                    choices=CONTACT_METHOD_CHOICES,
+                                    default="E", blank=True)
         
-    number              = models.CharField(max_length=10, blank=True, default="",
+    number               = models.CharField(max_length=10, blank=True, default="",
                             #editable=False,
                             db_index=True)
     
@@ -414,16 +414,6 @@ class Enumeration(models.Model):
     deceased_notes              = models.TextField(max_length=1000, blank=True, default="")
     dmf_incorrect               = models.BooleanField(blank=True, default=False,
                                     help_text = "DMF appears to be incorrect. Individual is not actually deceased.")
-    
-    
-    
-    
-    # Contact Method
-    contact_method         = models.CharField(max_length=1,
-                                    choices=CONTACT_METHOD_CHOICES,
-                                    default="E", blank=True)
-    
-    
     
     # Deactivation information ---------------------------
     deactivation_reason_code  = models.CharField(max_length=2,
@@ -980,39 +970,191 @@ class Event(models.Model):
     enumeration = models.ForeignKey(Enumeration, db_index=True)
     event_type  = models.CharField(choices = EVENT_CHOICES, max_length=20,
                                    db_index=True)
-    status      =  models.CharField(choices = EVENT_STATUS_CHOICES, max_length=20)
     subject     = models.CharField(max_length=200, default="", blank=True)
     
     body        = models.TextField(max_length=2048, default="", blank=True)
+    
+    details       = models.TextField(max_length=2048, default="", blank=True)
     
     notify_contact_person   = models.BooleanField(default=False, blank=True,
                                 help_text= "If checked, the contact person will receive a notification.")
     
     send_now   = models.BooleanField(default=True, blank=True,
-                        help_text= "If checked, the notification will be sent/resent to contact person.")
+                        help_text= "If checked, the notification will be sent/resent to contact person via the default contact method.")
+    
+    
+    send_mail_now   = models.BooleanField(default=False, blank=True,
+                        help_text= "If checked, the notification will be sent/resent to contact person by mail.")
+        
+    send_email_now   = models.BooleanField(default=False, blank=True,
+                        help_text= "If checked, the notification will be sent/resent to contact person by email.")
     
     notification_sent       = models.BooleanField(default=False, blank=True,
                         help_text= "Notification Sent")
+    
+    email_sent          = models.BooleanField(default=False, blank=True)
+    mail_sent           = models.BooleanField(default=False, blank=True)
+    
     note                    = models.TextField(max_length=1024, blank=True, default="")
     
     added                   = models.DateField()#auto_now_add=True
     
     updated                 = models.DateField(auto_now=True)
     
-    
+
+
+    class Meta:
+        get_latest_by = "id"
+        ordering = ('-updated', '-added')
+        
     def __unicode__(self):
         return "%s %s %s" % (self.enumeration, self.event_type, self.added)
     
-    def save(self, commit=True, **kwargs):
-        if self.send_now or (self.notification_sent==False and self.notify_contact_person==True):
-            #Send notification
-            print "Send notice"
-            
-            #Flag message as sent.
-            #reset out send now flag.
-            self.send_now = False
-            
+    
+    def as_json(self):
+        d = {"enumeration_number": self.enumeration.number,
+            "enumeration_type": self.enumeration.enumeration_type,
+            "enumeration_name": self.enumeration.name(),
+            "event_type": self.event_type,          
+            "status" : self.status,
+            "subject" : self.subject,
+            "body" : self.body,
+            "details" : self.details,
+            "notify_contact_person": self.notify_contact_person, 
+            "send_now": self.send_now,
+            "notification_sent": self.notification_sent,
+            "mail_sent": self.mail_sent,
+            "email_sent": self.email_sent,  
+            "note": self.note,                   
+            "added": str(self.added),                  
+            "updated":str(self.updated)               
+             }
+        return json.dumps(d, indent=4)
         
+
+    def as_dict(self):
+        d = {"enumeration_number": self.enumeration.number,
+            "enumeration_type": self.enumeration.enumeration_type,
+            "enumeration_name": self.enumeration.name(),
+            "event_type": self.event_type,          
+            "status" : self.status,
+            "subject" : self.subject,
+            "body" : self.body,
+            "details" : self.details,
+            "notify_contact_person": self.notify_contact_person, 
+            "send_now": self.send_now,
+            "notification_sent": self.notification_sent,
+            "mail_sent": self.mail_sent,
+            "email_sent": self.email_sent,  
+            "note": self.note,                   
+            "added": str(self.added),                  
+            "updated":str(self.updated)               
+             }
+        return d
+        
+
+    def send_event_notification_mail(self):
+        sent = False
+        #Add code here to generate PDF and mail labels.
+        out = "Send a mail to %s %s @ %s" % (self.enumeration.contact_person_first_name,
+                                             self.enumeration.contact_person_last_name,
+                                             self.enumeration.mailing_address)
+        print out
+        sent = True
+        return sent
+        
+
+
+    def send_event_notification_email(self):
+        """Send notice by Email"""
+        sent = False
+        if self.enumeration.contact_person_email and self.enumeration.contact_method =="E":
+            """If an email address exists, then send it."""            
+            subject = "[%s] %s" % (settings.ORGANIZATION_NAME,self.subject)    
+            from_email = settings.EMAIL_HOST_USER
+            to = self.enumeration.contact_person_email 
+            headers = {'Reply-To': from_email}
+            
+            html_content = """
+            Hello %s %s
+            
+            <p>
+            %s
+            </p>
+            <h1>Details</h1>
+            <p>
+            %s
+            </p>
+            <p>
+            <p>
+            Sincerely,
+            </p>
+            The NPPES Team @ CMS
+            </p>
+            """ % (self.enumeration.contact_person_first_name,
+                   self.enumeration.contact_person_last_name,
+                   self.body, self.details)
+           
+            text_content="""Hello: %s %s,
+                %s
+                Details
+                =======
+                %s
+                
+                Sincerely,
+                
+                The NPPES Team @ CMS
+                
+            """ % (self.enumeration.contact_person_first_name,
+                   self.enumeration.contact_person_last_name,
+                   self.body, self.details)
+            msg = EmailMultiAlternatives(subject, text_content, from_email,
+                                         [to,settings.INVITE_REQUEST_ADMIN, ])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+            sent = True
+            
+        return sent
+
+
+    
+    def save(self, commit=True, **kwargs):
+        
+        if self.send_now or (self.notification_sent==False and \
+                             self.notify_contact_person==True):
+            #Send notification
+            
+            if self.enumeration.contact_method == "E":    
+                if self.send_event_notification_email()== True:
+                    #Flag message as sent.
+                    self.notification_sent =True
+                    self.email_sent = True
+            
+            elif self.enumeration.contact_method == "M":
+                if self.send_event_notification_mail() == True:
+                    #Flag message as sent.
+                    self.notification_sent =True
+                    self.mail_sent = True
+                
+        #force an email    
+        if self.send_email_now:
+            if self.send_event_notification_email()== True:
+                #Flag message as sent.
+                self.notification_sent =True
+                self.email_sent = True
+            
+        #force a mail 
+        if self.send_mail_now:
+            if self.send_event_notification_mail() == True:
+                #Flag message as sent.
+                self.notification_sent =True
+                self.mail_sent = True
+                
+        
+            #Reset our send now flags.
+            self.send_now       = False
+            self.send_email_now = False
+            self.send_mail_now  = False
         
         if not self.added:
             self.added= datetime.date.today()

@@ -111,4 +111,7 @@ urlpatterns = patterns('',
     url(r'^replace/(?P<id>\S+)', replace, name="enumeration_replace"),
     url(r'^submit-dialouge/(?P<id>\S+)', submit_dialouge, name="enumeration_submit_dialouge"),
 
+    url(r'^events/resend-mail/(?P<event_id>\S+)', resend_mail, name="enumeration_event_resend_mail"),
+    url(r'^events/resend-email/(?P<event_id>\S+)', resend_email, name="enumeration_event_resend_email"),
+
     )

@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^identifiers/',   include('apps.identifiers.urls')),
     url(r'^reports/',       include('apps.reports.urls')),
     url(r'^dmf/',           include('apps.dmf.urls')),
+    url(r'^email-campaign/', include('apps.email_campaign.urls')),
     (r'^admin/lookups/',    include(ajax_select_urls)),
     (r'^admin/',            include(admin.site.urls)),
     
