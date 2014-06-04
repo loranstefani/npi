@@ -4,6 +4,7 @@
 from django.conf import settings
 import datetime
 from apps.enumerations.models import Enumeration, Event
+from apps.enumerations.notifications import DECEASED_SUBJECT, DECEASED_BODY
 
 
 
@@ -64,7 +65,10 @@ def process_dmf(f):
                     #Create an event                      
                     Event.objects.create(enumeration=e,
                                         event_type="DEACTIVATED-DECEASED",
-                                        note= note)
+                                        note= note,
+                                        body =  DECEASED_BODY,
+                                        subject = DECSEAED_SUBJECT
+                                        )
                     
                 else:
                     #The SSN matched but the name did not. This is a fuzzy match
@@ -76,7 +80,9 @@ def process_dmf(f):
                                                                      ssn, date_death)
                     
                     Event.objects.create(enumeration=e, event_type="FUZZY-DECEASED",
-                                             send_now=False, note=note)
+                                            send_now=False, note=note,
+                                            body =  DECEASED_BODY,
+                                            subject = DECSEAED_SUBJECT)
 
             e.date_of_death = datetime.date(int(date_death[4:8]),int(date_death[0:2]),int(date_death[2:4]))
             e.save()
