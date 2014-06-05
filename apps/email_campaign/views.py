@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import re
+from models import Notification
 
 
 
@@ -19,11 +20,14 @@ def sns_email_bounce(request):
         
         print "Headers", http_headers
         print "Body", json_body
+        n = Notification.objects.create(headers=http_headers, body = json_body)
         
         try:
             new_body = json.loads(json_body)
             #load into model
-            
+            print "JSON parsed."
+            n.valid_json=True
+            n.save()
             
         except ValueError:
             return HttpResponse("Not JSON (POST)")
