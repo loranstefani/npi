@@ -581,8 +581,6 @@ def flag_for_deactivation(request, id):
     return render(request, 'generic/bootstrapform.html', context)
 
 
-
-
 @login_required
 @reversion.create_revision()
 def submit_dialouge(request, id):
@@ -606,9 +604,10 @@ def submit_dialouge(request, id):
                 system_user       = User.objects.get(username=settings.AUTO_ENUMERATION_USERNAME)
                 e.enumerated_by= system_user
                 e.save()
-                send_active_email(e)
                 msg = "The application has been automaticaly enumerated. The number issued is %s." % (e.number)
                 messages.success(request, msg)
+                
+                e.save()
                 reversion.set_comment("Submit Enumeration Application - Auto-Enumerated")
                 Event.objects.create(enumeration=e, event_type="ACTIVATION",
                              note= msg)
@@ -651,12 +650,10 @@ def submit_dialouge(request, id):
         Fix these errors, then resubmit your application for enumeration.
         """
         messages.error(request, msg)
-        return HttpResponseRedirect(reverse('edit_enumeration',
-                                                   args=(e.id,)))
+        return HttpResponseRedirect(reverse('edit_enumeration', args=(e.id,)))
 
-        
     if not errors:
-        messages.success(request, "Congratulations. No validation errors were detectd with this application.")
+        messages.success(request, "Congratulations. No validation errors were detected with this application.")
     else:
         msg = """You can <a href="%s">go back attempt to fix these errors</a>
         or continue to submit your application with errors. The enumeration process may be
@@ -712,13 +709,17 @@ def reactivate(request, id):
         e.enumerated_by = request.user
         e.save()
         msg = "This record has been reactivated by %s" % (request.user)
+        
+        
         Event.objects.create(enumeration=e, event_type="REACTIVATION",
                              note= msg,
                              details = msg,
-                             body=REACTIVATED_SUBJECT,
-                             subject = REACTIVATED_BODY)
+                             subject=REACTIVATED_SUBJECT,
+                             body = REACTIVATED_BODY)
         reversion.set_user(request.user)
         reversion.set_comment(msg)
+        
+        
         messages.success(request, msg)
     elif e.status == "A":
         messages.info(request, "This record was not deactivated. Nothing was done.")

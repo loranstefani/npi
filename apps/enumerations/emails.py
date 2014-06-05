@@ -34,6 +34,6 @@ def send_event_notification_email(event):
            event.body
            )
     msg = EmailMultiAlternatives(subject, text_content, from_email,
-                                 [to,settings.INVITE_REQUEST_ADMIN, ])
+                                 [to, ])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
