@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 import uuid, random, datetime, json
-from utils import valid_uuid
+from utils import valid_uuid, generate_provider_json
 from ..addresses.models import Address, US_STATE_CHOICES, US_STATE_W_FC_CHOICES
 from ..addresses.countries import COUNTRIES
 from ..licenses.models import License
@@ -511,6 +511,12 @@ class Enumeration(models.Model):
         get_latest_by = "id"
         ordering = ('-enumeration_date',)
 
+
+
+
+    def provider_json(self):
+        j = generate_provider_json(self)
+        return j
 
     def name(self):
         name = "Not Provided"
