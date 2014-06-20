@@ -9,6 +9,16 @@ import random
 from ..enumerations.models import Enumeration
 
 
+
+
+def display_enumeration_profile_json(request, number):
+    
+    e = get_object_or_404(Enumeration, number=number)
+    return HttpResponse(e.provider_json(), mimetype="application/json")
+              
+
+
+
 def display_enumeration_profile(request, number):
     
     e = get_object_or_404(Enumeration, number=number, status="A")

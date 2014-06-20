@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# vim: ai ts=4 sts=4 et sw=4
+#-*- coding: utf-8 -*-
+#vim: ai ts=4 sts=4 et sw=4
 from django.conf import settings 
 from django.http import Http404
 import uuid, re, json
@@ -43,106 +43,179 @@ def generate_provider_json(e):
     basic = OrderedDict()
      
     d['enumeration_type']      = e.enumeration_type
-    d['number']                = e.number, 
+    d['number']                = e.number
     d['basic']                 = None
     d['addresses']             = []
     d['taxonomies']            = []
+    d['specialties']           = []
     d['licenses']              = []
     d['identifiers']           = []
-    basic['authorized_official_credential']= e.authorized_official_credential
-    #'authorized_official_email',
-    #'authorized_official_first_name',
-    #'authorized_official_last_name',
-    #'authorized_official_middle_name',
-    #'authorized_official_prefix',
-    #'authorized_official_suffix',
-    #'authorized_official_telephone_extension',
-    #'authorized_official_telephone_number',
-    #'authorized_official_title',
-    #'authorized_official_title_or_position',
-    #'bio_headline',
-    #'classification',
-    #'comments',
-    #'confirmation',
-    #'contact_method',
-    #'contact_person_credential',
-    #'contact_person_email',
-    #'contact_person_first_name',
-    #'contact_person_last_name',
-    #'contact_person_middle_name',
-    #'contact_person_prefix',
-    #'contact_person_suffix',
-    #'contact_person_telephone_extension',
-    #'contact_person_telephone_number',
-    #'contact_person_title',
-    #'contact_person_title_or_position',
-    #'correspondence_address',
-    #'country_of_birth',
-    #'credential',
-    #'date_of_birth',
-    #'date_of_death',
-    #'deactivated_details',
-    #'deactivation_date',
-    #'deactivation_reason_code',
-    #'decativation_note',
-    #'deceased_fuzzy_match',
-    #'deceased_in_dmf',
-    #'deceased_notes',
-    #'deceased_notice_day_sent',
-    #'direct_addresses',
-    #'direct_certificates',
-    #'dmf_incorrect',
-    #'doing_business_as',
-    #'driving_directions',
-    #'ein',
-    #'ein_image',
-    #'enumerated_by',
-    #'enumeration_date',
-    #'enumeration_parent_organization',
-    #'enumeration_type',
-    #'event',
-    #'facebook_handle',
-    #'first_name', 'gender', 'identifiers',
-    #'initial_enumeration_date',
-    #'itin',
-    #'last_name',
-    #'last_updated',
-    #'location_address',
-    #'mailing_address',
-    #'managers',
-    #'medical_record_storage_address',
-    #'middle_name',
-    #'mode',
-    #'name_prefix',
-    #'name_suffix',
-    #'number', 'old_numbers', 'organization_name',
-    #'organization_other_name', 'organization_other_name_code',
-    #'organizational_subpart', 'other_addresses', 'other_first_name_1',
-    #'other_first_name_2', 'other_last_name_1', 'other_last_name_2',
-    #'other_middle_name_1', 'other_middle_name_2', 'other_name_code_1',
-    #'other_name_code_2', 'other_name_credential_1',
-    #'other_name_credential_2', 'other_name_prefix_1',
-    #'other_name_prefix_2', 'other_name_suffix_1',
-    #'other_name_suffix_2', 'other_taxonomies',
-    #'parent_organization', 'parent_organization_ein',
-    #'parent_organization_legal_business_name',
-    #'pecos_id', 'pii_lock',
-    #'public_email',
-    #'reactivation_date',
-    #'recativation_note',
-    #'replacement_npi',
-    #'revalidation_address',
-    #'sole_proprietor',
-    #'specialties',
-    #'specialty',
-    #'ssn',
-    #'state_of_birth',
-    #'status',
-    #'taxonomy',
-    #'updated',
-    #'website'
     
+    
+    # Build Up Basic
+    
+    # Name For individuals
+    basic['name_prefix']= e.name_prefix
+    basic['first_name']= e.first_name
+    basic['last_name']= e.last_name
+    basic['middle_name']= e.middle_name
+    basic['name_suffix']= e.name_suffix
+    basic['credential']  = e.credential
+    basic['doing_business_as']= e.doing_business_as
+    basic['sole_proprietor']= e.sole_proprietor
+    basic['other_first_name_1']= e.other_first_name_1
+    basic['other_first_name_2']= e.other_first_name_2
+    basic['other_last_name_1']= e.other_last_name_1
+    basic['other_last_name_2']= e.other_last_name_2
+    basic['other_middle_name_1']= e.other_middle_name_1
+    basic['other_middle_name_2']= e.other_middle_name_2
+    basic['other_name_code_1']= e.other_name_code_1
+    basic['other_name_code_2']= e.other_name_code_2
+    basic['other_name_credential_1']= e.other_name_credential_1
+    basic['other_name_credential_2']= e.other_name_credential_2
+    basic['other_name_prefix_1']= e.other_name_prefix_1
+    basic['other_name_prefix_2']= e.other_name_prefix_2
+    basic['other_name_suffix_1']= e.other_name_suffix_1
+    basic['other_name_suffix_2'] = e.other_name_suffix_2
+    
+
+
+    # Name for organizations
+    basic['organization_name']          = e.organization_name
+    basic['organization_other_name']    = e.organization_other_name
+    basic['organization_other_name_code'] =  e.organization_other_name_code
+    basic['organizational_subpart']     = e.organizational_subpart
+
+    
+    # PII
+    basic['ssn']                = e.ssn
+    basic['ein']                = e.ein
+    basic['itin']               = e.itin
+    basic['gender']             = e.gender
+    basic['date_of_birth']      = str(e.date_of_birth)
+    basic['state_of_birth']     = e.state_of_birth
+    basic['country_of_birth']   = e.country_of_birth
+    
+    
+    # Metadata
+    
+    #Metadata Dates
+    basic['number']                        = e.number
+    basic['initial_enumeration_date']       = str(e.initial_enumeration_date)
+    basic['enumeration_date']               = str(e.enumeration_date)
+    basic['last_updated']                   = str(e.last_updated)
+    basic['updated']                        = str(e.updated)
+    basic['date_of_death']                  = str(e.date_of_death)
+    basic['reactivation_date']              = str(e.reactivation_date) 
+     
+     
+    basic['classification']                 = e.classification
+    basic['mode']                           = e.mode
+    basic['status']                         = e.status
+    basic['contact_method']                 = e.contact_method
+    
+
+    basic['deactivated_details']            = e.deactivated_details
+    basic['deactivation_date']              = str(e.deactivation_date)
+    basic['deactivation_reason_code']       = e.deactivation_reason_code
+    basic['decativation_note']              = e.decativation_note
+    basic['deceased_notes']                 = e.deceased_notes
+    basic['parent_organization']            = e.parent_organization
+    basic['parent_organization_ein']        = e.parent_organization_ein
+    basic['parent_organization_legal_business_name'] = e.parent_organization_legal_business_name
+    basic['recativation_note']              = e.recativation_note
+    basic['comments']                       = e.comments
+    
+    
+
+    # Authorized Official
+    basic['authorized_official_credential']          = e.authorized_official_credential
+    basic['authorized_official_email']               = e.authorized_official_email
+    basic['authorized_official_first_name']          = e.authorized_official_first_name
+    basic['authorized_official_last_name']           = e.authorized_official_last_name
+    basic['authorized_official_middle_name']         = e.authorized_official_middle_name
+    basic['authorized_official_prefix']              = e.authorized_official_prefix
+    basic['authorized_official_suffix']              = e.authorized_official_suffix
+    basic['authorized_official_telephone_number']    = e.authorized_official_telephone_number
+    basic['authorized_official_telephone_extension'] = e.authorized_official_telephone_extension
+    basic['authorized_official_title']               = e.authorized_official_title
+    basic['authorized_official_title_or_position']   = e.authorized_official_title_or_position
+    
+    #Contact Person
+    basic['contact_person_credential']          = e.contact_person_credential
+    basic['contact_person_email']               = e.contact_person_email
+    basic['contact_person_first_name']          = e.contact_person_first_name
+    basic['contact_person_last_name']           = e.contact_person_last_name
+    basic['contact_person_middle_name']         = e.contact_person_middle_name
+    basic['contact_person_prefix']              = e.contact_person_prefix
+    basic['contact_person_suffix']              = e.contact_person_suffix
+    basic['contact_person_telephone_extension'] = e.contact_person_telephone_extension
+    basic['contact_person_telephone_number']    = e.contact_person_telephone_number
+    basic['contact_person_title']               = e.contact_person_title
+    basic['contact_person_title_or_position']   = e.contact_person_title_or_position
+    
+
+    #Enhancements/Embilshments
+    basic['website']                = e.website
+    basic['facebook_handle']        = e.facebook_handle
+    basic['twitter_handle']         = e.twitter_handle
+    basic['public_email']           = e.public_email
+    basic['gravatar_email']         = e.gravatar_email
+    basic['driving_directions ']    = e. driving_directions       
+    basic['bio_headline']           = e.bio_headline
+
+    #Load the basic info into our ordered dictionary
     d['basic'] = basic
+
+
+    #Addresses
+    addresses =[]
+    
+    #The primary mailing
+    if e.mailing_address:
+        address = OrderedDict()
+        address['address_type']             = e.mailing_address.address_type
+        address['address_purpose']          = e.mailing_address.address_purpose
+        address['address_1']                = e.mailing_address.address_1
+        address['address_2']                = e.mailing_address.address_2
+        address['city']                     = e.mailing_address.city
+        address['state']                    = e.mailing_address.state
+        address['zip']                      = e.mailing_address.zip
+        address['country_code']             = e.mailing_address.country_code
+        address['foreign_state']            = e.mailing_address.foreign_state
+        address['foreign_postal']           = e.mailing_address.foreign_postal
+        address['us_telephone_number']      = e.mailing_address.us_telephone_number
+        address['us_fax_number']            = e.mailing_address.us_fax_number
+        address['foreign_telephone_number'] = e.mailing_address.foreign_telephone_number
+        address['foreign_fax_number']       = e.mailing_address.foreign_fax_number
+        address['telephone_number_extension']   = e.mailing_address.telephone_number_extension
+        addresses.append(address)
+    
+    
+    #The primary location
+    if e.location_address:
+        address = OrderedDict()
+        address['address_type']             = e.location_address.address_type
+        address['address_purpose']          = e.location_address.address_purpose
+        address['address_1']                = e.location_address.address_1
+        address['address_2']                = e.location_address.address_2
+        address['city']                     = e.location_address.city
+        address['state']                    = e.location_address.state
+        address['zip']                      = e.location_address.zip
+        address['country_code']             = e.location_address.country_code
+        address['foreign_state']            = e.location_address.foreign_state
+        address['foreign_postal']           = e.location_address.foreign_postal
+        address['us_telephone_number']      = e.location_address.us_telephone_number
+        address['us_fax_number']            = e.location_address.us_fax_number
+        address['foreign_telephone_number'] = e.location_address.foreign_telephone_number
+        address['foreign_fax_number']       = e.location_address.foreign_fax_number
+        address['telephone_number_extension']  = e.location_address.telephone_number_extension
+        addresses.append(address)
+    
+    
+    #Load the addresses into our ordered dictionary
+    d['addresses'] = addresses
+    
     
     return json.dumps(d, indent = 4)
     
