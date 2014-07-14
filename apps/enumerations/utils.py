@@ -50,6 +50,7 @@ def generate_provider_json(e):
     d['specialties']           = []
     d['licenses']              = []
     d['identifiers']           = []
+    d['direct_addresses']      = []
     
     
     # Build Up Basic
@@ -161,7 +162,7 @@ def generate_provider_json(e):
     basic['twitter_handle']         = e.twitter_handle
     basic['public_email']           = e.public_email
     basic['gravatar_email']         = e.gravatar_email
-    basic['driving_directions ']    = e. driving_directions       
+    basic['driving_directions']     = e.driving_directions       
     basic['bio_headline']           = e.bio_headline
 
     #Load the basic info into our ordered dictionary
@@ -191,7 +192,7 @@ def generate_provider_json(e):
         address['telephone_number_extension']   = e.mailing_address.telephone_number_extension
         addresses.append(address)
     
-    
+
     #The primary location
     if e.location_address:
         address = OrderedDict()
@@ -212,10 +213,183 @@ def generate_provider_json(e):
         address['telephone_number_extension']  = e.location_address.telephone_number_extension
         addresses.append(address)
     
+    if e.other_addresses:
+        for i in e.other_addresses.all():
+            address =OrderedDict()
+
+            address['address_type']             = i.address_type
+            address['address_purpose']          = i.address_purpose
+            address['address_1']                = i.address_1
+            address['address_2']                = i.address_2
+            address['city']                     = i.city
+            address['state']                    = i.state
+            address['zip']                      = i.zip
+            address['country_code']             = i.country_code
+            address['foreign_state']            = i.foreign_state
+            address['foreign_postal']           = i.foreign_postal
+            address['us_telephone_number']      = i.us_telephone_number
+            address['us_fax_number']            = i.us_fax_number
+            address['foreign_telephone_number'] = i.foreign_telephone_number
+            address['foreign_fax_number']       = i.foreign_fax_number
+            address['telephone_number_extension']  = i.telephone_number_extension
+            addresses.append(address)
     
     #Load the addresses into our ordered dictionary
     d['addresses'] = addresses
     
+
+    #build up taxonomies
+    taxonomies = []
+    if e.taxonomy:
+        taxonomy = OrderedDict()
+        taxonomy['code'] = e.taxonomy.code
+        taxonomy['primary'] = True
+        taxonomies.append(taxonomy)
+        
+        
     
+    if e.other_taxonomies:
+        
+        for i in e.other_taxonomies.all():
+            taxonomy = OrderedDict()
+            taxonomy['code'] = e.taxonomy.code
+            taxonomy['primary'] = False
+            taxonomies.append(taxonomy)
+            
+    d['taxonomies'] = taxonomies
+    
+    #build up identifiers
+    identifiers =[]
+    if e.identifiers:
+          for i in e.identifiers.all():
+            identifier = OrderedDict()
+            identifier['identifier'] = i.identifier
+            identifier['code']       = i.code
+            identifier['state']      =i.state   
+            identifier['issuer']     =i.issuer
+            identifiers.append(identifier)
+    d['identifiers'] = identifiers
+    
+    #build up identifiers
+    specialties =[]
+    
+    if e.specialty:
+        specialty  = OrderedDict()
+        specialty['code'] = e.specialty.code
+        specialties.append(specialty) 
+    
+    
+    
+    if e.specialties:
+          for i in e.specialties.all():
+            specialty = OrderedDict()
+            specialty['code']       = i.code
+            specialties.append(specialty)
+    d['specialties'] = specialties
+    
+    
+    #build up licenses
+    licenses =[]
+    
+    if e.licenses:
+        for i in e.licenses.all():
+        
+            license  = OrderedDict()
+        
+            license["number"] = i.number
+            license["type"]= i.license_type.license_type
+            license["state"]= i.license_type.state
+            license["code"]= i.mlvs()
+            license["status"]= i.status 
+            licenses.append(license) 
+    
+    d['licenses'] = licenses
+    
+    
+    
+    #build up direct addresses
+    direct_addresses=[]
+    
+    if e.direct_addresses:
+        for i in e.direct_addresses.all():
+        
+            da  = OrderedDict()
+            da["emailnumber"] = i.email
+            da["organization"]= i.organization
+            da["public"]= i.public
+            direct_addresses.append(da)
+    d['direct_addresses'] = direct_addresses
+
     return json.dumps(d, indent = 4)
+
+
+
+def create_basic_html_table(basic):
     
+    for k in basic.keys():
+        field = e._meta.get_field_by_name(k)
+        
+        #print dir(field[0])
+        is_blank = field[0].blank
+        
+        if is_blank:
+            required = "N"
+        else:
+            required = "Y"
+        
+        if field[0].choices:
+            l=[]
+            for i in field[0].choices:
+                l.append(i[0])
+            choices = "Choices must be in %s" % (l)
+        else:
+            choices = ""
+        print """ 
+    <tr>
+      <td>%s</td>
+      <td>%s</td>
+      <td>%s</td>
+      <td>%s</td>
+    </tr>
+        """ % (k, field[0].max_length, required, choices )
+        
+def create_address_html_table(address):
+    if address:
+        field_names = address._meta.get_all_field_names()
+        for k in field_names:
+            field = address._meta.get_field_by_name(k)
+            if field[0].__dict__.has_key("blank"):
+                is_blank = field[0].blank
+            
+            if is_blank:
+                required = "N"
+            else:
+                required = "Y"
+            
+            
+            try:
+                if field[0].choices:
+                    l=[]
+                    for i in field[0].choices:
+                        l.append(i[0])
+                    choices = "Choices must be in %s" % (l)
+                else:
+                    choices = ""    
+            except:
+             choices = ""
+            
+            
+            if field[0].__dict__.has_key("max_length"):
+                max_length = field[0].max_length
+            else:
+                max_length = ""
+            
+            print """
+            <tr>
+              <td>%s</td>
+              <td>%s</td>
+              <td>%s</td>
+              <td>%s</td>
+            </tr>
+                """ % (k, max_length, required, choices )
+        
