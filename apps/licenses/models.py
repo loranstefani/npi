@@ -78,6 +78,10 @@ class License(models.Model):
         r ="%s-%s" % (self.license_type.code(), self.number)
         return r
 
+    def mlvs(self):
+        r ="%s-%s" % (self.license_type.code(), self.number)
+        return r
+
     class Meta:
         
         unique_together =  (('license_type', 'number'), )   
