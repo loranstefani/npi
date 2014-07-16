@@ -121,7 +121,11 @@ def generate_provider_json(e):
     basic['deactivation_reason_code']       = e.deactivation_reason_code
     basic['decativation_note']              = e.decativation_note
     basic['deceased_notes']                 = e.deceased_notes
-    basic['parent_organization']            = e.parent_organization
+    if e.parent_organization:
+        basic['parent_organization_npi']    = e.parent_organization.number
+    else:
+        basic['parent_organization_npi'] = ""
+    
     basic['parent_organization_ein']        = e.parent_organization_ein
     basic['parent_organization_legal_business_name'] = e.parent_organization_legal_business_name
     basic['recativation_note']              = e.recativation_note
@@ -139,7 +143,6 @@ def generate_provider_json(e):
     basic['authorized_official_suffix']              = e.authorized_official_suffix
     basic['authorized_official_telephone_number']    = e.authorized_official_telephone_number
     basic['authorized_official_telephone_extension'] = e.authorized_official_telephone_extension
-    basic['authorized_official_title']               = e.authorized_official_title
     basic['authorized_official_title_or_position']   = e.authorized_official_title_or_position
     
     #Contact Person
@@ -152,7 +155,6 @@ def generate_provider_json(e):
     basic['contact_person_suffix']              = e.contact_person_suffix
     basic['contact_person_telephone_extension'] = e.contact_person_telephone_extension
     basic['contact_person_telephone_number']    = e.contact_person_telephone_number
-    basic['contact_person_title']               = e.contact_person_title
     basic['contact_person_title_or_position']   = e.contact_person_title_or_position
     
 
@@ -392,4 +394,6 @@ def create_address_html_table(address):
               <td>%s</td>
             </tr>
                 """ % (k, max_length, required, choices )
-        
+
+
+    

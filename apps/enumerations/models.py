@@ -166,19 +166,24 @@ class Enumeration(models.Model):
     
     has_ever_been_fraud_alert  = models.BooleanField(default=False)
     
+    
+    organization_name   = models.CharField(max_length=300, blank=True,
+                                    default="", db_index=True,
+                                    verbose_name="Legal Business Name")
+    
     name_prefix         = models.CharField(choices=PREFIX_CHOICES, max_length=5,
                                 blank=True, default="")
     
     first_name          = models.CharField(max_length=150, blank=True,
                                 default="", db_index=True)
     
-    middle_name               = models.CharField(max_length=150, blank=True,
+    middle_name         = models.CharField(max_length=150, blank=True,
                                                  default="")
     
-    last_name                 = models.CharField(max_length=150, blank=True,
+    last_name           = models.CharField(max_length=150, blank=True,
                                                    default="", db_index=True)
     
-    name_suffix               = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
+    name_suffix         = models.CharField(choices=SUFFIX_CHOICES, max_length=4,
                                            blank=True, default="")
 
     
@@ -190,9 +195,7 @@ class Enumeration(models.Model):
     credential                = models.CharField(max_length=50, blank=True,
                                     default="", help_text ="e.g. MD, PA, OBGYN, DO")
     
-    organization_name         = models.CharField(max_length=300, blank=True,
-                                    default="", db_index=True,
-                                    verbose_name="Legal Business Name")
+
     
     doing_business_as         = models.CharField(max_length=300, blank=True,
                                                  default="")
@@ -204,15 +207,15 @@ class Enumeration(models.Model):
                                         default="",
                                         choices=ORGANIZATION_OTHER_NAME_CHOICES)
     
-    other_first_name_1      = models.CharField(max_length=100, blank=True,
+    other_first_name_1      = models.CharField(max_length=150, blank=True,
                                         default="",
                                         help_text="Previous First name")
     
-    other_middle_name_1     = models.CharField(max_length=100, blank=True,
+    other_middle_name_1     = models.CharField(max_length=150, blank=True,
                                 default="",
                                 help_text="Another previous or maiden last name")
 
-    other_last_name_1     = models.CharField(max_length=100, blank=True,
+    other_last_name_1     = models.CharField(max_length=150, blank=True,
                                 default="", help_text="Previous or Maiden Last Name") 
 
     other_name_prefix_1     = models.CharField(choices=PREFIX_CHOICES, max_length=5,
@@ -221,20 +224,21 @@ class Enumeration(models.Model):
     other_name_suffix_1     = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
                                                    default="")
 
-    other_name_credential_1  = models.CharField(max_length=20, blank=True, default="")
+    other_name_credential_1  = models.CharField(max_length=50, blank=True, default="")
 
     other_name_code_1  = models.CharField(max_length=1, blank=True, default="",
                                     choices=INDIVIDUAL_OTHER_NAME_CHOICES)
-    other_first_name_2    = models.CharField(max_length=100, blank=True,
+    
+    other_first_name_2    = models.CharField(max_length=150, blank=True,
                                        default="",
                                        help_text="Another previous first name")
 
-    other_middle_name_2     = models.CharField(max_length=100, blank=True,
+    other_middle_name_2     = models.CharField(max_length=150, blank=True,
                                 default="",
                                 help_text="Another previous or maiden last name")
     
     
-    other_last_name_2     = models.CharField(max_length=100, blank=True,
+    other_last_name_2     = models.CharField(max_length=150, blank=True,
                                 default="",
                                 help_text="Another previous or maiden last name")
     
@@ -244,7 +248,7 @@ class Enumeration(models.Model):
     other_name_suffix_2     = models.CharField(choices=SUFFIX_CHOICES, max_length=4, blank=True,
                                                    default="")
 
-    other_name_credential_2     = models.CharField(max_length=20, blank=True,
+    other_name_credential_2     = models.CharField(max_length=50, blank=True,
                                                    default="")
 
     other_name_code_2  = models.CharField(max_length=1, blank=True, default="",
@@ -254,10 +258,10 @@ class Enumeration(models.Model):
                                         related_name = "enumeration_parent_organization")
     
     parent_organization_legal_business_name  = models.CharField(max_length=300, default="", blank=True)
-    parent_organization_ein     = models.CharField(max_length=10, default="", blank=True)
+    parent_organization_ein     = models.CharField(max_length=9, default="", blank=True)
     
     #Profile Enhancements
-    website                    = models.CharField(max_length=200,   blank=True, default="")
+    website                    = models.CharField(max_length=1024,   blank=True, default="")
     gravatar_email             = models.EmailField(max_length=200,   blank=True, default="",
                                     help_text="Add an avatar image to your public profile by provding an email registered with Gravatar.com. This email will not be public.")
     facebook_handle            = models.CharField(max_length=100,   blank=True, default="")
@@ -265,8 +269,8 @@ class Enumeration(models.Model):
     public_email               = models.EmailField(blank=True,      default="")
     
     
-    driving_directions         = models.TextField(max_length=256,   blank=True, default="")
-    bio_headline               = models.CharField(max_length=255,   blank=True, default="")
+    driving_directions         = models.TextField(max_length=1024,   blank=True, default="")
+    bio_headline               = models.CharField(max_length=256,   blank=True, default="")
    
     background_image           = models.ImageField(blank = True,    null=False, default='',
                                     max_length=255L, upload_to="enumeration-backgrounds",
@@ -411,7 +415,7 @@ class Enumeration(models.Model):
                                     help_text = "True when SSN matches but name DOB does not.")
     deceased_notice_day_sent    = models.DateField(blank=True, null=True,
                                            help_text="Format: YYYY-MM-DD")
-    deceased_notes              = models.TextField(max_length=1000, blank=True, default="")
+    deceased_notes              = models.TextField(max_length=1024, blank=True, default="")
     dmf_incorrect               = models.BooleanField(blank=True, default=False,
                                     help_text = "DMF appears to be incorrect. Individual is not actually deceased.")
     
@@ -419,7 +423,7 @@ class Enumeration(models.Model):
     deactivation_reason_code  = models.CharField(max_length=2,
                                     choices=DECACTIVAED_REASON_CHOICES,
                                     default="", blank=True)
-    deactivated_details = models.TextField(max_length=1000, blank=True, default="")
+    deactivated_details = models.TextField(max_length=1024, blank=True, default="")
 
     deactivation_date  = models.DateField(blank=True, null=True)
     reactivation_date   = models.DateField(blank=True, null=True)
@@ -456,53 +460,47 @@ class Enumeration(models.Model):
                                                   blank=True, default="")
     contact_person_title_or_position     = models.CharField(max_length=150,
                                                   blank=True, default="")
-
-    contact_person_title = models.CharField(max_length=150, blank=True,
-                                            default="")
     
     authorized_official_email = models.EmailField(blank=True, default="",
                                help_text = "Required if the authorized official has an email.",
                                db_index=True)
     
     # End PII -----------------------------------------------------------------
-    authorized_official_prefix        = models.CharField(choices=PREFIX_CHOICES, max_length=10,
-                                            blank=True, default="")
+    authorized_official_prefix        = models.CharField(choices=PREFIX_CHOICES,
+                                            max_length=5, blank=True, default="")
     
-    authorized_official_first_name    = models.CharField(max_length=150,
+    authorized_official_first_name    = models.CharField(max_length=300,
                                             blank=True, default="")
-    authorized_official_middle_name   = models.CharField(max_length=150,
+    authorized_official_middle_name   = models.CharField(max_length=300,
                                             blank=True, default="")
-    authorized_official_last_name     = models.CharField(max_length=150,
+    authorized_official_last_name     = models.CharField(max_length=300,
                                             blank=True, default="")
-    authorized_official_suffix  = models.CharField(choices=SUFFIX_CHOICES,
+    authorized_official_suffix        = models.CharField(choices=SUFFIX_CHOICES,
                                         max_length=4, blank=True, default="")
     
-    authorized_official_credential    = models.CharField(max_length=20,
-                                            blank=True, default="")
+    authorized_official_credential          = models.CharField(max_length=50,
+                                                blank=True, default="")
     
-    authorized_official_title_or_position  = models.CharField(max_length=150,
+    authorized_official_title_or_position   = models.CharField(max_length=300,
                                                   blank=True, default="",)
     
-    authorized_official_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
-                                            help_text="Format: XXX-XXX-XXXX.")
+    authorized_official_telephone_number    = PhoneNumberField(max_length=12,
+                                                blank=True, default="",
+                                                help_text="Format: XXX-XXX-XXXX.")
     
-    authorized_official_telephone_extension  = models.CharField(max_length=10,
+    authorized_official_telephone_extension = models.CharField(max_length=10,
                                                   blank=True, default="")
     
-    authorized_official_title_or_position     = models.CharField(max_length=150,
-                                                  blank=True, default="")
-    
-    authorized_official_title      = models.CharField(max_length=150,blank=True,
-                                                      default="")
 
     #Record management
     
-    comments            = models.TextField(blank=True, default="", max_length=1024)
-    last_updated        = models.DateField(blank=True, null=True)
-    added               = models.DateField(auto_now_add=True)
-    updated             = models.DateTimeField(auto_now=True)
-    enumerated_by       = models.ForeignKey(User, blank=True, null=True, editable=False)
-    initial_enumeration_date = models.DateField(blank=True, null=True)
+    comments                    = models.TextField(blank=True, default="", max_length=1024)
+    last_updated                = models.DateField(blank=True, null=True)
+    added                       = models.DateField(auto_now_add=True)
+    updated                     = models.DateTimeField(auto_now=True)
+    enumerated_by               = models.ForeignKey(User, blank=True, null=True,
+                                                    editable=False)
+    initial_enumeration_date    = models.DateField(blank=True, null=True)
     
     last_updated_ip     = models.CharField(max_length=20, blank=True,
                                 default="", db_index=True)
