@@ -184,6 +184,7 @@ def generate_provider_json(e):
         address['city']                     = e.mailing_address.city
         address['state']                    = e.mailing_address.state
         address['zip']                      = e.mailing_address.zip
+        address['mpo']                      = e.mailing_address.mpo
         address['country_code']             = e.mailing_address.country_code
         address['foreign_state']            = e.mailing_address.foreign_state
         address['foreign_postal']           = e.mailing_address.foreign_postal
@@ -297,16 +298,12 @@ def generate_provider_json(e):
         for i in e.licenses.all():
         
             license  = OrderedDict()
-        
-            license["number"] = i.number
-            license["type"]= i.license_type.license_type
-            license["state"]= i.license_type.state
+
             license["code"]= i.mlvs()
             license["status"]= i.status 
             licenses.append(license) 
     
     d['licenses'] = licenses
-    
     
     
     #build up direct addresses
@@ -316,7 +313,7 @@ def generate_provider_json(e):
         for i in e.direct_addresses.all():
         
             da  = OrderedDict()
-            da["emailnumber"] = i.email
+            da["email"] = i.email
             da["organization"]= i.organization
             da["public"]= i.public
             direct_addresses.append(da)
