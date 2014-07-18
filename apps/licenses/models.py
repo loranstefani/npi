@@ -2,7 +2,7 @@ from django.db import models
 from localflavor.us.us_states import US_STATES
 from django.conf import settings
 
-LICENSE_STATUS_CHOICES =( ("", "Unknown"),
+LICENSE_STATUS_CHOICES =( ("UNKNOWN", "Unknown"),
                           ("ACTIVE","Active"),
                           ("ACTIVE_WITH_RESTRICTIONS","Active with Restrictions"),
                           ("EXPIRED","Expired"),
@@ -45,9 +45,9 @@ class License(models.Model):
     number         = models.CharField(max_length=20, verbose_name="License Number",
                                                     db_index=True)
     status         = models.CharField(max_length=10, choices=LICENSE_STATUS_CHOICES,
-                                         default ="")
+                                         default ="UNKNOWN")
     verified_by_issuing_board   = models.BooleanField(default=False)
-    verified_by_ther_means      = models.BooleanField(default=False)
+    verified_by_other_means      = models.BooleanField(default=False)
     verified                    = models.BooleanField(default=False, editable=False)
     note                        = models.TextField(max_length=255,
                                                    blank=True, default="")
@@ -67,7 +67,7 @@ class License(models.Model):
     
     
     def save(self, **kwargs):
-        if self.verified_by_issuing_board or self.verified_by_ther_means:
+        if self.verified_by_issuing_board or self.verified_by_other_means:
             self.verified=True
         else:
             self.verified=False        
