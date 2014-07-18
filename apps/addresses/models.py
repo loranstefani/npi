@@ -35,23 +35,22 @@ US_STATE_CHOICES_ALL = US_STATE_CHOICES + MILITARY_STATE_CHOICES + FOREIGN_COUTR
 
 ADDRESS_TYPE_CHOICES    = (("DOM", "Domsestic"),                           
                            ("FGN", "Foreign"),
-                           ("MIL", "Military"),
-                        )
+                           ("MIL", "Military"),)
 
 
-ADDRESS_PURPOSE_CHOICES = (("LOCATION",     "Location Address (Phyiscal)"),
-                           ("MAILING",      "Mailing Address (Correspondence)"),
+ADDRESS_PURPOSE_CHOICES = (("LOCATION",             "Practice Location Address (Phyiscal)"),
+                           ("MAILING",              "Mailing Address (Correspondence)"),
                            ("MEDREC-STORAGE",       "Medical Records Storage Address"),
                            ("1099",                 "1099 Address"),
                            ("REVALIDATION",         "Revalidation Address"),
                            ("ADDITIONAL-LOCATION",  "Additional Location Address"),
-                           ("REMITTANCE",            "Remmitance Address"),
-                           )
+                           ("REMITTANCE",           "Remmitance Address"),
+                           ("TELEMEDICINE",         "Telemedicine"), )
 
 
 MPO_CHOICES = ( ('APO',  'APO - Army/Air Post Office'),
                 ('FPS',  'FPS - Fleet Post Office'),
-                ('DPO',  'PDO - Diplomatic Post Office'))
+                ('DPO',  'DPO - Diplomatic Post Office'))
 
 
 
@@ -71,23 +70,19 @@ class Address(models.Model):
     foreign_state         = models.CharField(max_length=2,  blank=True, default="")
     foreign_postal        = models.CharField(max_length=12,  blank=True, default="")
     us_telephone_number   = PhoneNumberField(max_length=12,  blank=True, default="",
-                                           help_text="Format: XXX-XXX-XXXX. Required if the address has a telephone.")
+                                help_text = "Format: XXX-XXX-XXXX. Required if the address has a telephone.")
     
     telephone_number_extension   = models.CharField(max_length=10,  blank=True, default="")
     
-    us_fax_number   = models.CharField(max_length=12,  blank=True, default="",)
-    foreign_telephone_number   = models.CharField(max_length=20,  blank=True, default="")
-    foreign_fax_number   = models.CharField(max_length=20,  blank=True, default="") 
-    mpo             = models.CharField(max_length=3, choices= MPO_CHOICES,
+    us_fax_number               = models.CharField(max_length=12,  blank=True, default="",)
+    foreign_telephone_number    = models.CharField(max_length=150,  blank=True, default="")
+    foreign_fax_number          = models.CharField(max_length=150,  blank=True, default="") 
+    mpo                         = models.CharField(max_length=3, choices= MPO_CHOICES,
                                               blank=True, default="",
                                               verbose_name="Military Post Office")
     
-    website                 = models.CharField(max_length=15,  blank=True, default="")
-    driving_details         = models.CharField(max_length=15,  blank=True, default="")
-    hours_of_operation      = models.TextField(max_length=255,  blank=True, default="")
-    private_email_contact   = models.CharField(max_length=15,  blank=True, default="")
-    public_email_contact    = models.CharField(max_length=15,  blank=True, default="")
-    phone_number_extension  = models.CharField(max_length=15,  blank=True, default="")
+    website                 = models.CharField(max_length=1024,  blank=True, default="")
+    driving_details         = models.TextField(max_length=1024,  blank=True, default="")
     diplay_phone            = models.BooleanField(default=False)
     display_fax             = models.BooleanField(default=False)
     usps_stadardized        = models.BooleanField(default=False)
