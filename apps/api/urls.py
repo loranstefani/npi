@@ -7,17 +7,10 @@ from views import *
 
 urlpatterns = patterns('',
 
-    #VIEW -----------------------------------
-    url(r'^enumeration/view/(?P<enumeration_number>\S+)',
-                    api_view_enumeration, name="api_view_enumeration"),
-    #UPDATE
-    url(r'^enumeration/update',
-                    api_enumeration_update, name="api_enumeration_update"),
+    #Write-----------------------------------
+    url(r'^write',
+                    api_enumeration_write, name="api_enumeration_write"),
 
-    #CREATE
-    url(r'^enumeration/create',
-                    api_enumeration_create, name="api_enumeration_create"),
-    
     
     url(r'^events/since/(?P<date_start>\S+)',
                     events_since_date, name="api_events_since_date"),

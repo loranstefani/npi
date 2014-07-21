@@ -53,13 +53,13 @@ A staff user can provide a valid enumeration record ID and get an HTML report of
 ------------------------------------------------------------
 The test identifies (as necessary):
 
-* the URL `/enumerations/self-take-over/[enmeration_id]`
+* the URL `/enumerations/history/[enumeration_id]`
 * the user logged in (staff user 'alan' ) and a non staff member 'not-staff' for negative testing.
 * the data that must already exist in the database to perform the work/test (as a fixture).
 * The data that is submitted to the application (in this case an `enumeration_id` provided as part of the URL.
 
 2.3 Define Several Tests
--------------------------
+------------------------
 
 1. Going to the URL generates a report with a history of the enumeration record.
 2. If a user is not a staff user he or she should not get the report and are instead redirected to provide staff credentials.
