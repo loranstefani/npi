@@ -11,14 +11,6 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 
 
-class SimpleTest(TestCase):
-    
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
-
 
 class PrintHistoricalReport_TestCase(TestCase):
     "Output an HTML report containing all historical report information"
