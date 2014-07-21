@@ -7,22 +7,32 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
-from forms import *
+from forms import ProviderJSONForm
 import json
 from datetime import timedelta, date, datetime
 from ..enumerations.models import Enumeration, Event, GateKeeperError
-from ..taxonomy.models import TaxonomyCode
 
 
 
-def api_view_enumeration(request, enumeration_number):
-    pass
 
-def api_enumeration_update(request):
-    pass
+def api_enumeration_write(request):
+    if request.method == 'POST':
+        form = ProviderJSONForm(request.POST)
+        if form.is_valid():
+            provider_write_response = form.save()
+            provider_write_response = {"errors": [] }
+            return HttpResponse(json.dumps(provider_write_response, indent =4),
+                                           mimetype="application/json")
+        else:
+            provider_write_response = form.save()
+            provider_write_response = {"errors": [] }
+            return HttpResponse(json.dumps(provider_write_response, indent =4),
+                                mimetype="application/json") 
+    
+    #this is a GET
+    context =  {'form': ProviderJSONForm() }
+    return render(request, 'generic/bootstrapform.html', context)
 
-def api_enumeration_create(request):
-    pass
 
 
 
