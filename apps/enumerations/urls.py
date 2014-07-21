@@ -6,6 +6,12 @@ from views import *
 
 
 urlpatterns = patterns('',
+    
+    
+    #Administrative URLs -----------------------------
+    url(r'^history/(?P<enumeration_id>\S+)',
+                    create_historical_report, name="enmeration_create_historical_report"),
+    
 
     #Taxonomy URLs -----------------------------------
     url(r'^taxonomy/(?P<enumeration_id>\S+)',

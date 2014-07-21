@@ -30,6 +30,13 @@ from notifications import (ACTIVATED_BODY, ACTIVATED_SUBJECT, DEACTIVATED_BODY,
                            REJECTION_SUBJECT)
 
 @login_required
+@staff_member_required
+def create_historical_report(request, enumeration_id):
+    pass
+    
+
+
+@login_required
 @reversion.create_revision()
 def primary_taxonomy(request, enumeration_id):
     name = _("Select a Primary Taxonomy")
@@ -333,8 +340,8 @@ def self_take_over(request):
         form = SelfTakeOverForm(request.POST)
         if form.is_valid():
             e = form.get_enumeration()
-            #Give ownership to the individual
             
+            #Give ownership to the individual
             e.managers.add(request.user)
             #make sure this user is also the surrogate
             s = Surrogate.objects.get(user=request.user)
