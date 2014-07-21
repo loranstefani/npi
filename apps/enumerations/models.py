@@ -112,7 +112,7 @@ class Enumeration(models.Model):
                                     choices=CONTACT_METHOD_CHOICES,
                                     default="E", blank=True)
         
-    number               = models.CharField(max_length=10, blank=True, default="",
+    number               = models.CharField(max_length=9, blank=True, default="",
                             #editable=False,
                             db_index=True)
     
@@ -374,7 +374,7 @@ class Enumeration(models.Model):
     gender      = models.CharField(max_length=2,  blank=True, default="",
                         verbose_name = "Sex", choices = GENDER_CHOICES )
     
-    itin        = models.CharField(max_length=10, blank=True,
+    itin        = models.CharField(max_length=9, blank=True,
                         default="", verbose_name="IRS Individual Tax Payer Identification Number (ITIN)",
                         help_text = "An ITIN is required for individuals that are not eligible for a social security number (SSN).",
                         db_index=True)
@@ -384,7 +384,7 @@ class Enumeration(models.Model):
                     verbose_name= "ITIN Image",
                     help_text ="If you have an ITIN, please upload an image of one form of identification or proof in PDF, PNG, JPG, or BMP format.",)
     
-    ssn          = models.CharField(max_length=10, blank=True, default="",
+    ssn          = models.CharField(max_length=9, blank=True, default="",
                         verbose_name = "Social Security Number (SSN)",
                         help_text= "Required for individuals unless an ITIN is provided",
                         db_index=True)
