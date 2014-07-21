@@ -25,14 +25,39 @@ def dob_range():
 class SelfTakeOverForm(forms.Form):
     provider_identifier  = forms.CharField(help_text ="""
                             Supply the nine digit provider identifier already assigned to you.""")
-    year_of_birth        = forms.IntegerField()
+    year_of_birth        = forms.CharField(max_length = 4 )
     last_four_ssn        = forms.CharField(max_length=4, required=False)
-    last_four_itin        = forms.CharField(max_length=4, required=False)
+    last_four_itin       = forms.CharField(max_length=4, required=False)
     i_attest             = forms.BooleanField(help_text ="""
                             I attest that this is me under the penalty of federal law.""")
     
     
     required_css_class = 'required'
+    
+    def clean_provider_identifier(self):
+        provider_identifier = self.cleaned_data.get("provider_identifier", "")
+        if len(provider_identifier) != 9:
+            raise forms.ValidationError("Invalid provider identifier.")
+        
+        try:
+            e = Enumeration.objects.get(number=provider_identifier)
+        
+        except Enumeration.DoesNotExist:
+            raise forms.ValidationError("No provider identifer exists with that number.")
+        
+        return provider_identifier
+    
+    def clean_year_of_birth(self):
+        year_of_birth = self.cleaned_data.get("year_of_birth", "")
+        if len(year_of_birth) != 4:
+            raise forms.ValidationError("Year of birth must be 4 digits.")
+        
+        if not year_of_birth.isdigit():
+            raise forms.ValidationError("Year of birth must be a 4 digit number")
+        return int(year_of_birth)
+            
+        
+
     def clean(self):
         cleaned_data = super(SelfTakeOverForm, self).clean()
 
@@ -44,32 +69,30 @@ class SelfTakeOverForm(forms.Form):
         year_of_birth= cleaned_data.get("year_of_birth", "")
         
         if not last_four_ssn and not last_four_itin:
-            raise forms.ValidationError("You must provide either an SSN or an ITIN.")
-        if  last_four_ssn and  last_four_itin:
-            raise forms.ValidationError("You cannot proide both an SSN and an ITIN.")
-            
+            raise forms.ValidationError("You must provide the last four digits of either an SSN or an ITIN.")
+        if  last_four_ssn and last_four_itin:
+            raise forms.ValidationError("You cannot provide both an SSN and an ITIN.")
+         
         try:
             e = Enumeration.objects.get(number=provider_identifier)
         
         except Enumeration.DoesNotExist:
-            raise forms.ValidationError("No provider identifer exists with that number.")
-        #except:
-        #    raise forms.ValidationError("No provider identifer exists with that number.")
-        
+            raise forms.ValidationError("No provider identifer exists with that number.") 
+         
+         
+            
         if last_four_ssn:
-            print e.date_of_birth.year, e.ssn[-4:]
             if  last_four_ssn != e.ssn[-4:] or year_of_birth != e.date_of_birth.year:
                 raise forms.ValidationError("This information cannot be verified.  Please call the help desk.")
        
         if last_four_itin:
-            print e.date_of_birth.year, e.itin[-4:]
             if  last_four_itin != e.itin[-4:] or year_of_birth != e.date_of_birth.year:
                 raise forms.ValidationError("This information cannot be verified.  Please call the help desk.")
        
         return cleaned_data
     
     def get_enumeration(self):
-        number              = self.cleaned_data.get("provider_identifier", "")
+        number = self.cleaned_data.get("provider_identifier", "")
         return Enumeration.objects.get(number=number)
         
         
@@ -351,8 +374,6 @@ class ContactPersonForm(forms.ModelForm):
                     'contact_person_telephone_number' ,
                     'contact_person_telephone_extension',
                     )
-
-
     required_css_class = 'required'
 
 
