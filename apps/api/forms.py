@@ -46,12 +46,31 @@ class ProviderJSONForm(forms.Form):
         """Custom save for saving to local DB"""        
         
         provider =  self.get_pjson_object()
-        print "Save to NPPES RDMS"
-        print "Write to read-only DBs"
-        response = {"message": "enumeration create/update successful.",
+        
+        if provider['classification'] == "C":
+            print "request change"
+            response = {"message": "Enumeration change request successful.",
+                    "code": 200,
+                    "number": provider['number'],
+                    "enumeration_type" : provider['enumeration_type']}
+            print "Save to NPPES RDMS"
+            print "Write to read-only DBs"
+        
+        elif provider['classification'] == "N":    
+            print "request new"
+            response = {"message": "New enumeration request successful.",
                     "code": 200,
                     "number": "123456789",
                     "enumeration_type" : provider['enumeration_type']}
+            print "Save to NPPES RDMS"
+            print "Write to read-only DBs"     
+        
+        else:
+            response = {"message": "No classification was provided so the enumeration request cannot be completed.",
+                    "code": 500,
+                    "number": "123456789",
+                    "enumeration_type" : provider['enumeration_type']}
+            
         return response
     
         
