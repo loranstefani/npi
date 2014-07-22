@@ -41,7 +41,8 @@ def generate_provider_json(e):
     """e is an enumeration model instance"""
     d     = OrderedDict()
     basic = OrderedDict()
-     
+    
+
     d['enumeration_type']      = e.enumeration_type
     d['number']                = e.number
     d['basic']                 = None
@@ -87,7 +88,7 @@ def generate_provider_json(e):
     basic['organization_other_name_code'] =  e.organization_other_name_code
     basic['organizational_subpart']     = e.organizational_subpart
 
-    
+
     # PII
     basic['ssn']                = e.ssn
     basic['ein']                = e.ein
@@ -106,11 +107,8 @@ def generate_provider_json(e):
     basic['enumeration_date']               = str(e.enumeration_date)
     basic['last_updated']                   = str(e.last_updated)
     basic['updated']                        = str(e.updated)
-    basic['date_of_death']                  = str(e.date_of_death)
-    basic['reactivation_date']              = str(e.reactivation_date) 
-     
-     
-    basic['classification']                 = e.classification
+    basic['date_of_death']              = str(e.date_of_death)
+    basic['reactivation_date']          = str(e.reactivation_date) 
     basic['mode']                           = e.mode
     basic['status']                         = e.status
     basic['contact_method']                 = e.contact_method
@@ -166,6 +164,11 @@ def generate_provider_json(e):
     basic['gravatar_email']         = e.gravatar_email
     basic['driving_directions']     = e.driving_directions       
     basic['bio_headline']           = e.bio_headline
+
+    #Convert any None values to ""
+    for k,v in basic.items():
+        if v=="None" or v==None:
+            basic[k] = ""
 
     #Load the basic info into our ordered dictionary
     d['basic'] = basic
