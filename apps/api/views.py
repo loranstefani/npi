@@ -11,12 +11,18 @@ from forms import ProviderJSONForm
 import json
 from datetime import timedelta, date, datetime
 from ..enumerations.models import Enumeration, Event, GateKeeperError
+from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
+from utils import get_unauthenticated_response
 
 
-
-
+@csrf_exempt
 def api_enumeration_write(request):
     if request.method == 'POST':
+        unauthenticated_response  = get_unauthenticated_response(request)
+        if unauthenticated_response :
+            return unauthenticated_response 
+       
         form = ProviderJSONForm(request.POST)
         if form.is_valid():
             validation_errors = form.validate()
