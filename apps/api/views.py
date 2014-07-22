@@ -19,11 +19,31 @@ def api_enumeration_write(request):
     if request.method == 'POST':
         form = ProviderJSONForm(request.POST)
         if form.is_valid():
-            provider_write_response = form.save()
-            provider_write_response = {"errors": [] }
-            return HttpResponse(json.dumps(provider_write_response, indent =4),
+            validation_errors = form.validate()
+            provider_write_response = {
+                      "code": 400,
+                      "message": "Enumeration create/update failed.",
+                      "errors": validation_errors }
+            if validation_errors:
+                provider_write_response = {"errors": validation_errors }
+                return HttpResponse(json.dumps(provider_write_response, indent =4),
                                            mimetype="application/json")
+            else:
+                save_response = form.save()
+                return HttpResponse(json.dumps(save_response, indent =4),
+                                           mimetype="application/json")
+               
         else:
+            errors=[]
+            for k,v in form._errors.items():
+                errors.append(v)
+            jsonstr={"code": 400,
+                      "message": "Enumeration create/update failed.",
+                         "errors": errors }
+            jsonstr=json.dumps(jsonstr, indent = 4,)
+            return HttpResponse(jsonstr, mimetype="application/json") 
+            
+            
             provider_write_response = form.save()
             provider_write_response = {"errors": [] }
             return HttpResponse(json.dumps(provider_write_response, indent =4),
