@@ -102,31 +102,30 @@ def generate_provider_json(e):
     # Metadata
     
     #Metadata Dates
-    basic['number']                        = e.number
+    basic['number']                         = e.number
     basic['initial_enumeration_date']       = str(e.initial_enumeration_date)
     basic['enumeration_date']               = str(e.enumeration_date)
     basic['last_updated']                   = str(e.last_updated)
     basic['updated']                        = str(e.updated)
-    basic['date_of_death']              = str(e.date_of_death)
-    basic['reactivation_date']          = str(e.reactivation_date) 
+    basic['date_of_death']                  = str(e.date_of_death)
+    basic['reactivation_date']              = str(e.reactivation_date)
+    basic['reacativation_note']             = e.recativation_note
     basic['mode']                           = e.mode
     basic['status']                         = e.status
     basic['contact_method']                 = e.contact_method
     
-
     basic['deactivated_details']            = e.deactivated_details
     basic['deactivation_date']              = str(e.deactivation_date)
     basic['deactivation_reason_code']       = e.deactivation_reason_code
-    basic['decativation_note']              = e.decativation_note
+    basic['deactivation_note']              = e.decativation_note
     basic['deceased_notes']                 = e.deceased_notes
     if e.parent_organization:
         basic['parent_organization_npi']    = e.parent_organization.number
     else:
-        basic['parent_organization_npi'] = ""
-    
+        basic['parent_organization_npi'] = ""    
     basic['parent_organization_ein']        = e.parent_organization_ein
     basic['parent_organization_legal_business_name'] = e.parent_organization_legal_business_name
-    basic['recativation_note']              = e.recativation_note
+
     basic['comments']                       = e.comments
     
     

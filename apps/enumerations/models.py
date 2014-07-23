@@ -53,7 +53,8 @@ ERROR_CHOICES = ( ('ADDRESS','Address'),
                   ('FIELD','A field did not validate.'),
                   )
 
-ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"), ("E","EFI"), ("C","CSV"))
+ENUMERATION_MODE_CHOICES = (("W", "Web"),("P", "Paper"), ("E","EFI"), ("C","CSV"),
+    ("A","API"),)
 
 ENUMERATION_CLASSIFICATION_CHOICES = (("N", "New"),("C", "Change Request"))
 
