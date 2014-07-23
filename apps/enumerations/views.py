@@ -609,7 +609,7 @@ def submit_dialouge(request, id):
                 e.enueration_date = datetime.date.today()
                 e.last_update     = datetime.date.today()
                 system_user       = User.objects.get(username=settings.AUTO_ENUMERATION_USERNAME)
-                e.enumerated_by= system_user
+                e.enumerated_by   = system_user
                 e.save()
                 msg = "The application has been automaticaly enumerated. The number issued is %s." % (e.number)
                 messages.success(request, msg)
@@ -617,12 +617,14 @@ def submit_dialouge(request, id):
                 e.save()
                 reversion.set_comment("Submit Enumeration Application - Auto-Enumerated")
                 Event.objects.create(enumeration=e, event_type="ACTIVATION",
+                                      body = ACTIVATED_BODY, 
+                                 subject =ACTIVATED_SUBJECT, 
                              note= msg)
                 
             else:
                 for i in errors:
                     if i.critical_error:
-                        msg = "The application cotains critical errors and cannot be submitted." 
+                        msg = "The application contains critical errors and cannot be submitted." 
                         messages.error(request, msg)
                         return HttpResponseRedirect(reverse('edit_enumeration',
                                                    args=(e.id,)))
