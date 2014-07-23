@@ -109,7 +109,7 @@ def generate_provider_json(e):
     basic['updated']                        = str(e.updated)
     basic['date_of_death']                  = str(e.date_of_death)
     basic['reactivation_date']              = str(e.reactivation_date)
-    basic['reacativation_note']             = e.recativation_note
+    basic['reacativation_note']             = e.reactivation_note
     basic['mode']                           = e.mode
     basic['status']                         = e.status
     basic['contact_method']                 = e.contact_method
@@ -117,7 +117,7 @@ def generate_provider_json(e):
     basic['deactivated_details']            = e.deactivated_details
     basic['deactivation_date']              = str(e.deactivation_date)
     basic['deactivation_reason_code']       = e.deactivation_reason_code
-    basic['deactivation_note']              = e.decativation_note
+    basic['deactivation_note']              = e.deactivation_note
     basic['deceased_notes']                 = e.deceased_notes
     if e.parent_organization:
         basic['parent_organization_npi']    = e.parent_organization.number

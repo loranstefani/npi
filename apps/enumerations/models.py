@@ -130,13 +130,13 @@ class Enumeration(models.Model):
     has_ever_been_deactive = models.BooleanField(default=False, editable=True)
     flag_for_deactivation  = models.BooleanField(default=False,
                             help_text="Check this box to flag this record for deactivation. Final deactivation processed by CMS.")
-    decativation_note       = models.TextField(max_length=1024, blank=True,
+    deactivation_note       = models.TextField(max_length=1024, blank=True,
                                 default="",
                                 help_text="Why do you wish to deactivate this record?")
     
     flag_for_reactivation  = models.BooleanField(default=False,
                             help_text="Check this box to flag this record for reactivation. Final deactivation processed by CMS.")
-    recativation_note       = models.TextField(max_length=1024, blank=True,
+    reactivation_note       = models.TextField(max_length=1024, blank=True,
                                 default="",
                                 help_text="Why do you wish to reactivate this record?")
 

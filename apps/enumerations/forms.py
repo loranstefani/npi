@@ -185,7 +185,7 @@ class DeactivateEnumerationForm(forms.ModelForm):
         self.fields['flag_for_deactivation'].required = True
     class Meta:
         model = Enumeration
-        fields = ('flag_for_deactivation', 'decativation_note',)
+        fields = ('flag_for_deactivation', 'deactivation_note',)
     required_css_class = 'required'
 
 
