@@ -43,7 +43,7 @@ def save_api_enumeration(request):
         
         if provider['classification'] == "C" and provider['enumeration_type'] in ("NPI-1", "NPI-2"):
             #Change request
-            enumeration = new_npi(request)
+            enumeration = create_update_npi(request)
             if enumeration:
                 msg = "%s change request successful" % (provider['enumeration_type'])
                 response = {"message": msg,
@@ -55,7 +55,7 @@ def save_api_enumeration(request):
         elif provider['classification'] == "N" and provider['enumeration_type'] in ("NPI-1", "NPI-2"):    
             #"New request"
             
-            enumeration = new_npi(request)
+            enumeration = create_update_npi(request)
             if enumeration:
                 msg =  "%s new enumeration request successful." % (provider['enumeration_type'])
                 response = {"message": msg,
@@ -134,7 +134,7 @@ def sanity_check(provider_json):
 
 
 @reversion.create_revision()
-def new_npi(request):
+def create_update_npi(request):
     
     provider =  json.loads(request.body)
     if provider['classification'] == 'N':    
@@ -225,12 +225,11 @@ def new_npi(request):
     if change:
         if e.mailing_address:
             e.mailing_address.delete()
-        if e.mailing_address:
-            e.mailing_address.delete()
+        if e.location_address:
+            e.location_address.delete()
         
         for a in e.other_addresses.all():
-            if a:
-                a.delete()
+            a.delete()
         
     for address in provider['addresses']:
         
@@ -329,10 +328,11 @@ def new_npi(request):
     #Taxonomies
     if change:
         if e.taxonomy:
-            e.taxonomy.delete()
+            e.taxonomy = None
         
         for taxonomy in e.other_taxonomies.all():
-            taxonomy.delete()
+            e.other_taxonomies.remove(taxonomy)
+            
     
     for taxonomy in provider['taxonomies']:
         if taxonomy['primary'] == True:
