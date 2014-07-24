@@ -281,6 +281,8 @@ def generate_provider_json(e):
     if e.specialty:
         specialty  = OrderedDict()
         specialty['code'] = e.specialty.code
+        specialty['description'] = e.specialty.description
+        specialty['primary'] = True
         specialties.append(specialty) 
     
     
@@ -289,6 +291,8 @@ def generate_provider_json(e):
           for i in e.specialties.all():
             specialty = OrderedDict()
             specialty['code']       = i.code
+            specialty['description'] = e.specialty.description
+            specialty['primary'] = False
             specialties.append(specialty)
     d['specialties'] = specialties
     

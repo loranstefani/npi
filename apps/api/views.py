@@ -3,7 +3,6 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from forms import ProviderJSONForm
 import json
 from datetime import timedelta, date, datetime
 from ..enumerations.models import Event

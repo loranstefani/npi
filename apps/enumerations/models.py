@@ -256,7 +256,8 @@ class Enumeration(models.Model):
                                     choices=INDIVIDUAL_OTHER_NAME_CHOICES)
 
     parent_organization         = models.ForeignKey('self', null=True, blank=True,
-                                        related_name = "enumeration_parent_organization")
+                                        related_name = "enumeration_parent_organization",
+                                        on_delete=models.SET_NULL)
     
     parent_organization_legal_business_name  = models.CharField(max_length=300, default="", blank=True)
     parent_organization_ein     = models.CharField(max_length=9, default="", blank=True)
@@ -293,28 +294,34 @@ class Enumeration(models.Model):
     mailing_address             = models.ForeignKey(Address,
                                     related_name = "enumeration_primary_mailing_address",
                                     verbose_name = "Mailing Address",
-                                    null=True, blank=True)
+                                    null=True, blank=True,
+                                    on_delete=models.SET_NULL)
     
     location_address            = models.ForeignKey(Address,
                                         help_text = "Location is a physical address of your practice or business",
                                         related_name = "enumeration_location_address",
-                                        null=True, blank=True)
+                                        null=True, blank=True,
+                                        on_delete=models.SET_NULL )
     
     medical_record_storage_address  = models.ForeignKey(Address,
                                         related_name = "enumeration_medical_record_storage_address",
-                                        null=True, blank=True)
+                                        null=True, blank=True,
+                                        on_delete=models.SET_NULL)
     
     correspondence_address    = models.ForeignKey(Address,
                                         related_name = "enumeration_correspondence_address",
-                                        null=True, blank=True)
+                                        null=True, blank=True,
+                                        on_delete=models.SET_NULL)
     
     ten_ninety_nine_address = models.ForeignKey(Address, verbose_name="1099 Address",
                                         related_name = "enumeration_ten_ninety_nine_address",
-                                        null=True, blank=True)
+                                        null=True, blank=True,
+                                        on_delete=models.SET_NULL)
     
     revalidation_address    = models.ForeignKey(Address, verbose_name="PECOS Revalidation Address",
                                         related_name = "enumeration_revalidation_address",
-                                        null=True, blank=True)
+                                        null=True, blank=True,
+                                        on_delete=models.SET_NULL)
     
     identifiers            = models.ManyToManyField(Identifier, null=True, blank=True,
                                         related_name ="enumeration_identifiers",
@@ -324,7 +331,9 @@ class Enumeration(models.Model):
     taxonomy                   = models.ForeignKey(TaxonomyCode, null=True, blank=True,
                                         related_name ="enumeration_primary_taxonomy",
                                         verbose_name="Primary Taxonomy",
-                                        db_index=True)
+                                        db_index=True,
+                                        on_delete=models.SET_NULL)
+                                        
     
     other_taxonomies           = models.ManyToManyField(TaxonomyCode, null=True,
                                         blank=True, related_name ="enumeration_other_taxonomies")
@@ -336,7 +345,8 @@ class Enumeration(models.Model):
     specialty                   = models.ForeignKey(SpecialtyCode, null=True, blank=True,
                                         related_name ="enumeration_primary_specialty",
                                         verbose_name="Primary Specialty",
-                                        db_index=True)
+                                        db_index=True,
+                                        on_delete=models.SET_NULL)
     
     
     specialties                 = models.ManyToManyField(SpecialtyCode, null=True, blank=True,
@@ -500,7 +510,7 @@ class Enumeration(models.Model):
     added                       = models.DateField(auto_now_add=True)
     updated                     = models.DateTimeField(auto_now=True)
     enumerated_by               = models.ForeignKey(User, blank=True, null=True,
-                                                    editable=False)
+                                                    editable=False, on_delete=models.SET_NULL)
     initial_enumeration_date    = models.DateField(blank=True, null=True)
     
     last_updated_ip     = models.CharField(max_length=20, blank=True,
