@@ -36,10 +36,15 @@ def save_api_enumeration(request):
         
         provider =  json.loads(request.body)
         
+        response = {"message": "No classification was provided so the enumeration request cannot be completed.",
+                    "code": 500,
+                    "status": "ERROR",
+                    "enumeration_type" : provider['enumeration_type']}
+        
         if provider['classification'] == "C" and provider['enumeration_type'] in ("NPI-1", "NPI-2"):
             #Change request
-            errors = change_mpi(request)
-            if not errors:
+            enumeration = new_npi(request)
+            if enumeration:
                 msg = "%s change request successful" % (provider['enumeration_type'])
                 response = {"message": msg,
                             "status": "UPDATED",
@@ -50,13 +55,13 @@ def save_api_enumeration(request):
         elif provider['classification'] == "N" and provider['enumeration_type'] in ("NPI-1", "NPI-2"):    
             #"New request"
             
-            errors = new_npi(request)
-            if not errors:
+            enumeration = new_npi(request)
+            if enumeration:
                 msg =  "%s new enumeration request successful." % (provider['enumeration_type'])
                 response = {"message": msg,
                             "code": 200,
                             "status": "CREATED",
-                            "number": "123456789",
+                            "number": enumeration.number,
                             "enumeration_type" : provider['enumeration_type']}
     
         else:
@@ -126,11 +131,20 @@ def sanity_check(provider_json):
 
 
 
+
+
 @reversion.create_revision()
 def new_npi(request):
-    provider =  json.loads(request.body)
-    e = Enumeration(mode = "A")
     
+    provider =  json.loads(request.body)
+    if provider['classification'] == 'N':    
+        e = Enumeration()
+        change = False
+    else:
+        e = Enumeration.objects.get(number = provider['number'])
+        change = True
+    
+    e.mode                  = "A" #The mode is API.
     e.website               = provider['basic'].get('website')
     e.facebook_handle       = provider['basic'].get('facebook_handle')
     e.twitter_handle        = provider['basic'].get('twitter_handle')
@@ -208,7 +222,19 @@ def new_npi(request):
         e.authorized_official_title_or_position     = provider['basic'].get('authorized_official_title_or_position')
     
     e.save()
+    if change:
+        if e.mailing_address:
+            e.mailing_address.delete()
+        if e.mailing_address:
+            e.mailing_address.delete()
+        
+        for a in e.other_addresses.all():
+            if a:
+                a.delete()
+        
     for address in provider['addresses']:
+        
+        
         
         if address['address_purpose'] == "MAILING":
             a = Address(address_type      =  address['address_type'],
@@ -274,6 +300,10 @@ def new_npi(request):
             e.other_addresses.add(a)   
     
     #Licenses
+    if change:
+        for license in e.licenses.all():
+            license.delete()
+    
     for license in provider['licenses']:
         state, license_type, number = license['code'].split("-")
         lt  = LicenseType.objects.get(state = state, license_type=license_type)
@@ -282,6 +312,10 @@ def new_npi(request):
         e.licenses.add(l)
     
     #Identifiers
+    if change:
+        for identifier in e.identifiers.all():
+            identifier.delete()
+    
     for identifier in provider['identifiers']:
         
         i = Identifier(identifier = identifier['identifier'],
@@ -293,6 +327,13 @@ def new_npi(request):
               
     
     #Taxonomies
+    if change:
+        if e.taxonomy:
+            e.taxonomy.delete()
+        
+        for taxonomy in e.other_taxonomies.all():
+            taxonomy.delete()
+    
     for taxonomy in provider['taxonomies']:
         if taxonomy['primary'] == True:
             tc = TaxonomyCode.objects.get(code= taxonomy['code'])
@@ -302,6 +343,10 @@ def new_npi(request):
             e.other_taxonomies.add(tc)
             
     #Direct Addresses
+    if change:
+        for direct_address in e.direct_addresses.all():
+            direct_address.delete()
+    
     for direct_address in provider['direct_addresses']:
         d = DirectAddress(email = direct_address['email'],
                           organization=direct_address['organization'],
@@ -324,10 +369,17 @@ def new_npi(request):
     s.save()
     
     e.save()
-    msg = "The application has been automaticaly enumerated via the API. The number issued is %s." % (e.number)
+    if change:
+        msg = "The application has been automaticaly updated via the API. The number issued is %s." % (e.number)
+        Event.objects.create(enumeration=e, event_type="ACTIVATION",
+                          body = ACTIVATED_BODY, 
+                          subject = ACTIVATED_SUBJECT, 
+                          note= msg)
     
-    #Create an Event
-    Event.objects.create(enumeration=e, event_type="ACTIVATION",
+    else:
+        msg = "The application has been automaticaly enumerated via the API. The number issued is %s." % (e.number)
+        #Create an Event
+        Event.objects.create(enumeration=e, event_type="ACTIVATION",
                           body = ACTIVATED_BODY, 
                           subject = ACTIVATED_SUBJECT, 
                           note= msg)
@@ -335,20 +387,14 @@ def new_npi(request):
     #Create a revision for the model
     reversion.set_comment("Submit Enumeration Application - Auto-Enumerated via API")
     reversion.set_user(request.user)
-    
-    
-    
-    
-  
-    
-    errors = []
-    return errors
+    return e
 
 
 
-def change_npi(request):
-    errors = []
-    return errors
+
+
+
+
 
 
 
