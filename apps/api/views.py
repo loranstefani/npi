@@ -23,6 +23,7 @@ def api_enumeration_write(request):
         if validation_errors:
             provider_write_response = {
                   "code": 400,
+                  "status": "ERROR",
                   "message": "Enumeration create/update failed.",
                   "errors": validation_errors }
             return HttpResponse(json.dumps(provider_write_response, indent =4),
