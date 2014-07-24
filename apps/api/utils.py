@@ -37,9 +37,10 @@ def save_api_enumeration(request):
             if not errors:
             
                 response = {"message": "NPI-1 change request successful.",
-                        "code": 200,
-                        "number": provider['number'],
-                        "enumeration_type" : provider['enumeration_type']}
+                            "status": "UPDATED",
+                            "code": 200,
+                            "number": provider['number'],
+                            "enumeration_type" : provider['enumeration_type']}
             
         elif provider['classification'] == "C" and provider['enumeration_type']=="NPI-2":
             print "NPI-2 change request"
@@ -47,6 +48,7 @@ def save_api_enumeration(request):
             if not errors:
                 response = {"message": "NPI-2 change request successful.",
                         "code": 200,
+                        "status": "UPDATED",
                         "number": provider['number'],
                         "enumeration_type" : provider['enumeration_type']}          
             
@@ -58,6 +60,7 @@ def save_api_enumeration(request):
             if not errors:
                 response = {"message": "NPI-1 new enumeration request successful.",
                             "code": 200,
+                            "status": "CREATED",
                              "number": "123456789",
                              "enumeration_type" : provider['enumeration_type']}
         
@@ -68,12 +71,14 @@ def save_api_enumeration(request):
             if not errors:
                 response = {"message": "NPI-2 new enumeration request successful.",
                             "code":   200,
+                            "status": "CREATED",
                             "number": "123456789",
                             "enumeration_type" : provider['enumeration_type']}    
         
         else:
             response = {"message": "No classification was provided so the enumeration request cannot be completed.",
                     "code": 500,
+                    "status": "ERROR",
                     "number": "123456789",
                     "enumeration_type" : provider['enumeration_type']}
             
@@ -316,7 +321,11 @@ def get_unauthenticated_response(request):
     response = None 
     
     if not auth_string:
-        jsonstr={"code": 401, "message": "No HTTP_AUTHORIZATION supplied."}
+        jsonstr={"code": 401,
+                 "status": "ERROR",
+                 "message": "No HTTP_AUTHORIZATION supplied.",
+                 "errors": ["No HTTP_AUTHORIZATION supplied.", ]
+                 }
         jsonstr=json.dumps(jsonstr, indent = 4,)
         response = HttpResponse(jsonstr) 
     else:
@@ -328,7 +337,10 @@ def get_unauthenticated_response(request):
     
             if not authmeth.lower() == 'basic':
                 jsonstr={"code": 401,
-                          "message": "No HTTP_AUTHORIZATION supplied."}
+                          "status": "ERROR",
+                          "message": "No HTTP_AUTHORIZATION supplied.",
+                          "errors": ["No HTTP_AUTHORIZATION supplied.", ]
+                          }
                 jsonstr=json.dumps(jsonstr, indent = 4,)
                 response = HttpResponse(jsonstr, mimetype="application/json")
     
@@ -341,7 +353,10 @@ def get_unauthenticated_response(request):
             if user is not None:
                 if not user.is_active:
                     #the account is disabled
-                    jsonstr={"code": 401, "message": "Account disabled."}
+                    jsonstr={"code": 401,  "status": "ERROR",
+                             "message": "Account disabled.",
+                             "errors": ["Account disabled.", ]
+                             }
                     jsonstr=json.dumps(jsonstr, indent = 4,)
                     response =  HttpResponse(jsonstr, mimetype="application/json")
                 else:
@@ -349,13 +364,18 @@ def get_unauthenticated_response(request):
                     login(request, user)
             else:
                 # the authentication system was unable to verify the username and password
-                jsonstr={"code": 401, "message": "Invalid username or password."}
+                jsonstr={"code": 401,  "status": "ERROR",
+                         "message": "Invalid username or password.",
+                         "errors": ["Invalid username or password." ,]}
                 jsonstr=json.dumps(jsonstr, indent = 4,)
                 response =  HttpResponse(jsonstr, mimetype="application/json")
             
         
         except (ValueError, binascii.Error):
-            jsonstr={"code": 401, "message": "No HTTP_AUTHORIZATION supplied."}
+            jsonstr={"code": 401,  "status": "ERROR",
+                     "message": "No HTTP_AUTHORIZATION supplied.",
+                     "errors": ["No HTTP_AUTHORIZATION supplied.", ]
+                     }
             jsonstr=json.dumps(jsonstr, indent = 4,)
             response =  HttpResponse(jsonstr, mimetype="application/json")
     
