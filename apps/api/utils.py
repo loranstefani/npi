@@ -9,6 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from ..enumerations.models import Enumeration, Event
 from ..addresses.models import Address
 from ..surrogates.models import Surrogate
+from ..licenses.models import License, LicenseType
+from ..identifiers.models import Identifier
+from ..direct.models import DirectAddress
+from ..specialties.models import SpecialtyCode
+from ..taxonomy.models import TaxonomyCode
 import reversion
 from pjson.validate import validate_pjson
 from ..enumerations.notifications import (ACTIVATED_BODY, ACTIVATED_SUBJECT)
@@ -31,55 +36,33 @@ def save_api_enumeration(request):
         
         provider =  json.loads(request.body)
         
-        if provider['classification'] == "C" and provider['enumeration_type']=="NPI-1":
-            print "NPI-1change request"
-            errors = change_type_1(provider)
+        if provider['classification'] == "C" and provider['enumeration_type'] in ("NPI-1", "NPI-2"):
+            #Change request
+            errors = change_mpi(request)
             if not errors:
-            
-                response = {"message": "NPI-1 change request successful.",
+                msg = "%s change request successful" % (provider['enumeration_type'])
+                response = {"message": msg,
                             "status": "UPDATED",
                             "code": 200,
                             "number": provider['number'],
                             "enumeration_type" : provider['enumeration_type']}
-            
-        elif provider['classification'] == "C" and provider['enumeration_type']=="NPI-2":
-            print "NPI-2 change request"
-            errors = change_type_2(provider)
-            if not errors:
-                response = {"message": "NPI-2 change request successful.",
-                        "code": 200,
-                        "status": "UPDATED",
-                        "number": provider['number'],
-                        "enumeration_type" : provider['enumeration_type']}          
-            
-        
-        elif provider['classification'] == "N" and provider['enumeration_type']=="NPI-1":    
-            print "NPI-1 new request"
+                
+        elif provider['classification'] == "N" and provider['enumeration_type'] in ("NPI-1", "NPI-2"):    
+            #"New request"
             
             errors = new_npi(request)
             if not errors:
-                response = {"message": "NPI-1 new enumeration request successful.",
+                msg =  "%s new enumeration request successful." % (provider['enumeration_type'])
+                response = {"message": msg,
                             "code": 200,
                             "status": "CREATED",
-                             "number": "123456789",
-                             "enumeration_type" : provider['enumeration_type']}
-        
-        elif provider['classification'] == "N" and provider['enumeration_type']=="NPI-2":    
-            print "NPI-2 new request"
-            
-            errors = new_npi(request)
-            if not errors:
-                response = {"message": "NPI-2 new enumeration request successful.",
-                            "code":   200,
-                            "status": "CREATED",
                             "number": "123456789",
-                            "enumeration_type" : provider['enumeration_type']}    
-        
+                            "enumeration_type" : provider['enumeration_type']}
+    
         else:
             response = {"message": "No classification was provided so the enumeration request cannot be completed.",
                     "code": 500,
                     "status": "ERROR",
-                    "number": "123456789",
                     "enumeration_type" : provider['enumeration_type']}
             
         return response
@@ -89,27 +72,27 @@ def save_api_enumeration(request):
 
 def sanity_check(provider_json):
     errors = []
-    d = json.loads(provider_json)
+    provider = json.loads(provider_json)
     
-    if d['enumeration_type'] not in ('NPI-1','NPI-2'):
+    if provider['enumeration_type'] not in ('NPI-1','NPI-2'):
         errors.append("API enumeration is limited to NPI-1 and NPI-2 at this time.")
     
     # If classification=N, then number should not be provided.
-    if d['classification']=="N" and d.get("number"):
+    if provider['classification']=="N" and provider.get("number"):
         errors.append("A request for a new enumeration must not contain an enumeration number.")
     
     # If classification=C, then a number should be provided.
-    if d['classification']=="C" and not d.get("number"):
+    if provider['classification']=="C" and not provider.get("number"):
         errors.append("A change request for an enumeration must contain an enumeration number.")
     
     #If this is a change request, the number should exist.
-    if d['classification']=="C" and not Enumeration.objects.filter(number=d.get("number")).exists():
+    if provider['classification']=="C" and not Enumeration.objects.filter(number=provider.get("number")).exists():
         errors.append("The enumeration number provided does not exist.")
     
-    if d['classification']=="N" and d['enumeration_type']=="NPI-1":
+    if provider['classification']=="N" and provider['enumeration_type']=="NPI-1":
             #check that the DOB is not less than 16 years.
             try:
-                date_of_birth = datetime.datetime.strptime(d['basic'].get('date_of_birth'),
+                date_of_birth = datetime.datetime.strptime(provider['basic'].get('date_of_birth'),
                                                   '%Y-%m-%d').date()
         
                 age_days =  datetime.date.today() - date_of_birth
@@ -121,17 +104,24 @@ def sanity_check(provider_json):
                 errors.append("date_of_birth must be in YYYY-MM-DD format.")
                 
             #Make sure the ssn is not already assigned to another npi.
-            if d['basic'].get('ssn'):
-                if Enumeration.objects.filter(enumeration_type=d.get("enumeration_type"),
-                                       ssn =  d['basic'].get('ssn')).exists():
+            if provider['basic'].get('ssn'):
+                if Enumeration.objects.filter(enumeration_type=provider.get("enumeration_type"),
+                                       ssn =  provider['basic'].get('ssn')).exists():
                     errors.append("This ssn already has an existing enumeration number assigned.")
             
             #Make sure the itin is not already assigned to another npi.
-            if d['basic'].get('itin'):
-                if Enumeration.objects.filter(enumeration_type=d.get("enumeration_type"),
+            if provider['basic'].get('itin'):
+                if Enumeration.objects.filter(enumeration_type=provider.get("enumeration_type"),
                                        ssn =  d['basic'].get('itin')).exists():
                     errors.append("This itin already has an existing enumeration number assigned.")
     
+            #Make sure the licenses are not already assigned to someone else.
+            for license in provider['licenses']:
+                state, license_type, number = license['code'].split("-")
+                lt  = LicenseType.objects.get(state = state, license_type=license_type)
+                if License.objects.filter(license_type= lt, number=number).exists():
+                    error =  "License %s-%s-%s has already been provided by another person."
+                    errors.append(error)
     return errors
 
 
@@ -228,7 +218,7 @@ def new_npi(request):
                     city              =  address.get('city'),
                     state             =  address.get('state'),
                     zip               =  address.get('zip'),
-                    mpo               =  address.get('mpo'),
+                    mpo               =  address.get('mpo',""),
                     country_code      =  address.get('country_code'),
                     foreign_state     =  address.get('foreign_state'),
                     foreign_postal    =  address.get('foreign_postal'),
@@ -240,33 +230,87 @@ def new_npi(request):
                     )
             a.save()
             e.mailing_address = a
-                
+            
+        elif address['address_purpose'] == "LOCATION":
+            a = Address(address_type      =  address['address_type'],
+                    address_purpose   =  address['address_purpose'],
+                    address_1         =  address['address_1'],
+                    address_2         =  address.get('address_2'),
+                    city              =  address.get('city'),
+                    state             =  address.get('state'),
+                    zip               =  address.get('zip'),
+                    mpo               =  address.get('mpo',""),
+                    country_code      =  address.get('country_code'),
+                    foreign_state     =  address.get('foreign_state'),
+                    foreign_postal    =  address.get('foreign_postal'),
+                    us_telephone_number        =  address.get('us_telephone_number'),
+                    us_fax_number              =  address.get('us_fax_number'),
+                    foreign_telephone_number   =  address.get('foreign_telephone_number'),
+                    foreign_fax_number         =  address.get('foreign_fax_number'),
+                    telephone_number_extension =  address.get('telephone_number_extension'),
+                    )
+            a.save()
+            e.location_address = a
+        
+        else:
+            a = Address(address_type      =  address['address_type'],
+                    address_purpose   =  address['address_purpose'],
+                    address_1         =  address['address_1'],
+                    address_2         =  address.get('address_2'),
+                    city              =  address.get('city'),
+                    state             =  address.get('state'),
+                    zip               =  address.get('zip'),
+                    mpo               =  address.get('mpo',""),
+                    country_code      =  address.get('country_code'),
+                    foreign_state     =  address.get('foreign_state'),
+                    foreign_postal    =  address.get('foreign_postal'),
+                    us_telephone_number        =  address.get('us_telephone_number'),
+                    us_fax_number              =  address.get('us_fax_number'),
+                    foreign_telephone_number   =  address.get('foreign_telephone_number'),
+                    foreign_fax_number         =  address.get('foreign_fax_number'),
+                    telephone_number_extension =  address.get('telephone_number_extension'),
+                    )
+            a.save()
+            e.other_addresses.add(a)   
     
-        #address['address_type']             = e.mailing_address.address_type
-        #address['address_purpose']          = e.mailing_address.address_purpose
-        #address['address_1']                = e.mailing_address.address_1
-        #address['address_2']                = e.mailing_address.address_2
-        #address['city']                     = e.mailing_address.city
-        #address['state']                    = e.mailing_address.state
-        #address['zip']                      = e.mailing_address.zip
-        #address['mpo']                      = e.mailing_address.mpo
-        #address['country_code']             = e.mailing_address.country_code
-        #address['foreign_state']            = e.mailing_address.foreign_state
-        #address['foreign_postal']           = e.mailing_address.foreign_postal
-        #address['us_telephone_number']      = e.mailing_address.us_telephone_number
-        #address['us_fax_number']            = e.mailing_address.us_fax_number
-        #address['foreign_telephone_number'] = e.mailing_address.foreign_telephone_number
-        #address['foreign_fax_number']       = e.mailing_address.foreign_fax_number
-        #address['telephone_number_extension']   = e.mailing_address.telephone_number_extension
     #Licenses
+    for license in provider['licenses']:
+        state, license_type, number = license['code'].split("-")
+        lt  = LicenseType.objects.get(state = state, license_type=license_type)
+        l = License(license_type= lt, number=number)
+        l.save()
+        e.licenses.add(l)
     
     #Identifiers
+    for identifier in provider['identifiers']:
+        
+        i = Identifier(identifier = identifier['identifier'],
+                       code =identifier['code'],
+                       state =identifier['state'],
+                       issuer = identifier['issuer'])
+        i.save()
+        e.identifiers.add(i)
+              
     
     #Taxonomies
-    
+    for taxonomy in provider['taxonomies']:
+        if taxonomy['primary'] == True:
+            tc = TaxonomyCode.objects.get(code= taxonomy['code'])
+            e.taxonomy = tc
+        elif taxonomy['primary'] == False:
+            tc = TaxonomyCode.objects.get(code= taxonomy['code'])
+            e.other_taxonomies.add(tc)
+            
     #Direct Addresses
-  
+    for direct_address in provider['direct_addresses']:
+        d = DirectAddress(email = direct_address['email'],
+                          organization=direct_address['organization'],
+                          public  =direct_address['public'])
+        d.save()
+        e.direct_addresses.add(d)
     
+    
+    #Save and activate the NPI
     e.status          = "A"
     e.enueration_date = datetime.date.today()
     e.last_update     = datetime.date.today()
@@ -300,17 +344,13 @@ def new_npi(request):
     errors = []
     return errors
 
-def new_type_2(provider_json):
+
+
+def change_npi(request):
     errors = []
     return errors
 
-def change_type_1(provider_json):
-    errors = []
-    return errors
 
-def change_type_2(provider_json):
-    errors = []
-    return errors
 
 
 def get_unauthenticated_response(request):
