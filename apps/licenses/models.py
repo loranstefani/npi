@@ -9,10 +9,22 @@ LICENSE_STATUS_CHOICES =( ("UNKNOWN", "Unknown"),
                           ("REVOKED","Revoked"),
                           ("DECEASED","Deceased"), )
 
+US_STATE_CHOICES = list(US_STATES)
+#US_STATE_CHOICES.insert(0, ('', 'Please Choose a State'))
+US_STATE_CHOICES.extend(
+    [('AS', 'American Samoa'),
+    ('FM', 'Micronesia, Federated states of'),
+    ('GU', 'Guam'),
+    ('MH', 'Marshall Islands'),
+    ('MP', 'Mariana Islands, Northern'),
+    ('PR', 'Puerto Rico'),
+    ('PW', 'Palau'),
+    ('VI', 'Virgin Islands')])
+
 
 class LicenseType(models.Model):
     state          = models.CharField(max_length=2,
-                                    choices = US_STATES)
+                                    choices = US_STATE_CHOICES)
     license_type   = models.CharField(max_length=3)
     
     mac            =  models.IntegerField(max_length=2,
@@ -21,8 +33,8 @@ class LicenseType(models.Model):
     provider_type  = models.IntegerField(max_length=2)
     
     credential     = models.CharField(max_length=150)
-    last_updated_ip     = models.GenericIPAddressField(max_length=20, null=True,
-                                default="", db_index=True)
+    last_updated_ip     = models.CharField(max_length=20, blank=True,
+                                default="")
     
     class Meta:
         
@@ -36,6 +48,9 @@ class LicenseType(models.Model):
     def code(self):
         lt ="%s-%s" % (self.state, self.license_type)
         return lt
+
+    def save(self, **kwargs):       
+        super(LicenseType, self).save(**kwargs)
 
 
 
