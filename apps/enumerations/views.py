@@ -1032,8 +1032,9 @@ def select_address_type(request, address_purpose, enumeration_id):
 @login_required
 def edit_address(request, address_id, enumeration_id):
     a = Address.objects.get(id=address_id)
-    name = _("Edit Address")
-
+    name = "Edit %s Address" % (a.address_type)
+    
+    _("Edit %s Address")
     if a.address_type == "DOM":
         return HttpResponseRedirect(reverse('domestic_address',
                                             args=(a.id,enumeration_id)))
@@ -1055,7 +1056,10 @@ def edit_address(request, address_id, enumeration_id):
 @login_required
 @reversion.create_revision()
 def domestic_address(request,  address_id, enumeration_id):
-    name = _("Domestic Address")
+    a = Address.objects.get(id=address_id)
+    e = Enumeration.objects.get(id=enumeration_id)
+    name = "Edit Domestic %s for %s" % (a.get_address_purpose_display(),
+                                                e.name())
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
     address = Address.objects.get(id=address_id)
@@ -1120,7 +1124,10 @@ def domestic_address(request,  address_id, enumeration_id):
 @login_required
 @reversion.create_revision()
 def foreign_address(request, address_id, enumeration_id):
-    name = _("Foreign Address")
+    a = Address.objects.get(id=address_id)
+    e = Enumeration.objects.get(id=enumeration_id)
+    name = "Edit Foreign %s for %s" % (a.get_address_purpose_display(),
+                                        e.name())
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
     address = Address.objects.get(id=address_id)
@@ -1151,7 +1158,10 @@ def foreign_address(request, address_id, enumeration_id):
 @login_required
 @reversion.create_revision()
 def military_address(request, address_id, enumeration_id):
-    name = _("Military Address")
+    a = Address.objects.get(id=address_id)
+    e = Enumeration.objects.get(id=enumeration_id)
+    name = "Edit Military %s for %s" % (a.get_address_purpose_display(),
+                                                e.name())
     e = get_enumeration_user_manages_or_404(Enumeration, enumeration_id,
                                             request.user)
     address = Address.objects.get(id=address_id)
